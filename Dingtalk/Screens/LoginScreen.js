@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import {
   View,
@@ -8,16 +8,29 @@ import {
   Pressable,
   Image,
 } from "react-native";
-import Icon from "react-native-vector-icons/FontAwesome";
-import { Ionicons } from "@expo/vector-icons";
+import Ionicons from "react-native-vector-icons/Ionicons";
+import { useNavigation, useRoute } from "@react-navigation/native";
 
-const LoginScreen = ({ navigation }) => {
+// const LoginScreen = ({ navigation }) => {
+const LoginScreen = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loginByEmail, setLoginByEmail] = useState(true);
   const [value, setValue] = useState("");
+  const [countryCode, setCountryCode] = useState("+1");
 
-  //   const [countryCode, setCountryCode] = useState("+1");
+  //!
+  const navigation = useNavigation();
+  const route = useRoute();
+  //   const selectedCode = route.params?.selectedCode || "+1";
+
+  // useEffect(() => {
+  //   if (route.params?.selectedCode) {
+  //     setCountryCode(route.params.selectedCode);
+  //   }
+  // }, [route.params?.selectedCode]);
+
+  // //!
 
   const handleLogin = () => {
     // Add your login logic here (e.g., API call)
@@ -25,12 +38,10 @@ const LoginScreen = ({ navigation }) => {
   };
 
   const handleCreateAccount = () => {
-    // Add your login logic here (e.g., API call)
     navigation.navigate("CreateAccount");
   };
 
   const handleForgetPassword = () => {
-    // Add your forget password logic here (e.g., API call)
     navigation.navigate("ForgetPassword");
   };
 
@@ -38,13 +49,13 @@ const LoginScreen = ({ navigation }) => {
     navigation.navigate("CountryCodeInput");
   };
 
-  // Swap between login by email and login by phone number
+  //* Swap between login by email and login by phone number
   const handleToggleLoginMethod = () => {
     setLoginByEmail(!loginByEmail);
-    setUsername(""); // Clear the username input when switching
+    setUsername(""); //!Clear the username input when switching
   };
 
-  // Change the value of text input to number
+  //* Change the value of text input to number
   const handelChange = (text) => {
     setValue(Number(text));
   };
@@ -63,46 +74,34 @@ const LoginScreen = ({ navigation }) => {
             {loginByEmail ? "Email" : "Phone Number"}
           </Text>
 
-          {/* <Text style={styles.num} onPress={handleCountryCodeInput}>
-            +1
-          </Text> */}
+          <View style={styles.codeContainer}>
+            {loginByEmail ? (
+              ""
+            ) : (
+              <View style={styles.codeContain}>
+                <Text style={styles.codeText}>{selectedCode}</Text>
+                <Ionicons
+                  name="chevron-down"
+                  size={20}
+                  color="black"
+                  marginRight={10}
+                  onPress={handleCountryCodeInput}
+                />
+              </View>
+            )}
 
-          {/* <Text style={styles.countryCodeText}>{countryCode}</Text> */}
-
-          <Ionicons name="chevron-down" size={16} color="black" />
-          <TextInput
-            style={styles.input}
-            placeholder={
-              loginByEmail
-                ? "Enter your email address"
-                : "Enter your phone number"
-            }
-            value={loginByEmail ? username : value.toString()}
-            onChangeText={loginByEmail ? setUsername : handelChange}
-            keyboardType={loginByEmail ? "email-address" : "numeric"}
-            onCountryCodeSelect={handleCountryCodeInput}
-          />
-
-          {/* {!loginByEmail && (
-            <Pressable
-              style={styles.countryCodeButton}
-              onPress={handleCountryCodeInput}
-            >
-              <Text style={styles.countryCodeText}>{countryCode}</Text>
-              <Ionicons name="chevron-down" size={16} color="black" />
-            </Pressable>
-          )}
-          <TextInput
-            style={[styles.input, !loginByEmail && styles.inputWithCountryCode]}
-            placeholder={
-              loginByEmail
-                ? "Enter your email address"
-                : "Enter your phone number"
-            }
-            value={loginByEmail ? value : `${countryCode}${value}`}
-            onChangeText={onChangeText}
-            keyboardType={loginByEmail ? "email-address" : "numeric"}
-          /> */}
+            <TextInput
+              style={styles.inputCode}
+              placeholder={
+                loginByEmail
+                  ? "Enter your email address"
+                  : "Enter your phone number"
+              }
+              value={loginByEmail ? username : value.toString()}
+              onChangeText={loginByEmail ? setUsername : handelChange}
+              keyboardType={loginByEmail ? "email-address" : "numeric"}
+            />
+          </View>
 
           <Text style={styles.textInputText}>Password</Text>
           <TextInput
@@ -154,8 +153,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   innerContainer: {
-    marginLeft: 10,
-    marginRight: 10,
+    marginLeft: 15,
+    marginRight: 15,
   },
   image: {
     marginBottom: 110,
@@ -173,32 +172,51 @@ const styles = StyleSheet.create({
   inputContainer: {
     marginTop: 30,
   },
-  textInputText: {
-    // fontSize: 16,
-    fontWeight: "bold",
-    color: "black",
-    marginBottom: 5,
+  codeContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    height: 30,
+    borderColor: "#EEEEEE",
+    borderWidth: 1,
+    borderTopWidth: 0,
+    borderLeftWidth: 0,
+    borderRightWidth: 0,
+  },
+  codeContain: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  codeText: {
+    fontSize: 18,
+    marginRight: 3,
+  },
+  inputCode: {
+    marginBottom: 2,
   },
   input: {
-    // width: "90%",
     height: 40,
     borderColor: "#EEEEEE",
     borderWidth: 1,
     borderTopWidth: 0,
     borderLeftWidth: 0,
     borderRightWidth: 0,
-    marginBottom: 12,
-    // paddingHorizontal: 8,
+  },
+  textInputText: {
+    fontWeight: "bold",
+    color: "black",
+    marginBottom: 5,
+    marginTop: 10,
   },
   button: {
     backgroundColor: "#007bff",
     padding: 12,
     borderRadius: 10,
+    marginTop: 10,
   },
   buttonTwo: {
     backgroundColor: "#7EA1FF",
     padding: 12,
-    borderRadius: 10,
+    borderRadius: 6,
   },
   buttonText: {
     color: "#fff",
@@ -215,28 +233,25 @@ const styles = StyleSheet.create({
   textContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: 10,
-    marginBottom: 250,
+    marginTop: 20,
+    marginBottom: 220,
   },
   textOne: {
-    fontSize: 12,
     color: "#007bff",
-    fontWeight: "bold",
+    fontWeight: "500",
   },
   textTwo: {
-    fontSize: 12,
-    // color: "#EEEEEE",
     color: "black",
-    fontWeight: "bold",
+    fontWeight: "400",
   },
   orContainer: {
     flexDirection: "row",
     alignItems: "center",
     marginVertical: 10,
     justifyContent: "center",
+    marginBottom: 16,
   },
   line: {
-    // flex: 1,
     width: 80,
     height: 1,
     backgroundColor: "#EEEEEE",

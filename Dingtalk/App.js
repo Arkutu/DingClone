@@ -6,6 +6,7 @@ import ForgetPassword from "./Screens/ForgetPassword";
 import CountryCodeInput from "./Screens/CountryCodeInput";
 import CreateNewAccount from "./Screens/CreateNewAccount";
 import HomeScreen from "./Screens/HomeScreen";
+import PrivacyTermsScreen from "./Screens/PrivacyTermsScreen";
 // import ChatScreen from "./Screens/ChatScreen";
 // import TasksScreen from "./Screens/TasksScreen";
 // import CalendarScreen from "./Screens/CalendarScreen";
@@ -19,6 +20,7 @@ const screens = [
   { name: "CountryCodeInput", component: CountryCodeInput },
   { name: "CreateAccount", component: CreateNewAccount },
   { name: "Home", component: HomeScreen },
+  { name: "PrivacyTermsScreen", component: PrivacyTermsScreen },
   // { name: "Chat", component: ChatScreen },
   // { name: "Tasks", component: TasksScreen },
   // { name: "Calendar", component: CalendarScreen },

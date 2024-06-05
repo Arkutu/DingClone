@@ -1,19 +1,36 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { View, Text, TextInput, StyleSheet, Pressable } from "react-native";
+import Ionicons from "react-native-vector-icons/Ionicons";
 
 const CreateAccountScreen = ({ navigation }) => {
-  //   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
-  //   const [password, setPassword] = useState("");
 
   const handleCreateAccount = () => {
-    // Add your account creation logic here (e.g., API call)
-    navigation.navigate("Home"); // Navigate to HomeScreen after successful account creation
+    //* Add your account creation logic here (e.g., API call)
+    navigation.navigate("Home");
+    //! Navigate to HomeScreen after successful account creation
+  };
+
+  const handlePrivacyTerms = () => {
+    navigation.navigate("PrivacyTermsScreen");
+  };
+
+  const goBack = () => {
+    navigation.navigate("Login");
   };
 
   return (
     <View style={styles.container}>
+      <View style={styles.icon}>
+        <Ionicons
+          name="chevron-back"
+          size={24}
+          //   color="black"
+          onPress={goBack}
+        />
+      </View>
+
       <View style={styles.innerContainer}>
         <Text style={styles.headerText}>Create New Account</Text>
 
@@ -29,7 +46,9 @@ const CreateAccountScreen = ({ navigation }) => {
 
         <Text>
           I have read and agree{" "}
-          <Text style={styles.textBlue}>Privacy Policy,Terms of Service</Text>
+          <Text style={styles.textBlue} onPress={handlePrivacyTerms}>
+            Privacy Policy,Terms of Service
+          </Text>
         </Text>
 
         <Pressable style={styles.button} onPress={handleCreateAccount}>
@@ -51,15 +70,20 @@ const styles = StyleSheet.create({
     padding: 16,
     backgroundColor: "#fff",
   },
+  icon: {
+    marginTop: 40,
+    marginBottom: 50,
+    fontSize: 25,
+  },
   innerContainer: {
-    marginLeft: 10,
-    marginRight: 10,
+    marginLeft: 15,
+    marginRight: 15,
   },
   headerText: {
     fontSize: 20,
     fontWeight: "bold",
     color: "black",
-    marginBottom: 5,
+    marginBottom: 20,
   },
   inputContainer: {
     marginTop: 40,
@@ -77,11 +101,10 @@ const styles = StyleSheet.create({
     borderLeftWidth: 0,
     borderRightWidth: 0,
     marginBottom: 12,
-    // paddingHorizontal: 8,
   },
   textBlue: {
     color: "#007bff",
-    // fontWeight: "bold",
+    fontWeight: "500",
   },
   button: {
     backgroundColor: "#007bff",
