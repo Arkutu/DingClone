@@ -13,28 +13,41 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 
 // const LoginScreen = ({ navigation }) => {
 const LoginScreen = () => {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [userphone, setUserphone] = useState(); //! Working on now
   const [password, setPassword] = useState("");
-  const [loginByEmail, setLoginByEmail] = useState(true);
-  const [value, setValue] = useState("");
+  const [isSwitched, setSwitched] = useState(true);
   const [countryCode, setCountryCode] = useState("+1");
 
   //!
   const navigation = useNavigation();
   const route = useRoute();
-  //   const selectedCode = route.params?.selectedCode || "+1";
+  const selectedCode = route.params?.selectedCode || "+1";
 
-  // useEffect(() => {
-  //   if (route.params?.selectedCode) {
-  //     setCountryCode(route.params.selectedCode);
-  //   }
-  // }, [route.params?.selectedCode]);
+  useEffect(() => {
+    if (route.params?.selectedCode) {
+      setCountryCode(route.params.selectedCode);
+    }
+  }, [route.params?.selectedCode]);
 
   // //!
 
   const handleLogin = () => {
     // Add your login logic here (e.g., API call)
-    navigation.navigate("Home");
+    if (!email || !password) {
+      alert("Enter email and password");
+    } else {
+      navigation.navigate("Home");
+    }
+  };
+
+  const handelEmailChange = (text) => {
+    setEmail(text);
+    console.log(email);
+  };
+  const handelPhoneChange = (text) => {
+    setUserphone(text);
+    console.log(userphone);
   };
 
   const handleCreateAccount = () => {
@@ -51,13 +64,8 @@ const LoginScreen = () => {
 
   //* Swap between login by email and login by phone number
   const handleToggleLoginMethod = () => {
-    setLoginByEmail(!loginByEmail);
-    setUsername(""); //!Clear the username input when switching
-  };
-
-  //* Change the value of text input to number
-  const handelChange = (text) => {
-    setValue(Number(text));
+    setSwitched(!isSwitched);
+    // setEmail(""); //!Clear the email input when switching
   };
 
   return (
@@ -71,13 +79,10 @@ const LoginScreen = () => {
 
         <View style={styles.inputContainer}>
           <Text style={styles.textInputText}>
-            {loginByEmail ? "Email" : "Phone Number"}
+            {isSwitched ? "Phone Number" : "Email"}
           </Text>
-
           <View style={styles.codeContainer}>
-            {loginByEmail ? (
-              ""
-            ) : (
+            {isSwitched ? (
               <View style={styles.codeContain}>
                 <Text style={styles.codeText}>{selectedCode}</Text>
                 <Ionicons
@@ -87,20 +92,24 @@ const LoginScreen = () => {
                   marginRight={10}
                   onPress={handleCountryCodeInput}
                 />
-              </View>
-            )}
 
-            <TextInput
-              style={styles.inputCode}
-              placeholder={
-                loginByEmail
-                  ? "Enter your email address"
-                  : "Enter your phone number"
-              }
-              value={loginByEmail ? username : value.toString()}
-              onChangeText={loginByEmail ? setUsername : handelChange}
-              keyboardType={loginByEmail ? "email-address" : "numeric"}
-            />
+                <TextInput
+                  style={styles.inputCode}
+                  placeholder="Enter your phone number"
+                  value={userphone}
+                  onChangeText={(text) => handelPhoneChange(text)}
+                  keyboardType="numeric"
+                />
+              </View>
+            ) : (
+              <TextInput
+                style={styles.inputCode}
+                placeholder="Enter your email address"
+                value={email}
+                onChangeText={(text) => handelEmailChange(text)}
+                keyboardType="email-address"
+              />
+            )}
           </View>
 
           <Text style={styles.textInputText}>Password</Text>
@@ -119,7 +128,7 @@ const LoginScreen = () => {
 
         <View style={styles.textContainer}>
           <Text style={styles.textOne} onPress={handleToggleLoginMethod}>
-            {loginByEmail ? "Log in by Phone Number" : "Log in by Email"}
+            {isSwitched ? "Log in by Phone Number" : "Log in by Email"}
           </Text>
           <Text style={styles.textTwo} onPress={handleForgetPassword}>
             Forget Password

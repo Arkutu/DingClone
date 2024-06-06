@@ -25,7 +25,7 @@ const CountryCodeScreen = ({ navigation }) => {
           <TouchableOpacity
             style={styles.item}
             onPress={() =>
-              navigation.navigate("PhoneNumberInput", {
+              navigation.navigate("Login", {
                 selectedCode: item.code,
               })
             }
