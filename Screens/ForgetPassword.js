@@ -7,8 +7,14 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 // const ForgetPassword = ({ navigation }) => {
 const ForgetPassword = () => {
   const [value, setValue] = useState("");
-  const [loginByEmail, setLoginByEmail] = useState(true); //? What i did without the data
+  // const [isSwitched, setLoginByEmail] = useState(true); //? What i did without the data
   const [username, setUsername] = useState("");
+
+  //?
+  const [email, setEmail] = useState("");
+  const [userphone, setUserphone] = useState();
+  const [isSwitched, setSwitched] = useState(true);
+  //?
 
   //!
   const navigation = useNavigation();
@@ -33,15 +39,30 @@ const ForgetPassword = () => {
     setValue(Number(text));
   };
 
+  //?
+  const handelEmailChange = (text) => {
+    setEmail(text);
+    console.log(email);
+  };
+  const handelPhoneChange = (text) => {
+    setUserphone(text);
+    console.log(userphone);
+  };
   const goBack = () => {
     navigation.navigate("Login");
   };
 
-  //? What i did without the data
   const handleToggleLoginMethod = () => {
-    setLoginByEmail(!loginByEmail);
-    setUsername(""); //!Clear the username input when switching
+    setSwitched(!isSwitched);
+    // setEmail(""); //!Clear the email input when switching
   };
+  //?
+
+  //? What i did without the data
+  // const handleToggleLoginMethod = () => {
+  //   setLoginByEmail(!loginByEmail);
+  //   setUsername(""); //!Clear the username input when switching
+  // };
 
   return (
     <View style={styles.container}>
@@ -56,18 +77,16 @@ const ForgetPassword = () => {
 
       <View style={styles.innerContainer}>
         <Text style={styles.headerText}>
-          {loginByEmail
-            ? "Enter your phone number"
-            : "Enter your email address"}
+          {isSwitched ? "Enter your phone number" : "Enter your email address"}
         </Text>
 
-        <View style={styles.inputContainer}>
+        {/* <View style={styles.inputContainer}>
           <Text style={styles.inputText}>
-            {loginByEmail ? "Phone Number" : "Email"}
+            {isSwitched ? "Phone Number" : "Email"}
           </Text>
 
           <View style={styles.codeContainer}>
-            {loginByEmail ? (
+            {isSwitched ? (
               <View style={styles.codeContain}>
                 <Text style={styles.codeText}>{selectedCode}</Text>
                 <Ionicons
@@ -85,15 +104,46 @@ const ForgetPassword = () => {
             <TextInput
               style={styles.inputCode}
               placeholder={
-                loginByEmail
+                isSwitched
                   ? "Enter your phone number"
                   : "Enter your email address"
               }
-              value={loginByEmail ? username : value.toString()}
-              onChangeText={loginByEmail ? setUsername : handelChange}
-              keyboardType={loginByEmail ? "email-address" : "numeric"}
+              value={isSwitched ? username : value.toString()}
+              onChangeText={isSwitched ? setUsername : handelChange}
+              keyboardType={isSwitched ? "email-address" : "numeric"}
             />
           </View>
+        </View> */}
+
+        <View style={styles.codeContainer}>
+          {isSwitched ? (
+            <View style={styles.codeContain}>
+              <Text style={styles.codeText}>{selectedCode}</Text>
+              <Ionicons
+                name="chevron-down"
+                size={20}
+                color="black"
+                marginRight={10}
+                onPress={handleCountryCodeInput}
+              />
+
+              <TextInput
+                style={styles.inputCode}
+                placeholder="Enter your phone number"
+                value={userphone}
+                onChangeText={(text) => handelPhoneChange(text)}
+                keyboardType="numeric"
+              />
+            </View>
+          ) : (
+            <TextInput
+              style={styles.inputCode}
+              placeholder="Enter your email address"
+              value={email}
+              onChangeText={(text) => handelEmailChange(text)}
+              keyboardType="email-address"
+            />
+          )}
         </View>
 
         <Pressable style={styles.button} onPress={handleForgetAccount}>
@@ -101,7 +151,7 @@ const ForgetPassword = () => {
         </Pressable>
 
         <Text style={styles.textBlue} onPress={handleToggleLoginMethod}>
-          {loginByEmail
+          {isSwitched
             ? "Find your password by email"
             : "Find your password by phone"}
         </Text>

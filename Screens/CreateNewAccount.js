@@ -8,7 +8,12 @@ const CreateAccountScreen = ({ navigation }) => {
 
   const handleCreateAccount = () => {
     //* Add your account creation logic here (e.g., API call)
-    navigation.navigate("Home");
+    if (!email) {
+      alert("Enter email");
+    } else {
+      navigation.navigate("Home");
+    }
+    // navigation.navigate("Home");
     //! Navigate to HomeScreen after successful account creation
   };
 

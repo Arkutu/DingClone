@@ -19,7 +19,6 @@ const LoginScreen = () => {
   const [isSwitched, setSwitched] = useState(true);
   const [countryCode, setCountryCode] = useState("+1");
 
-  //!
   const navigation = useNavigation();
   const route = useRoute();
   const selectedCode = route.params?.selectedCode || "+1";
@@ -30,12 +29,12 @@ const LoginScreen = () => {
     }
   }, [route.params?.selectedCode]);
 
-  // //!
-
   const handleLogin = () => {
     // Add your login logic here (e.g., API call)
     if (!email || !password) {
       alert("Enter email and password");
+    } else if (!userphone || !password) {
+      alert("Enter phone number and password");
     } else {
       navigation.navigate("Home");
     }

@@ -1,29 +1,22 @@
 import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import LoginScreen from "./Screens/LoginScreen";
-import ForgetPassword from "./Screens/ForgetPassword";
-import CountryCodeInput from "./Screens/CountryCodeInput";
-import CreateNewAccount from "./Screens/CreateNewAccount";
-import HomeScreen from "./Screens/HomeScreen";
-import PrivacyTermsScreen from "./Screens/PrivacyTermsScreen";
-// import ChatScreen from "./Screens/ChatScreen";
-// import TasksScreen from "./Screens/TasksScreen";
-// import CalendarScreen from "./Screens/CalendarScreen";
-// import CreateAccountScreen from './Screens/CreateAccountScreen';
+// import CheckCode from "./Screen/CheckCode";
+import LoginScreen from "./Screen/LoginScreen";
+import CreateNewAccount from "./Screen/CreateNewAccount";
+import ForgetPassword from "./Screen/ForgetPassword";
+import HomeScreen from "./Screen/HomeScreen";
+import Startchart from "./Screen/Startchart";
 
 const Stack = createStackNavigator();
 
 const screens = [
+  // { name: "CheckCode", component: CheckCode },
   { name: "Login", component: LoginScreen },
+  { name: "CreateNewAccount", component: CreateNewAccount },
   { name: "ForgetPassword", component: ForgetPassword },
-  { name: "CountryCodeInput", component: CountryCodeInput },
-  { name: "CreateAccount", component: CreateNewAccount },
   { name: "Home", component: HomeScreen },
-  { name: "PrivacyTermsScreen", component: PrivacyTermsScreen },
-  // { name: "Chat", component: ChatScreen },
-  // { name: "Tasks", component: TasksScreen },
-  // { name: "Calendar", component: CalendarScreen },
+  { name: "Startchart", component: Startchart },
 ];
 
 function App() {
@@ -46,24 +39,3 @@ function App() {
 }
 
 export default App;
-
-// import { StatusBar } from 'expo-status-bar';
-// import { StyleSheet, Text, View } from 'react-native';
-
-// export default function App() {
-//   return (
-//     <View style={styles.container}>
-//       <Text>Open up App.js to start working on your app!</Text>
-//       <StatusBar style="auto" />
-//     </View>
-//   );
-// }
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     backgroundColor: '#fff',
-//     alignItems: 'center',
-//     justifyContent: 'center',
-//   },
-// });
