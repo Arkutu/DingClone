@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
+import { useNavigation } from "@react-navigation/native";
 import {
   View,
   Text,
@@ -8,11 +9,14 @@ import {
   Pressable,
   Image,
 } from "react-native";
-// import Ionicons from "react-native-vector-icons/Ionicons";
+import Ionicons from "react-native-vector-icons/Ionicons";
 
-const LoginScreen = ({ navigation }) => {
+// const LoginScreen = ({ navigation }) => {
+const LoginScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState();
+
+  const navigation = useNavigation();
 
   const handleLogin = () => {
     // Add your login logic here (e.g., API call)
@@ -32,8 +36,12 @@ const LoginScreen = ({ navigation }) => {
     // console.log(password);
   };
 
+  const goBack = () => {
+    navigation.navigate("Welcome");
+  };
+
   const handleCreateAccount = () => {
-    navigation.navigate("CreateNewAccount");
+    navigation.navigate("CreateNewAccount", { from: "Login" });
   };
 
   const handleForgetPassword = () => {
@@ -42,6 +50,15 @@ const LoginScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
+      <View style={styles.icon}>
+        <Ionicons
+          name="chevron-back"
+          size={24}
+          color="white"
+          onPress={goBack}
+        />
+      </View>
+
       <View style={styles.innerContainer}>
         <View style={styles.image}>
           {/* <image source={require("../assets/")} style={styles.logo} /> */}
@@ -106,12 +123,18 @@ const styles = StyleSheet.create({
     backgroundColor: "#101223",
     padding: 5,
   },
+  icon: {
+    marginTop: 50,
+    marginLeft: 7,
+    marginBottom: 50,
+    fontSize: 25,
+  },
   innerContainer: {
-    marginLeft: 16,
-    marginRight: 16,
+    marginLeft: 20,
+    marginRight: 20,
   },
   image: {
-    marginBottom: 110,
+    marginBottom: 50,
   },
   headerTextOne: {
     fontSize: 20,
@@ -147,7 +170,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#007bff",
     padding: 12,
     borderRadius: 50,
-    marginTop: 10,
+    // marginTop: 10,
   },
   buttonText: {
     textAlign: "center",
@@ -157,7 +180,7 @@ const styles = StyleSheet.create({
   },
   textContainer: {
     marginTop: 14,
-    marginBottom: 100,
+    marginBottom: 80,
   },
   textTwo: {
     color: "gray",

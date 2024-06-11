@@ -1,17 +1,22 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { View, Text, TextInput, StyleSheet, Pressable } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
-const CreateAccountScreen = ({ navigation }) => {
+// const CreateAccountScreen = ({ navigation }) => {
+const CreateAccountScreen = () => {
   const [email, setEmail] = useState("");
+
+  const navigation = useNavigation();
+  const route = useRoute();
 
   const handleCreateAccount = () => {
     //* Add your account creation logic here (e.g., API call)
     if (!email) {
       alert("Enter email");
     } else {
-      navigation.navigate("Home");
+      navigation.navigate("VerifyScreen");
     }
   };
 
@@ -21,11 +26,20 @@ const CreateAccountScreen = ({ navigation }) => {
 
   const handelEmailChange = (text) => {
     setEmail(text);
-    console.log(password);
+    // console.log(password);
   };
 
   const goBack = () => {
-    navigation.navigate("Login");
+    // const from = route.params?.form || "Login";
+    const from = route.params || {};
+
+    // navigation.navigate(from);
+
+    if (from) {
+      navigation.navigate(from);
+    } else {
+      navigation.navigate("Login");
+    }
   };
 
   return (
