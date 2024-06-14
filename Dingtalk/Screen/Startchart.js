@@ -7,87 +7,82 @@ const Startchart = ({ navigation }) => {
     navigation.navigate("VerifyScreen");
   };
   const haldleAccept = () => {
-    navigation.navigate("Home");
+    navigation.navigate("GetStarted");
     // For now let that be our code but we will change it
   };
   const handleDecline = () => {
     navigation.navigate("CheckCode");
   };
   return (
-    <>
-      <View style={styles.mainContainer}>
-        <View style={styles.innerMainContainer}>
-          <View style={styles.headerCover}>
-            <Pressable style={styles.btnIcon}>
-              <FontAwesome6
-                name="chevron-left"
-                color="white"
-                size={20}
-                onPress={goBack}
-              />
-            </Pressable>
+    <View style={styles.mainContainer}>
+      <View style={styles.innerMainContainer}>
+        <View style={styles.headerCover}>
+          <Pressable style={styles.btnIcon}>
+            <FontAwesome6
+              name="chevron-left"
+              color="white"
+              size={20}
+              onPress={goBack}
+            />
+          </Pressable>
 
-            <Pressable style={styles.btnSkip} onPress={haldleAccept}>
-              <Text style={styles.headerText}>Skip</Text>
-            </Pressable>
-          </View>
+          <Pressable style={styles.btnSkip} onPress={haldleAccept}>
+            <Text style={styles.headerText}>Skip</Text>
+          </Pressable>
+        </View>
 
-          <View style={styles.box}>
-            <View style={styles.innerBox}>
-              <Text style={styles.boxText}>Pass</Text>
-            </View>
-          </View>
-
-          <View style={styles.textContainer}>
-            <Text style={styles.textOne}>
-              We'd like you to share optional diagnostic data about how you use
-              Starchat. This information helps us improve your Starchat
-              experience.
-            </Text>
-
-            <Text style={styles.textTwo}>
-              None of this data includes your name, file contents, or
-              information about apps unrelated to OfficeComms
-            </Text>
-
-            <Pressable style={styles.link}>
-              <Text style={styles.linkText}>Learn more</Text>
-            </Pressable>
-          </View>
-
-          <View style={styles.btnContainer}>
-            <Pressable style={styles.btnOne} onPress={haldleAccept}>
-              <Text style={styles.btnText}>Accept</Text>
-            </Pressable>
-
-            <Pressable style={styles.btnTwo} onPress={handleDecline}>
-              <Text style={styles.btnText}>Decline</Text>
-            </Pressable>
+        <View style={styles.box}>
+          <View style={styles.innerBox}>
+            <Text style={styles.boxText}>Pass</Text>
           </View>
         </View>
+
+        <View style={styles.textContainer}>
+          <Text style={styles.textOne}>
+            We'd like you to share optional diagnostic data about how you use
+            Starchat. This information helps us improve your Starchat
+            experience.
+          </Text>
+
+          <Text style={styles.textTwo}>
+            None of this data includes your name, file contents, or information
+            about apps unrelated to OfficeComms
+          </Text>
+
+          <Pressable style={styles.link}>
+            <Text style={styles.linkText}>Learn more</Text>
+          </Pressable>
+        </View>
+
+        <View style={styles.btnContainer}>
+          <Pressable style={styles.btnOne} onPress={haldleAccept}>
+            <Text style={styles.btnText}>Accept</Text>
+          </Pressable>
+
+          <Pressable style={styles.btnTwo} onPress={handleDecline}>
+            <Text style={styles.btnText}>Decline</Text>
+          </Pressable>
+        </View>
       </View>
-    </>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
-    padding: 10,
+    padding: 16,
     backgroundColor: "#101223",
   },
   innerMainContainer: {
-    marginLeft: 14,
-    marginRight: 14,
+    marginLeft: 10,
+    marginRight: 10,
+    marginTop: 40,
   },
   headerCover: {
-    marginTop: 50,
     flexDirection: "row",
     justifyContent: "space-between",
     marginBottom: 70,
-  },
-  btnIcon: {
-    // marginRight: 240,
   },
   headerText: {
     fontSize: 16,
@@ -97,6 +92,7 @@ const styles = StyleSheet.create({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
+    marginTop: 50,
     marginBottom: 50,
   },
   innerBox: {
@@ -112,7 +108,7 @@ const styles = StyleSheet.create({
     color: "white",
   },
   textContainer: {
-    marginBottom: 210,
+    marginBottom: 110,
   },
   textOne: {
     textAlign: "center",
@@ -129,20 +125,23 @@ const styles = StyleSheet.create({
   linkText: {
     textAlign: "center",
     color: "#007bff",
-    // fontWeight: 10,
     fontWeight: "bold",
     textDecorationLine: "underline",
   },
+  btnContainer: {
+    marginRight: 18,
+    marginLeft: 18,
+  },
   btnOne: {
     borderWidth: 1,
-    padding: 10,
+    padding: 14,
     borderRadius: 8,
     marginBottom: 10,
     backgroundColor: "#007bff",
   },
   btnTwo: {
     borderWidth: 1,
-    padding: 10,
+    padding: 14,
     borderRadius: 8,
     backgroundColor: "#007bff",
   },

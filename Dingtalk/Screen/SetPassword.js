@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { View, Text, TextInput, StyleSheet, Pressable } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
-const ForgetPassword = ({ navigation }) => {
+const SetPassword = ({ navigation }) => {
   const [userphoneone, setUserphoneone] = useState("");
   const [userphone, setUserphone] = useState();
 
@@ -15,7 +15,7 @@ const ForgetPassword = ({ navigation }) => {
     } else if (userphone !== userphoneone) {
       alert("Mismatch password");
     } else {
-      navigation.navigate("Home");
+      navigation.navigate("Startchart");
     }
   };
 
@@ -30,7 +30,7 @@ const ForgetPassword = ({ navigation }) => {
   };
 
   const goBack = () => {
-    navigation.navigate("Login");
+    navigation.navigate("VerifyScreen");
   };
 
   return (
@@ -47,20 +47,20 @@ const ForgetPassword = ({ navigation }) => {
 
         <View style={styles.innerContainer}>
           <View style={styles.headerTextContainer}>
-            <Text style={styles.headerText}>Create new password</Text>
+            <Text style={styles.headerText}>Set your password</Text>
           </View>
 
           <View>
             <View style={styles.textTopContainer}>
               <Text style={styles.textTop}>
-                Please enter below your new password.
+                Please enter below your password
               </Text>
             </View>
 
             <TextInput
               style={styles.inputCode}
-              placeholder="New password"
-              placeholderTextColor={"gray"}
+              placeholder="Enter password"
+              placeholderTextColor={"#282A3A"}
               value={userphone}
               onChangeText={(text) => handelPhoneChange(text)}
               // keyboardType="numeric"
@@ -70,7 +70,7 @@ const ForgetPassword = ({ navigation }) => {
             <TextInput
               style={styles.input}
               placeholder="Confirm password"
-              placeholderTextColor={"gray"}
+              placeholderTextColor={"#282A3A"}
               value={userphoneone}
               onChangeText={(text) => handelPhoneChangeTwo(text)}
               // keyboardType="numeric"
@@ -79,7 +79,7 @@ const ForgetPassword = ({ navigation }) => {
           </View>
 
           <Pressable style={styles.button} onPress={handleForgetAccount}>
-            <Text style={styles.buttonText}>Reset password</Text>
+            <Text style={styles.buttonText}>Set password</Text>
           </Pressable>
         </View>
       </View>
@@ -87,7 +87,7 @@ const ForgetPassword = ({ navigation }) => {
   );
 };
 
-ForgetPassword.propTypes = {
+SetPassword.propTypes = {
   navigation: PropTypes.object.isRequired,
 };
 
@@ -167,4 +167,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ForgetPassword;
+export default SetPassword;

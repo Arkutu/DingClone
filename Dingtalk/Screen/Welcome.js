@@ -11,7 +11,7 @@ const Welcome = () => {
     navigation.navigate("Home");
   };
   const handleSingIn = () => {
-    navigation.navigate("Login");
+    navigation.navigate("Login", { from: "Welcome" });
   };
   const handleSignUp = () => {
     navigation.navigate("CreateNewAccount", { from: "Welcome" });

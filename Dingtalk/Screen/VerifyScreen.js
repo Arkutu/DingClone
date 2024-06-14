@@ -1,12 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  StyleSheet,
-  Button,
-  Pressable,
-} from "react-native";
+import { View, Text, TextInput, StyleSheet, Pressable } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
 const VerifyScreen = ({ navigation }) => {
@@ -56,7 +49,7 @@ const VerifyScreen = ({ navigation }) => {
 
   const requestNewCode = () => {
     // Logic to request a new code
-    console.log("Requesting a new code...");
+    // console.log("Requesting a new code...");
     // Reset the timer and code
     setTimeLeft(240);
     setIsExpired(false);
@@ -77,65 +70,68 @@ const VerifyScreen = ({ navigation }) => {
   };
 
   const handleVerify = () => {
-    navigation.navigate("Startchart");
+    navigation.navigate("SetPassword");
   };
 
   return (
     <View style={styles.container}>
-      <View style={styles.icon}>
-        <Ionicons
-          name="chevron-back"
-          size={24}
-          color="white"
-          // color="black"
-          onPress={goBack}
-        />
-      </View>
-
-      <View style={styles.mainContainer}>
-        <View style={styles.innerContainer}>
-          <Text style={styles.headerText}>Check Your Phone</Text>
-          <Text style={styles.nextText}>We've sent the code to your Email</Text>
+      <View style={styles.inneContainer}>
+        <View style={styles.icon}>
+          <Ionicons
+            name="chevron-back"
+            size={24}
+            color="white"
+            onPress={goBack}
+          />
         </View>
 
-        <View style={styles.inputContainer}>
-          {code.map((value, index) => (
-            <TextInput
-              key={index}
-              ref={inputRefs[index]}
-              style={styles.input}
-              keyboardType="number-pad"
-              maxLength={1}
-              onChangeText={(text) => handleChangeText(text, index)}
-              onKeyPress={(e) => handleKeyPress(e, index)}
-              value={value}
-              editable={!isExpired}
-            />
-          ))}
-        </View>
-
-        <View style={styles.expireContainer}>
-          {isExpired ? (
-            <Text style={styles.requestCodeText}>Request New Code</Text>
-          ) : (
-            <View style={styles.codeTimerContainer}>
-              <Text style={styles.codeText}>Code expires in</Text>
-              <Text style={styles.timer}>{formatTime(timeLeft)}</Text>
-            </View>
-          )}
-        </View>
-
-        <View style={styles.btnContainer}>
-          <View style={styles.btnOneContainer}>
-            <Pressable style={styles.btnOne} onPress={handleVerify}>
-              <Text style={styles.verifyText}>Verify</Text>
-            </Pressable>
+        <View style={styles.mainContainer}>
+          <View style={styles.innerContainer}>
+            <Text style={styles.headerText}>Check Your Phone</Text>
+            <Text style={styles.nextText}>
+              We've sent the code to your Email
+            </Text>
           </View>
 
-          <View style={styles.btnTwoContainer}>
-            <Pressable style={styles.btnTwo} onPress={requestNewCode}>
-              <Text style={styles.sendText}>Send again</Text>
-            </Pressable>
+          <View style={styles.inputContainer}>
+            {code.map((value, index) => (
+              <TextInput
+                key={index}
+                ref={inputRefs[index]}
+                style={styles.input}
+                keyboardType="number-pad"
+                maxLength={1}
+                onChangeText={(text) => handleChangeText(text, index)}
+                onKeyPress={(e) => handleKeyPress(e, index)}
+                value={value}
+                editable={!isExpired}
+              />
+            ))}
+          </View>
+
+          <View style={styles.expireContainer}>
+            {isExpired ? (
+              <Text style={styles.requestCodeText}>Request New Code</Text>
+            ) : (
+              <View style={styles.codeTimerContainer}>
+                <Text style={styles.codeText}>Code expires in</Text>
+                <Text style={styles.timer}>{formatTime(timeLeft)}</Text>
+              </View>
+            )}
+          </View>
+
+          <View style={styles.btnContainer}>
+            <View style={styles.btnOneContainer}>
+              <Pressable style={styles.btnOne} onPress={handleVerify}>
+                <Text style={styles.verifyText}>Verify</Text>
+              </Pressable>
+            </View>
+
+            <View style={styles.btnTwoContainer}>
+              <Pressable style={styles.btnTwo} onPress={requestNewCode}>
+                <Text style={styles.sendText}>Send again</Text>
+              </Pressable>
+            </View>
           </View>
         </View>
       </View>
@@ -149,18 +145,19 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     backgroundColor: "#101223",
   },
-  icon: {
-    marginTop: 50,
+  inneContainer: {
     marginLeft: 10,
+    marginRight: 10,
+    marginTop: 40,
+  },
+  icon: {
     marginBottom: 50,
-    fontSize: 25,
   },
   mainContainer: {
     alignItems: "center",
   },
   innerContainer: {
     alignItems: "center",
-    // width: "80%",
     marginBottom: 20,
   },
   headerText: {
@@ -172,7 +169,6 @@ const styles = StyleSheet.create({
   nextText: {
     fontSize: 15,
     color: "#fff",
-    // marginBottom: 20,
   },
   inputContainer: {
     flexDirection: "row",
@@ -186,7 +182,7 @@ const styles = StyleSheet.create({
     height: 50,
     borderWidth: 1,
     borderRadius: 10,
-    borderColor: "#fff",
+    borderColor: "gray",
     color: "#fff",
     textAlign: "center",
     fontSize: 20,
@@ -253,9 +249,3 @@ const styles = StyleSheet.create({
 });
 
 export default VerifyScreen;
-
-// import PropTypes from "prop-types";
-
-// VerifyScreen.propTypes = {
-//   navigation: PropTypes.object.isRequired,
-// };

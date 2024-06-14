@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import {
   View,
   Text,
@@ -17,6 +17,7 @@ const LoginScreen = () => {
   const [password, setPassword] = useState();
 
   const navigation = useNavigation();
+  const route = useRoute();
 
   const handleLogin = () => {
     // Add your login logic here (e.g., API call)
@@ -37,7 +38,8 @@ const LoginScreen = () => {
   };
 
   const goBack = () => {
-    navigation.navigate("Welcome");
+    const from = route.params?.form || "Welcome";
+    navigation.navigate(from);
   };
 
   const handleCreateAccount = () => {
@@ -50,63 +52,65 @@ const LoginScreen = () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.icon}>
-        <Ionicons
-          name="chevron-back"
-          size={24}
-          color="white"
-          onPress={goBack}
-        />
-      </View>
-
-      <View style={styles.innerContainer}>
-        <View style={styles.image}>
-          {/* <image source={require("../assets/")} style={styles.logo} /> */}
-        </View>
-
-        <Text style={styles.headerTextOne}>Make it yours!</Text>
-        <Text style={styles.headerTextTwo}>Sign In {"\n"}Now</Text>
-
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.inputCode}
-            placeholder="Email"
-            placeholderTextColor={"#282A3A"}
-            value={email}
-            onChangeText={(text) => handelEmailChange(text)}
-            keyboardType="email-address"
-          />
-
-          <TextInput
-            style={styles.input}
-            placeholder="Password"
-            placeholderTextColor={"#282A3A"}
-            secureTextEntry
-            value={password}
-            onChangeText={(text) => handelPhoneChange(text)}
+      <View style={styles.innContainer}>
+        <View style={styles.icon}>
+          <Ionicons
+            name="chevron-back"
+            size={24}
+            color="white"
+            onPress={goBack}
           />
         </View>
 
-        <Pressable style={styles.button} onPress={handleLogin}>
-          <Text style={styles.buttonText}>Sign In</Text>
-        </Pressable>
-
-        <View style={styles.textContainer}>
-          <Text style={styles.textTwo} onPress={handleForgetPassword}>
-            Forget Password
-          </Text>
-        </View>
-
-        <View>
-          <View style={styles.orContainer}>
-            <View style={styles.line} />
-            <Text style={styles.orText}>OR</Text>
-            <View style={styles.line} />
+        <View style={styles.innerContainer}>
+          <View style={styles.image}>
+            {/* <image source={require("../assets/")} style={styles.logo} /> */}
           </View>
 
-          <Pressable style={styles.buttonTwo} onPress={handleCreateAccount}>
-            <Text style={styles.buttonTextTwo}>Create New Account</Text>
+          <Text style={styles.headerTextOne}>Make it yours!</Text>
+          <Text style={styles.headerTextTwo}>Sign In {"\n"}Now</Text>
+
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={styles.inputCode}
+              placeholder="Email"
+              placeholderTextColor={"gray"}
+              value={email}
+              onChangeText={(text) => handelEmailChange(text)}
+              keyboardType="email-address"
+            />
+
+            <TextInput
+              style={styles.input}
+              placeholder="Password"
+              placeholderTextColor={"gray"}
+              secureTextEntry
+              value={password}
+              onChangeText={(text) => handelPhoneChange(text)}
+            />
+          </View>
+
+          <Pressable style={styles.button} onPress={handleLogin}>
+            <Text style={styles.buttonText}>Sign In</Text>
           </Pressable>
+
+          <View style={styles.textContainer}>
+            <Text style={styles.textTwo} onPress={handleForgetPassword}>
+              Forget Password
+            </Text>
+          </View>
+
+          <View>
+            <View style={styles.orContainer}>
+              <View style={styles.line} />
+              <Text style={styles.orText}>OR</Text>
+              <View style={styles.line} />
+            </View>
+
+            <Pressable style={styles.buttonTwo} onPress={handleCreateAccount}>
+              <Text style={styles.buttonTextTwo}>Create New Account</Text>
+            </Pressable>
+          </View>
         </View>
       </View>
     </View>
@@ -121,17 +125,17 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#101223",
-    padding: 5,
+    padding: 16,
+  },
+  innContainer: {
+    marginTop: 40,
   },
   icon: {
-    marginTop: 50,
-    marginLeft: 7,
     marginBottom: 50,
-    fontSize: 25,
   },
   innerContainer: {
-    marginLeft: 20,
-    marginRight: 20,
+    marginLeft: 10,
+    marginRight: 10,
   },
   image: {
     marginBottom: 50,
@@ -184,7 +188,6 @@ const styles = StyleSheet.create({
   },
   textTwo: {
     color: "gray",
-    // fontWeight: "500",
   },
   textOne: {
     color: "#fff",

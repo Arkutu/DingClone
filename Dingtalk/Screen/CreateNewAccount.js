@@ -30,66 +30,59 @@ const CreateAccountScreen = () => {
   };
 
   const goBack = () => {
-    // const from = route.params?.form || "Login";
-    const from = route.params || {};
-
-    // navigation.navigate(from);
-
-    if (from) {
-      navigation.navigate(from);
-    } else {
-      navigation.navigate("Login");
-    }
+    const from = route.params?.form || "Welcome";
+    navigation.navigate(from);
   };
 
   return (
     <View style={styles.container}>
-      <View style={styles.icon}>
-        <Ionicons
-          name="chevron-back"
-          size={24}
-          color="white"
-          onPress={goBack}
-        />
-      </View>
-
-      <View style={styles.innerContainer}>
-        <Text style={styles.headerText}>Create your new account</Text>
-
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter your email address"
-            placeholderTextColor={"gray"}
-            value={email}
-            onChangeText={(text) => handelEmailChange(text)}
+      <View style={styles.innContainer}>
+        <View style={styles.icon}>
+          <Ionicons
+            name="chevron-back"
+            size={24}
+            color="white"
+            onPress={goBack}
           />
         </View>
 
-        <Text style={styles.textMain}>
-          I have read and agree{" "}
-          <Text style={styles.textBlue} onPress={handlePrivacyTerms}>
-            Privacy Policy,Terms of Service
+        <View style={styles.innerContainer}>
+          <Text style={styles.headerText}>Create your new account</Text>
+
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter your email address"
+              placeholderTextColor={"gray"}
+              value={email}
+              onChangeText={(text) => handelEmailChange(text)}
+            />
+          </View>
+
+          <Text style={styles.textMain}>
+            I have read and agree{" "}
+            <Text style={styles.textBlue} onPress={handlePrivacyTerms}>
+              Privacy Policy,Terms of Service
+            </Text>
           </Text>
-        </Text>
-      </View>
-
-      <View style={styles.buttonContainer}>
-        <Pressable style={styles.button} onPress={handleCreateAccount}>
-          <Text style={styles.buttonText}>Sign Up</Text>
-        </Pressable>
-
-        <View style={styles.singUpContainer}>
-          <View style={styles.line} />
-          <Text style={styles.singUpText}>or sign up with</Text>
-          <View style={styles.line} />
         </View>
 
-        <View style={styles.iconContainer}>
-          <View style={styles.iconOne}></View>
-          <View style={styles.iconTwo}></View>
+        <View style={styles.buttonContainer}>
+          <Pressable style={styles.button} onPress={handleCreateAccount}>
+            <Text style={styles.buttonText}>Sign Up</Text>
+          </Pressable>
+
+          <View style={styles.singUpContainer}>
+            <View style={styles.line} />
+            <Text style={styles.singUpText}>or sign up with</Text>
+            <View style={styles.line} />
+          </View>
+
+          <View style={styles.iconContainer}>
+            <View style={styles.iconOne}></View>
+            <View style={styles.iconTwo}></View>
+          </View>
         </View>
-        <View style={styles.push}></View>
       </View>
     </View>
   );
@@ -105,14 +98,15 @@ const styles = StyleSheet.create({
     padding: 16,
     backgroundColor: "#101223",
   },
+  innContainer: {
+    marginTop: 40,
+  },
   icon: {
-    marginTop: 50,
     marginBottom: 50,
-    fontSize: 25,
   },
   innerContainer: {
-    marginLeft: 15,
-    marginRight: 15,
+    marginLeft: 10,
+    marginRight: 10,
   },
   headerText: {
     fontSize: 30,
@@ -143,8 +137,8 @@ const styles = StyleSheet.create({
     fontWeight: "500",
   },
   buttonContainer: {
-    marginLeft: 25,
-    marginRight: 25,
+    marginLeft: 20,
+    marginRight: 20,
   },
   button: {
     backgroundColor: "#007bff",
@@ -178,7 +172,6 @@ const styles = StyleSheet.create({
   },
   iconContainer: {
     flexDirection: "row",
-    marginTop: 10,
     justifyContent: "center",
     alignContent: "center",
   },
@@ -186,18 +179,15 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 50,
-    backgroundColor: "#007bff",
+    backgroundColor: "#fff",
     marginRight: 10,
   },
   iconTwo: {
     width: 60,
     height: 60,
     borderRadius: 50,
-    backgroundColor: "#007bff",
+    backgroundColor: "#fff",
     marginRight: 10,
-  },
-  push: {
-    height: 450,
   },
 });
 
