@@ -4,6 +4,9 @@ import {
   createStackNavigator,
   TransitionPresets,
 } from "@react-navigation/stack";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+
+// import Navigate from "./Navigate";
 import Welcome from "./Screen/Welcome";
 import LoginScreen from "./Screen/LoginScreen";
 import CreateNewAccount from "./Screen/CreateNewAccount";
@@ -13,8 +16,10 @@ import GetStarted from "./Screen/GetStarted";
 import ForgetPassword from "./Screen/ForgetPassword";
 import HomeScreen from "./Screen/HomeScreen";
 import Startchart from "./Screen/Startchart";
+import ProfileScreen from "./Screen/ProfileScreen";
 
 const Stack = createStackNavigator();
+const Tab = createBottomTabNavigator();
 
 const screens = [
   { name: "Welcome", component: Welcome },
@@ -26,6 +31,7 @@ const screens = [
   { name: "ForgetPassword", component: ForgetPassword },
   { name: "Home", component: HomeScreen },
   { name: "Startchart", component: Startchart },
+  { name: "ProfileScreen", component: ProfileScreen },
 ];
 
 function App() {
@@ -46,6 +52,7 @@ function App() {
             component={screen.component}
           />
         ))}
+        {/* <Stack.Screen name="Navigate" component={Navigate} /> */}
       </Stack.Navigator>
     </NavigationContainer>
   );

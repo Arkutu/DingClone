@@ -126,8 +126,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   inputCode: {
-    backgroundColor: "#fff",
-    borderColor: "#fff",
+    color: "#fff",
+    borderColor: "gray",
     borderWidth: 1,
     borderRadius: 50,
     padding: 7,
@@ -141,8 +141,8 @@ const styles = StyleSheet.create({
     marginBottom: 25,
   },
   input: {
-    backgroundColor: "#fff",
-    borderColor: "#fff",
+    color: "#fff",
+    borderColor: "gray",
     borderWidth: 1,
     borderRadius: 50,
     padding: 7,

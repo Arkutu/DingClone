@@ -161,6 +161,7 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     paddingHorizontal: 20,
     borderColor: "gray",
+    color: "#fff",
   },
   input: {
     marginBottom: 50,
@@ -169,6 +170,7 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     paddingHorizontal: 20,
     borderColor: "gray",
+    color: "#fff",
   },
   button: {
     backgroundColor: "#007bff",

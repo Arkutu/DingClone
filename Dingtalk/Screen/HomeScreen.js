@@ -1,33 +1,191 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, Pressable, StyleSheet } from "react-native";
-import { FlatList, ScrollView } from "react-native-gesture-handler";
-import Ionicons from "react-native-vector-icons/Ionicons";
-// import DropDownPicker from "react-native-dropdown-picker";
+import {
+  View,
+  Text,
+  ScrollView,
+  TextInput,
+  Pressable,
+  StyleSheet,
+} from "react-native";
+import { Ionicons, Octicons, MaterialCommunityIcons } from "@expo/vector-icons";
 
-const HomeScreen = ({ navigation }) => {
+const HomeScreen = () => {
+  const [currentTab, setCurrentTab] = useState("home");
   const [searchText, setSearchText] = useState("");
-  const [showDropdwonDM, setShowDropdownDM] = useState(false);
-  const [showDropdwonChannel, setShowDropdownChannel] = useState(false);
+  const [showDropdownDM, setShowDropdownDM] = useState(false);
+  const [showDropdownChannel, setShowDropdownChannel] = useState(false);
 
-  // const handleAddChannel = () => {
-  //   if (newChannelName) {
-  //     addChannel(newChannelName);
-  //     setNewChannelName("");
-  //   } else {
-  //     alert("Please enter both name and description.");
-  //   }
-  // };
+  const toggleDropdown = () => setShowDropdownDM(!showDropdownDM);
+  const toggleDropdownChannel = () =>
+    setShowDropdownChannel(!showDropdownChannel);
 
-  // const handleNext = () => {
-  //   navigation.navigate("CreateNewAccount");
-  // };
-
-  const toggleDropdown = () => {
-    setShowDropdownDM(!showDropdwonDM);
+  const handleProfileScreen = () => {
+    navigation.navigate("ProfileScreen");
   };
 
-  const toggleDropdownChannel = () => {
-    setShowDropdownChannel(!showDropdwonChannel);
+  const renderContent = () => {
+    switch (currentTab) {
+      case "home":
+        return (
+          <ScrollView style={styles.scrollView}>
+            <View style={styles.navigate}>
+              <View style={styles.btns}>
+                <View style={styles.btn_One}></View>
+                <View style={styles.btn_One}></View>
+                <View style={styles.btn_One}></View>
+                <View style={styles.btn_One}></View>
+              </View>
+
+              <View>
+                <View style={styles.BodyMainContainer}>
+                  <View style={styles.innerBodyMainContainer}>
+                    <View style={styles.wrapper}>
+                      <View>
+                        <Text style={styles.wapText}>New DMs</Text>
+                      </View>
+
+                      <View>
+                        <Pressable
+                          onPress={toggleDropdown}
+                          style={styles.pressable}
+                        >
+                          <View>
+                            <Text style={styles.textBlue}>
+                              {showDropdownDM ? "show less" : ""}
+                            </Text>
+                          </View>
+
+                          <View style={styles.wapIcon}>
+                            <Ionicons
+                              name={showDropdownDM ? "" : "chevron-forward"}
+                              size={24}
+                              color="white"
+                            />
+                          </View>
+                        </Pressable>
+                      </View>
+                    </View>
+
+                    {showDropdownDM && (
+                      <View>
+                        <View style={styles.msgContainer}>
+                          <Ionicons
+                            name="person"
+                            size={24}
+                            color="white"
+                            style={styles.msgIcon}
+                          />
+                          <Text style={styles.msgText}>Mensah Raphael T.</Text>
+                        </View>
+                        <View style={styles.msgContainer}>
+                          <Ionicons
+                            name="person"
+                            size={24}
+                            color="white"
+                            style={styles.msgIcon}
+                          />
+                          <Text style={styles.msgText}>Michael Anim</Text>
+                        </View>
+                        <View style={styles.msgContainer}>
+                          <Ionicons
+                            name="person"
+                            size={24}
+                            color="white"
+                            style={styles.msgIcon}
+                          />
+                          <Text style={styles.msgText}>
+                            Dennis Opoku Amponsah
+                          </Text>
+                        </View>
+                      </View>
+                    )}
+                  </View>
+                </View>
+
+                <View style={styles.inner}>
+                  <View style={styles.innerChannel}>
+                    <View style={styles.coverChannel}>
+                      <View>
+                        <Text style={styles.innerTextOne}>Channels</Text>
+                      </View>
+                      <View style={styles.icon}>
+                        <Pressable
+                          onPress={toggleDropdownChannel}
+                          style={styles.pressable}
+                        >
+                          <View>
+                            <Text style={styles.textBlue}>
+                              {showDropdownChannel ? "show less" : ""}
+                            </Text>
+                          </View>
+
+                          <Ionicons
+                            name={showDropdownChannel ? "" : "chevron-forward"}
+                            size={24}
+                            color="white"
+                          />
+                        </Pressable>
+                      </View>
+                    </View>
+
+                    {showDropdownChannel && (
+                      <View>
+                        <View style={styles.channelContainer}>
+                          <View style={styles.subContainer}>
+                            <Text style={styles.hash}>#</Text>
+                            <Text style={styles.channelText}>general</Text>
+                          </View>
+
+                          <View style={styles.subContainer}>
+                            <Text style={styles.hash}>#</Text>
+                            <Text style={styles.channelText}>meeting</Text>
+                          </View>
+
+                          <View style={styles.subContainer}>
+                            <Text style={styles.hash}>#</Text>
+                            <Text style={styles.channelText}>random</Text>
+                          </View>
+
+                          <View style={styles.addChannelContainer}>
+                            <Pressable style={styles.btnChannel}>
+                              <Text style={styles.btnChannelPlus}>+</Text>
+
+                              <Text style={styles.btnChannelText}>
+                                Create channel
+                              </Text>
+                            </Pressable>
+                          </View>
+                        </View>
+                      </View>
+                    )}
+                  </View>
+                </View>
+
+                <View style={styles.innerTwo}>
+                  <Text style={styles.innerTextTwo}>Direct message</Text>
+                  <View style={styles.icon}>
+                    <Ionicons name="chevron-forward" size={24} color="white" />
+                  </View>
+                </View>
+              </View>
+            </View>
+          </ScrollView>
+        );
+      case "chat":
+        return (
+          <View style={styles.container}>
+            <Text>Chat Content</Text>
+          </View>
+        );
+      case "bell":
+        return (
+          <View style={styles.container}>
+            <Text>Bell Content</Text>
+          </View>
+        );
+      default:
+        return null;
+    }
   };
 
   return (
@@ -54,178 +212,45 @@ const HomeScreen = ({ navigation }) => {
         </View>
       </View>
 
-      <ScrollView style={styles.scrollView}>
-        <View style={styles.navigate}>
-          <View style={styles.btns}>
-            <View style={styles.btn_One}></View>
-            <View style={styles.btn_One}></View>
-            <View style={styles.btn_One}></View>
-            <View style={styles.btn_One}></View>
-          </View>
-
-          <View>
-            <View style={styles.BodyMainContainer}>
-              <View style={styles.innerBodyMainContainer}>
-                <View style={styles.wrapper}>
-                  <View>
-                    <Text style={styles.wapText}>New DMs</Text>
-                  </View>
-
-                  <View>
-                    <Pressable
-                      onPress={toggleDropdown}
-                      style={styles.pressable}
-                    >
-                      <View>
-                        <Text style={styles.textBlue}>
-                          {showDropdwonDM ? "show less" : ""}
-                        </Text>
-                      </View>
-
-                      <View style={styles.wapIcon}>
-                        <Ionicons
-                          name={showDropdwonDM ? "" : "chevron-forward"}
-                          size={24}
-                          color="white"
-                        />
-                      </View>
-                    </Pressable>
-                  </View>
-                </View>
-
-                {showDropdwonDM && (
-                  <View>
-                    <View style={styles.msgContainer}>
-                      <Ionicons
-                        name="person"
-                        size={24}
-                        color="white"
-                        style={styles.msgIcon}
-                      />
-                      <Text style={styles.msgText}>Mensah Raphael T.</Text>
-                    </View>
-                    <View style={styles.msgContainer}>
-                      <Ionicons
-                        name="person"
-                        size={24}
-                        color="white"
-                        style={styles.msgIcon}
-                      />
-                      <Text style={styles.msgText}>Michael Anim</Text>
-                    </View>
-                    <View style={styles.msgContainer}>
-                      <Ionicons
-                        name="person"
-                        size={24}
-                        color="white"
-                        style={styles.msgIcon}
-                      />
-                      <Text style={styles.msgText}>Dennis Opoku Amponsah</Text>
-                    </View>
-                  </View>
-                )}
-              </View>
-            </View>
-
-            {/* <View> */}
-            <View style={styles.inner}>
-              <View style={styles.innerChannel}>
-                <View style={styles.coverChannel}>
-                  <View>
-                    <Text style={styles.innerTextOne}>Channels</Text>
-                  </View>
-                  <View style={styles.icon}>
-                    <Pressable
-                      onPress={toggleDropdownChannel}
-                      style={styles.pressable}
-                    >
-                      <View>
-                        <Text style={styles.textBlue}>
-                          {showDropdwonChannel ? "show less" : ""}
-                        </Text>
-                      </View>
-
-                      <Ionicons
-                        name={showDropdwonChannel ? "" : "chevron-forward"}
-                        size={24}
-                        color="white"
-                      />
-                    </Pressable>
-                  </View>
-                </View>
-
-                {showDropdwonChannel && (
-                  <View>
-                    <View style={styles.channelContainer}>
-                      <View style={styles.subContainer}>
-                        <Text style={styles.hash}>#</Text>
-                        <Text style={styles.channelText}>general</Text>
-                      </View>
-
-                      <View style={styles.subContainer}>
-                        <Text style={styles.hash}>#</Text>
-                        <Text style={styles.channelText}>meeting</Text>
-                      </View>
-
-                      <View style={styles.subContainer}>
-                        <Text style={styles.hash}>#</Text>
-                        <Text style={styles.channelText}>random</Text>
-                      </View>
-
-                      <View style={styles.addChannelContainer}>
-                        <Pressable
-                          style={styles.btnChannel}
-                          // onPress={handleAddChannel}
-                        >
-                          <Text style={styles.btnChannelPlus}>+</Text>
-
-                          <Text style={styles.btnChannelText}>
-                            Create channel
-                          </Text>
-                        </Pressable>
-                      </View>
-                    </View>
-                  </View>
-                )}
-              </View>
-            </View>
-
-            <View style={styles.innerTwo}>
-              <Text style={styles.innerTextTwo}>Direct message</Text>
-              <View style={styles.icon}>
-                <Ionicons
-                  name="chevron-forward"
-                  size={24}
-                  color="white"
-                  // onPress={handleNext}
-                />
-              </View>
-            </View>
-            {/* </View> */}
-          </View>
-        </View>
-      </ScrollView>
+      {renderContent()}
 
       <View style={styles.iconContainer}>
-        <View style={styles.iconItem}>
-          <Ionicons name="home-outline" size={24} color="white" />
-          {/* <Text style={styles.iconText}>Home</Text> */}
-        </View>
+        <Pressable
+          style={styles.iconItem}
+          onPress={() => setCurrentTab("home")}
+        >
+          <Octicons name="home" size={22} color="white" />
+          <Text style={styles.iconText}>Home</Text>
+        </Pressable>
 
-        <View style={styles.iconItem}>
-          <Ionicons name="chatbubbles-outline" size={24} color="white" />
-          {/* <Text style={styles.iconText}>Chats</Text> */}
-        </View>
+        <Pressable
+          style={styles.iconItem}
+          onPress={() => setCurrentTab("chat")}
+        >
+          <Ionicons
+            name="chatbubble-ellipses-outline"
+            size={24}
+            color="white"
+          />
+          <Text style={styles.iconText}>Chats</Text>
+        </Pressable>
 
-        <View style={styles.iconItem}>
-          <Ionicons name="notifications-outline" size={24} color="white" />
-          {/* <Text style={styles.iconText}>Notifs</Text> */}
-        </View>
+        <Pressable
+          style={styles.iconItem}
+          onPress={() => setCurrentTab("bell")}
+        >
+          <Octicons name="bell" size={22} color="white" />
+          <Text style={styles.iconText}>Notifs</Text>
+        </Pressable>
 
-        <View style={styles.iconItem}>
-          <Ionicons name="people-outline" size={24} color="white" />
-          {/* <Text style={styles.iconText}>Profile</Text> */}
-        </View>
+        <Pressable style={styles.iconItem} onPress={handleProfileScreen}>
+          <MaterialCommunityIcons
+            name="account-multiple-outline"
+            size={27}
+            color="white"
+          />
+          <Text style={styles.iconText}>Profile</Text>
+        </Pressable>
       </View>
     </View>
   );
@@ -283,6 +308,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
+    overflow: "hidden",
   },
   navigate: {
     paddingBottom: 100, //!Increase this to cause the scrolling
@@ -428,12 +454,13 @@ const styles = StyleSheet.create({
   },
   iconItem: {
     alignItems: "center",
-    marginBottom: 5,
+    // marginBottom: 5,
   },
-  // iconText: {
-  //   color: "#fff",
-  //   marginTop: 5,
-  // },
+  iconText: {
+    color: "#fff",
+    fontSize: 10,
+    marginTop: 5,
+  },
 });
 
 export default HomeScreen;

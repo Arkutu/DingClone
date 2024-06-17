@@ -11,7 +11,7 @@ const Startchart = ({ navigation }) => {
     // For now let that be our code but we will change it
   };
   const handleDecline = () => {
-    navigation.navigate("CheckCode");
+    navigation.navigate("GetStarted");
   };
   return (
     <View style={styles.mainContainer}>
