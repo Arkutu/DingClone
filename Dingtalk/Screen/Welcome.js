@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { useNavigation } from "@react-navigation/native";
-import { View, Text, StyleSheet, Pressable } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 
 // const Welcome = ({ navigation }) => {
 const Welcome = () => {
@@ -30,19 +30,19 @@ const Welcome = () => {
         </View>
 
         <View style={styles.btnOneContainer}>
-          <Pressable style={styles.btn} onPress={handleHome}>
+          <TouchableOpacity style={styles.btn} onPress={handleHome}>
             <Text style={styles.btnText}>skip for now</Text>
-          </Pressable>
+          </TouchableOpacity>
         </View>
 
         <View style={styles.btnTwoContainer}>
-          <Pressable style={styles.btnTwo} onPress={handleSignUp}>
+          <TouchableOpacity style={styles.btnTwo} onPress={handleSignUp}>
             <Text style={styles.btnText}>Sign up</Text>
-          </Pressable>
+          </TouchableOpacity>
 
-          <Pressable style={styles.btnThree} onPress={handleSingIn}>
+          <TouchableOpacity style={styles.btnThree} onPress={handleSingIn}>
             <Text style={styles.btnText}>Sign in</Text>
-          </Pressable>
+          </TouchableOpacity>
         </View>
       </View>
     </View>

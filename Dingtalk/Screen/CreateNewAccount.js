@@ -1,8 +1,16 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { View, Text, TextInput, StyleSheet, Pressable } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
+// import Icon from "react-native-vector-icons/FontAwesome";
+import FontAwesome from "react-native-vector-icons/FontAwesome";
 
 // const CreateAccountScreen = ({ navigation }) => {
 const CreateAccountScreen = () => {
@@ -68,9 +76,9 @@ const CreateAccountScreen = () => {
         </View>
 
         <View style={styles.buttonContainer}>
-          <Pressable style={styles.button} onPress={handleCreateAccount}>
+          <TouchableOpacity style={styles.button} onPress={handleCreateAccount}>
             <Text style={styles.buttonText}>Sign Up</Text>
-          </Pressable>
+          </TouchableOpacity>
 
           <View style={styles.singUpContainer}>
             <View style={styles.line} />
@@ -79,8 +87,27 @@ const CreateAccountScreen = () => {
           </View>
 
           <View style={styles.iconContainer}>
-            <View style={styles.iconOne}></View>
-            <View style={styles.iconTwo}></View>
+            <View style={styles.iconOne}>
+              <TouchableOpacity>
+                <FontAwesome
+                  name="google"
+                  size={40}
+                  color="#DB4437"
+                  style={styles.iconGoogle}
+                />
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.iconTwo}>
+              <TouchableOpacity>
+                <FontAwesome
+                  name="apple"
+                  size={40}
+                  color="#000000"
+                  style={styles.iconApp}
+                />
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </View>
@@ -181,6 +208,11 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     backgroundColor: "#fff",
     marginRight: 10,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  iconGoogle: {
+    // color: "#DB4437",
   },
   iconTwo: {
     width: 60,
@@ -188,6 +220,11 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     backgroundColor: "#fff",
     marginRight: 10,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  iconApp: {
+    // color: "#000000",
   },
 });
 

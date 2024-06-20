@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { Ionicons, Octicons, MaterialCommunityIcons } from "@expo/vector-icons";
 
-const HomeScreen = () => {
+const HomeScreen = ({ navigation }) => {
   const [currentTab, setCurrentTab] = useState("home");
   const [searchText, setSearchText] = useState("");
   const [showDropdownDM, setShowDropdownDM] = useState(false);
@@ -19,15 +19,14 @@ const HomeScreen = () => {
   const toggleDropdownChannel = () =>
     setShowDropdownChannel(!showDropdownChannel);
 
-  const handleProfileScreen = () => {
-    navigation.navigate("ProfileScreen");
-  };
-
   const renderContent = () => {
     switch (currentTab) {
       case "home":
         return (
-          <ScrollView style={styles.scrollView}>
+          <ScrollView
+            style={styles.scrollView}
+            contentContainerStyle={styles.scrollContainer}
+          >
             <View style={styles.navigate}>
               <View style={styles.btns}>
                 <View style={styles.btn_One}></View>
@@ -183,6 +182,12 @@ const HomeScreen = () => {
             <Text>Bell Content</Text>
           </View>
         );
+      case "profile":
+        return (
+          <View style={styles.container}>
+            <Text>Profile Content</Text>
+          </View>
+        );
       default:
         return null;
     }
@@ -211,45 +216,96 @@ const HomeScreen = () => {
           />
         </View>
       </View>
-
       {renderContent()}
 
       <View style={styles.iconContainer}>
         <Pressable
-          style={styles.iconItem}
+          style={[
+            styles.iconItem,
+            currentTab === "home" && styles.iconItemSelected,
+          ]}
           onPress={() => setCurrentTab("home")}
         >
-          <Octicons name="home" size={22} color="white" />
-          <Text style={styles.iconText}>Home</Text>
+          <Octicons
+            name="home"
+            size={22}
+            color={currentTab === "home" ? "#007bff" : "white"}
+          />
+          <Text
+            style={[
+              styles.iconText,
+              currentTab === "home" && styles.iconItemSelected,
+            ]}
+          >
+            Home
+          </Text>
         </Pressable>
 
         <Pressable
-          style={styles.iconItem}
+          style={[
+            styles.iconItem,
+            currentTab === "chat" && styles.iconItemSelected,
+          ]}
           onPress={() => setCurrentTab("chat")}
         >
           <Ionicons
             name="chatbubble-ellipses-outline"
             size={24}
-            color="white"
+            color={currentTab === "chat" ? "#007bff" : "white"}
           />
-          <Text style={styles.iconText}>Chats</Text>
+          <Text
+            style={[
+              styles.iconText,
+              currentTab === "chat" && styles.iconItemSelected,
+            ]}
+          >
+            Chats
+          </Text>
         </Pressable>
 
         <Pressable
-          style={styles.iconItem}
+          style={[
+            styles.iconItem,
+            currentTab === "bell" && styles.iconItemSelected,
+          ]}
           onPress={() => setCurrentTab("bell")}
         >
-          <Octicons name="bell" size={22} color="white" />
-          <Text style={styles.iconText}>Notifs</Text>
+          <Octicons
+            name="bell"
+            size={22}
+            color={currentTab === "bell" ? "#007bff" : "white"}
+          />
+          <Text
+            style={[
+              styles.iconText,
+              currentTab === "bell" && styles.iconItemSelected,
+            ]}
+          >
+            Notifs
+          </Text>
         </Pressable>
 
-        <Pressable style={styles.iconItem} onPress={handleProfileScreen}>
+        {/* <Pressable style={styles.iconItem} > */}
+        <Pressable
+          style={[
+            styles.iconItem,
+            currentTab === "profile" && styles.iconItemSelected,
+          ]}
+          onPress={() => setCurrentTab("profile")}
+        >
           <MaterialCommunityIcons
             name="account-multiple-outline"
             size={27}
-            color="white"
+            color={currentTab === "profile" ? "#007bff" : "white"}
           />
-          <Text style={styles.iconText}>Profile</Text>
+          <Text
+            style={[
+              styles.iconText,
+              currentTab === "profile" && styles.iconItemSelected,
+            ]}
+          >
+            Profile
+          </Text>
         </Pressable>
       </View>
     </View>
@@ -310,8 +366,12 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 30,
     overflow: "hidden",
   },
+  scrollContainer: {
+    paddingBottom: 100,
+    paddingTop: 0,
+  },
   navigate: {
-    paddingBottom: 100, //!Increase this to cause the scrolling
+    // paddingBottom: 100,
   },
   btns: {
     flexDirection: "row",
@@ -460,6 +520,11 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 10,
     marginTop: 5,
+  },
+
+  //! Select icons style
+  iconItemSelected: {
+    // color: "#007bff",
   },
 });
 

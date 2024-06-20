@@ -1,6 +1,12 @@
 import React from "react";
-import { View, Text, Pressable, StyleSheet } from "react-native";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Pressable,
+  StyleSheet,
+} from "react-native";
+// import { TouchableOpacity } from "react-native-gesture-handler";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
 const GetStarted = ({ navigation }) => {
@@ -60,9 +66,9 @@ const GetStarted = ({ navigation }) => {
         </View>
 
         <View style={styles.btnContainer}>
-          <Pressable style={styles.btn} onPress={handleNext}>
+          <TouchableOpacity style={styles.btn} onPress={handleNext}>
             <Text style={styles.btnText}>Continue</Text>
-          </Pressable>
+          </TouchableOpacity>
         </View>
       </View>
     </View>

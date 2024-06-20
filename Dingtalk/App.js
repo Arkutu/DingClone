@@ -16,7 +16,7 @@ import GetStarted from "./Screen/GetStarted";
 import ForgetPassword from "./Screen/ForgetPassword";
 import HomeScreen from "./Screen/HomeScreen";
 import Startchart from "./Screen/Startchart";
-import ProfileScreen from "./Screen/ProfileScreen";
+// import ProfileScreen from "./Screen/ProfileScreen";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -31,7 +31,7 @@ const screens = [
   { name: "ForgetPassword", component: ForgetPassword },
   { name: "Home", component: HomeScreen },
   { name: "Startchart", component: Startchart },
-  { name: "ProfileScreen", component: ProfileScreen },
+  // { name: "ProfileScreen", component: ProfileScreen },
 ];
 
 function App() {
@@ -52,7 +52,6 @@ function App() {
             component={screen.component}
           />
         ))}
-        {/* <Stack.Screen name="Navigate" component={Navigate} /> */}
       </Stack.Navigator>
     </NavigationContainer>
   );

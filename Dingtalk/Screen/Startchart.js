@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, Pressable } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Pressable,
+} from "react-native";
 import { FontAwesome6 } from "react-native-vector-icons";
 
 const Startchart = ({ navigation }) => {
@@ -55,13 +61,13 @@ const Startchart = ({ navigation }) => {
         </View>
 
         <View style={styles.btnContainer}>
-          <Pressable style={styles.btnOne} onPress={haldleAccept}>
+          <TouchableOpacity style={styles.btnOne} onPress={haldleAccept}>
             <Text style={styles.btnText}>Accept</Text>
-          </Pressable>
+          </TouchableOpacity>
 
-          <Pressable style={styles.btnTwo} onPress={handleDecline}>
+          <TouchableOpacity style={styles.btnTwo} onPress={handleDecline}>
             <Text style={styles.btnText}>Decline</Text>
-          </Pressable>
+          </TouchableOpacity>
         </View>
       </View>
     </View>

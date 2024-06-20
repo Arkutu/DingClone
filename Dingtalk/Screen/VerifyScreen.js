@@ -1,5 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
-import { View, Text, TextInput, StyleSheet, Pressable } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
 const VerifyScreen = ({ navigation }) => {
@@ -122,15 +128,15 @@ const VerifyScreen = ({ navigation }) => {
 
           <View style={styles.btnContainer}>
             <View style={styles.btnOneContainer}>
-              <Pressable style={styles.btnOne} onPress={handleVerify}>
+              <TouchableOpacity style={styles.btnOne} onPress={handleVerify}>
                 <Text style={styles.verifyText}>Verify</Text>
-              </Pressable>
+              </TouchableOpacity>
             </View>
 
             <View style={styles.btnTwoContainer}>
-              <Pressable style={styles.btnTwo} onPress={requestNewCode}>
+              <TouchableOpacity style={styles.btnTwo} onPress={requestNewCode}>
                 <Text style={styles.sendText}>Send again</Text>
-              </Pressable>
+              </TouchableOpacity>
             </View>
           </View>
         </View>

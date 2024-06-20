@@ -6,7 +6,7 @@ import {
   Text,
   TextInput,
   StyleSheet,
-  Pressable,
+  TouchableOpacity,
   Image,
 } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -90,9 +90,9 @@ const LoginScreen = () => {
             />
           </View>
 
-          <Pressable style={styles.button} onPress={handleLogin}>
+          <TouchableOpacity style={styles.button} onPress={handleLogin}>
             <Text style={styles.buttonText}>Sign In</Text>
-          </Pressable>
+          </TouchableOpacity>
 
           <View style={styles.textContainer}>
             <Text style={styles.textTwo} onPress={handleForgetPassword}>
@@ -107,9 +107,12 @@ const LoginScreen = () => {
               <View style={styles.line} />
             </View>
 
-            <Pressable style={styles.buttonTwo} onPress={handleCreateAccount}>
+            <TouchableOpacity
+              style={styles.buttonTwo}
+              onPress={handleCreateAccount}
+            >
               <Text style={styles.buttonTextTwo}>Create New Account</Text>
-            </Pressable>
+            </TouchableOpacity>
           </View>
         </View>
       </View>

@@ -1,6 +1,12 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
-import { View, Text, TextInput, StyleSheet, Pressable } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
 const SetPassword = ({ navigation }) => {
@@ -78,9 +84,9 @@ const SetPassword = ({ navigation }) => {
             <Text style={styles.textTwo}>Must match new password.</Text>
           </View>
 
-          <Pressable style={styles.button} onPress={handleForgetAccount}>
+          <TouchableOpacity style={styles.button} onPress={handleForgetAccount}>
             <Text style={styles.buttonText}>Set password</Text>
-          </Pressable>
+          </TouchableOpacity>
         </View>
       </View>
     </View>
