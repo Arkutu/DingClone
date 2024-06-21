@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { useNavigation } from "@react-navigation/native";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, Pressable, SafeAreaView } from "react-native";
 
 // const Welcome = ({ navigation }) => {
 const Welcome = () => {
@@ -18,7 +18,7 @@ const Welcome = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <View>
         <Text style={styles.headerText}>OfficeComms</Text>
       </View>
@@ -30,22 +30,22 @@ const Welcome = () => {
         </View>
 
         <View style={styles.btnOneContainer}>
-          <TouchableOpacity style={styles.btn} onPress={handleHome}>
+          <Pressable style={styles.btn} onPress={handleHome}>
             <Text style={styles.btnText}>skip for now</Text>
-          </TouchableOpacity>
+          </Pressable>
         </View>
 
         <View style={styles.btnTwoContainer}>
-          <TouchableOpacity style={styles.btnTwo} onPress={handleSignUp}>
+          <Pressable style={styles.btnTwo} onPress={handleSignUp}>
             <Text style={styles.btnText}>Sign up</Text>
-          </TouchableOpacity>
+          </Pressable>
 
-          <TouchableOpacity style={styles.btnThree} onPress={handleSingIn}>
+          <Pressable style={styles.btnThree} onPress={handleSingIn}>
             <Text style={styles.btnText}>Sign in</Text>
-          </TouchableOpacity>
+          </Pressable>
         </View>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 

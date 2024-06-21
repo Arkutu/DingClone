@@ -6,6 +6,7 @@ import {
   TextInput,
   Pressable,
   StyleSheet,
+  SafeAreaView,
 } from "react-native";
 import { Ionicons, Octicons, MaterialCommunityIcons } from "@expo/vector-icons";
 
@@ -23,10 +24,29 @@ const HomeScreen = ({ navigation }) => {
     switch (currentTab) {
       case "home":
         return (
-          <ScrollView
-            style={styles.scrollView}
-            contentContainerStyle={styles.scrollContainer}
-          >
+          <SafeAreaView>
+            <View style={styles.headerContainer}>
+              <View style={styles.boxHome}>
+                <View style={styles.box}>
+                  <Text>KK</Text>
+                </View>
+                <Text style={styles.boxText}>Home</Text>
+              </View>
+
+              <View style={styles.searchBar}>
+                <View style={styles.iconContainerOne}>
+                  <Ionicons name="search" size={20} color="gray" />
+                </View>
+                <TextInput
+                  style={styles.searchInput}
+                  placeholder="search anything..."
+                  placeholderTextColor={"gray"}
+                  value={searchText}
+                  onChangeText={setSearchText}
+                />
+              </View>
+            </View>
+
             <View style={styles.navigate}>
               <View style={styles.btns}>
                 <View style={styles.btn_One}></View>
@@ -35,140 +55,135 @@ const HomeScreen = ({ navigation }) => {
                 <View style={styles.btn_One}></View>
               </View>
 
-              <View>
-                <View style={styles.BodyMainContainer}>
-                  <View style={styles.innerBodyMainContainer}>
-                    <View style={styles.wrapper}>
-                      <View>
-                        <Text style={styles.wapText}>New DMs</Text>
-                      </View>
-
-                      <View>
-                        <Pressable
-                          onPress={toggleDropdown}
-                          style={styles.pressable}
-                        >
-                          <View>
-                            <Text style={styles.textBlue}>
-                              {showDropdownDM ? "show less" : ""}
-                            </Text>
-                          </View>
-
-                          <View style={styles.wapIcon}>
-                            <Ionicons
-                              name={showDropdownDM ? "" : "chevron-forward"}
-                              size={24}
-                              color="white"
-                            />
-                          </View>
-                        </Pressable>
-                      </View>
+              <View style={styles.BodyMainContainer}>
+                <View style={styles.innerBodyMainContainer}>
+                  <View style={styles.wrapper}>
+                    <View>
+                      <Text style={styles.wapText}>New DMs</Text>
                     </View>
 
-                    {showDropdownDM && (
-                      <View>
-                        <View style={styles.msgContainer}>
-                          <Ionicons
-                            name="person"
-                            size={24}
-                            color="white"
-                            style={styles.msgIcon}
-                          />
-                          <Text style={styles.msgText}>Mensah Raphael T.</Text>
-                        </View>
-                        <View style={styles.msgContainer}>
-                          <Ionicons
-                            name="person"
-                            size={24}
-                            color="white"
-                            style={styles.msgIcon}
-                          />
-                          <Text style={styles.msgText}>Michael Anim</Text>
-                        </View>
-                        <View style={styles.msgContainer}>
-                          <Ionicons
-                            name="person"
-                            size={24}
-                            color="white"
-                            style={styles.msgIcon}
-                          />
-                          <Text style={styles.msgText}>
-                            Dennis Opoku Amponsah
+                    <View>
+                      <Pressable
+                        onPress={toggleDropdown}
+                        style={styles.pressable}
+                      >
+                        <View>
+                          <Text style={styles.textBlue}>
+                            {showDropdownDM ? "show less" : ""}
                           </Text>
                         </View>
-                      </View>
-                    )}
-                  </View>
-                </View>
 
-                <View style={styles.inner}>
-                  <View style={styles.innerChannel}>
-                    <View style={styles.coverChannel}>
-                      <View>
-                        <Text style={styles.innerTextOne}>Channels</Text>
-                      </View>
-                      <View style={styles.icon}>
-                        <Pressable
-                          onPress={toggleDropdownChannel}
-                          style={styles.pressable}
-                        >
-                          <View>
-                            <Text style={styles.textBlue}>
-                              {showDropdownChannel ? "show less" : ""}
-                            </Text>
-                          </View>
-
+                        <View style={styles.wapIcon}>
                           <Ionicons
-                            name={showDropdownChannel ? "" : "chevron-forward"}
+                            name={showDropdownDM ? "" : "chevron-forward"}
                             size={24}
                             color="white"
                           />
-                        </Pressable>
+                        </View>
+                      </Pressable>
+                    </View>
+                  </View>
+
+                  {showDropdownDM && (
+                    <View>
+                      <View style={styles.msgContainer}>
+                        <Ionicons
+                          name="person"
+                          size={24}
+                          color="white"
+                          style={styles.msgIcon}
+                        />
+                        <Text style={styles.msgText}>Mensah Raphael T.</Text>
+                      </View>
+                      <View style={styles.msgContainer}>
+                        <Ionicons
+                          name="person"
+                          size={24}
+                          color="white"
+                          style={styles.msgIcon}
+                        />
+                        <Text style={styles.msgText}>Michael Anim</Text>
+                      </View>
+                      <View style={styles.msgContainer}>
+                        <Ionicons
+                          name="person"
+                          size={24}
+                          color="white"
+                          style={styles.msgIcon}
+                        />
+                        <Text style={styles.msgText}>
+                          Dennis Opoku Amponsah
+                        </Text>
                       </View>
                     </View>
+                  )}
+                </View>
+              </View>
+              <View style={styles.inner}>
+                <View style={styles.innerChannel}>
+                  <View style={styles.coverChannel}>
+                    <View>
+                      <Text style={styles.innerTextOne}>Channels</Text>
+                    </View>
+                    <View style={styles.icon}>
+                      <Pressable
+                        onPress={toggleDropdownChannel}
+                        style={styles.pressable}
+                      >
+                        <View>
+                          <Text style={styles.textBlue}>
+                            {showDropdownChannel ? "show less" : ""}
+                          </Text>
+                        </View>
+                        <Ionicons
+                          name={showDropdownChannel ? "" : "chevron-forward"}
+                          size={24}
+                          color="white"
+                        />
+                      </Pressable>
+                    </View>
+                  </View>
+                  {showDropdownChannel && (
+                    <View>
+                      <View style={styles.channelContainer}>
+                        <View style={styles.subContainer}>
+                          <Text style={styles.hash}>#</Text>
+                          <Text style={styles.channelText}>general</Text>
+                        </View>
 
-                    {showDropdownChannel && (
-                      <View>
-                        <View style={styles.channelContainer}>
-                          <View style={styles.subContainer}>
-                            <Text style={styles.hash}>#</Text>
-                            <Text style={styles.channelText}>general</Text>
-                          </View>
+                        <View style={styles.subContainer}>
+                          <Text style={styles.hash}>#</Text>
+                          <Text style={styles.channelText}>meeting</Text>
+                        </View>
 
-                          <View style={styles.subContainer}>
-                            <Text style={styles.hash}>#</Text>
-                            <Text style={styles.channelText}>meeting</Text>
-                          </View>
+                        <View style={styles.subContainer}>
+                          <Text style={styles.hash}>#</Text>
+                          <Text style={styles.channelText}>random</Text>
+                        </View>
 
-                          <View style={styles.subContainer}>
-                            <Text style={styles.hash}>#</Text>
-                            <Text style={styles.channelText}>random</Text>
-                          </View>
+                        <View style={styles.addChannelContainer}>
+                          <Pressable style={styles.btnChannel}>
+                            <Text style={styles.btnChannelPlus}>+</Text>
 
-                          <View style={styles.addChannelContainer}>
-                            <Pressable style={styles.btnChannel}>
-                              <Text style={styles.btnChannelPlus}>+</Text>
-
-                              <Text style={styles.btnChannelText}>
-                                Create channel
-                              </Text>
-                            </Pressable>
-                          </View>
+                            <Text style={styles.btnChannelText}>
+                              Create channel
+                            </Text>
+                          </Pressable>
                         </View>
                       </View>
-                    )}
-                  </View>
+                    </View>
+                  )}
                 </View>
+              </View>
 
-                <View style={styles.innerTwo}>
-                  <Text style={styles.innerTextTwo}>Direct message</Text>
-                  <View style={styles.icon}>
-                    <Ionicons name="chevron-forward" size={24} color="white" />
-                  </View>
+              <View style={styles.innerTwo}>
+                <Text style={styles.innerTextTwo}>Direct message</Text>
+                <View style={styles.icon}>
+                  <Ionicons name="chevron-forward" size={24} color="white" />
                 </View>
               </View>
             </View>
-          </ScrollView>
+          </SafeAreaView>
         );
       case "chat":
         return (
@@ -194,28 +209,7 @@ const HomeScreen = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.headerContainer}>
-        <View style={styles.boxHome}>
-          <View style={styles.box}>
-            <Text>KK</Text>
-          </View>
-          <Text style={styles.boxText}>Home</Text>
-        </View>
-
-        <View style={styles.searchBar}>
-          <View style={styles.iconContainerOne}>
-            <Ionicons name="search" size={20} color="gray" />
-          </View>
-          <TextInput
-            style={styles.searchInput}
-            placeholder="search anything..."
-            placeholderTextColor={"gray"}
-            value={searchText}
-            onChangeText={setSearchText}
-          />
-        </View>
-      </View>
+    <SafeAreaView style={styles.container}>
       {renderContent()}
 
       <View style={styles.iconContainer}>
@@ -308,7 +302,7 @@ const HomeScreen = ({ navigation }) => {
           </Text>
         </Pressable>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -359,19 +353,17 @@ const styles = StyleSheet.create({
   iconContainerOne: {
     marginRight: 5,
   },
-  scrollView: {
+  // scrollView: {
+
+  // },
+  navigate: {
+    // paddingBottom: 100,
+
     backgroundColor: "#101223",
     borderWidth: 1,
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
     overflow: "hidden",
-  },
-  scrollContainer: {
-    paddingBottom: 100,
-    paddingTop: 0,
-  },
-  navigate: {
-    // paddingBottom: 100,
   },
   btns: {
     flexDirection: "row",
@@ -390,124 +382,124 @@ const styles = StyleSheet.create({
     margin: 8,
     marginBottom: 20,
   },
-  BodyMainContainer: {
-    borderBottomWidth: 1,
-    borderColor: "gray",
-  },
-  innerBodyMainContainer: {
-    marginTop: 15,
-    marginLeft: 16,
-    marginRight: 16,
-    marginBottom: 15,
-  },
-  wrapper: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  pressable: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  wapText: {
-    fontSize: 14,
-    color: "white",
-    fontWeight: "bold",
-  },
-  textBlue: {
-    color: "#007bff",
-  },
-  msgContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginTop: 10,
-    marginBottom: 10,
-  },
-  msgIcon: {
-    borderWidth: 1,
-    borderColor: "#fff",
-    borderRadius: 10,
-    backgroundColor: "#868e96",
-  },
-  msgText: {
-    fontSize: 14,
-    marginLeft: 10,
-    color: "white",
-  },
+  // BodyMainContainer: {
+  //   borderBottomWidth: 1,
+  //   borderColor: "gray",
+  // },
+  // innerBodyMainContainer: {
+  //   marginTop: 15,
+  //   marginLeft: 16,
+  //   marginRight: 16,
+  //   marginBottom: 15,
+  // },
+  // wrapper: {
+  //   flexDirection: "row",
+  //   justifyContent: "space-between",
+  //   alignItems: "center",
+  // },
+  // pressable: {
+  //   flexDirection: "row",
+  //   alignItems: "center",
+  // },
+  // wapText: {
+  //   fontSize: 14,
+  //   color: "white",
+  //   fontWeight: "bold",
+  // },
+  // textBlue: {
+  //   color: "#007bff",
+  // },
+  // msgContainer: {
+  //   flexDirection: "row",
+  //   alignItems: "center",
+  //   marginTop: 10,
+  //   marginBottom: 10,
+  // },
+  // msgIcon: {
+  //   borderWidth: 1,
+  //   borderColor: "#fff",
+  //   borderRadius: 10,
+  //   backgroundColor: "#868e96",
+  // },
+  // msgText: {
+  //   fontSize: 14,
+  //   marginLeft: 10,
+  //   color: "white",
+  // },
 
-  //? Channels
-  inner: {
-    borderBottomWidth: 1,
-    borderColor: "gray",
-  },
-  innerChannel: {
-    marginTop: 15,
-    marginLeft: 16,
-    marginRight: 16,
-    marginBottom: 15,
-  },
-  coverChannel: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  innerTextOne: {
-    fontSize: 14,
-    color: "white",
-    fontWeight: "bold",
-  },
-  channelContainer: {
-    // backgroundColor: "#fff",
-    // marginBottom: 10,
-    marginLeft: 10,
-  },
-  subContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginTop: 10,
-  },
-  hash: {
-    color: "gray",
-  },
-  channelText: {
-    color: "gray",
-    marginLeft: 10,
-  },
-  btnChannel: {
-    marginTop: 17,
-    marginBottom: 10,
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  btnChannelPlus: {
-    color: "gray",
-    fontSize: 18,
-  },
-  btnChannelText: {
-    color: "gray",
-    marginLeft: 8,
-  },
+  // //? Channels
+  // inner: {
+  //   borderBottomWidth: 1,
+  //   borderColor: "gray",
+  // },
+  // innerChannel: {
+  //   marginTop: 15,
+  //   marginLeft: 16,
+  //   marginRight: 16,
+  //   marginBottom: 15,
+  // },
+  // coverChannel: {
+  //   flexDirection: "row",
+  //   justifyContent: "space-between",
+  //   alignItems: "center",
+  // },
+  // innerTextOne: {
+  //   fontSize: 14,
+  //   color: "white",
+  //   fontWeight: "bold",
+  // },
+  // channelContainer: {
+  //   // backgroundColor: "#fff",
+  //   // marginBottom: 10,
+  //   marginLeft: 10,
+  // },
+  // subContainer: {
+  //   flexDirection: "row",
+  //   alignItems: "center",
+  //   marginTop: 10,
+  // },
+  // hash: {
+  //   color: "gray",
+  // },
+  // channelText: {
+  //   color: "gray",
+  //   marginLeft: 10,
+  // },
+  // btnChannel: {
+  //   marginTop: 17,
+  //   marginBottom: 10,
+  //   flexDirection: "row",
+  //   alignItems: "center",
+  // },
+  // btnChannelPlus: {
+  //   color: "gray",
+  //   fontSize: 18,
+  // },
+  // btnChannelText: {
+  //   color: "gray",
+  //   marginLeft: 8,
+  // },
 
-  //? Direct Message
-  innerTwo: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    padding: 15,
-    borderWidth: 0,
-    // borderTopWidth: 1,
-    borderBottomWidth: 1,
-    borderColor: "gray",
-  },
-  innerTextTwo: {
-    fontSize: 14,
-    color: "white",
-  },
+  // //? Direct Message
+  // innerTwo: {
+  //   flexDirection: "row",
+  //   justifyContent: "space-between",
+  //   padding: 15,
+  //   borderWidth: 0,
+  //   // borderTopWidth: 1,
+  //   borderBottomWidth: 1,
+  //   borderColor: "gray",
+  // },
+  // innerTextTwo: {
+  //   fontSize: 14,
+  //   color: "white",
+  // },
 
   //? icon Container
   iconContainer: {
+    // marginTop: "200%",
     backgroundColor: "#101223",
-    // borderWidth: 1,
-    // borderColor: "#101223",
+    // backgroundColor: "#000",
     flexDirection: "row",
     justifyContent: "space-around",
     padding: 10,
@@ -521,11 +513,21 @@ const styles = StyleSheet.create({
     fontSize: 10,
     marginTop: 5,
   },
-
   //! Select icons style
   iconItemSelected: {
-    // color: "#007bff",
+    color: "#007bff",
   },
 });
 
 export default HomeScreen;
+
+// <ScrollView
+//   style={styles.scrollView}
+//   contentContainerStyle={styles.scrollContainer}
+// >
+//
+//
+
+//     <View>
+//       //   </View>
+// </ScrollView>

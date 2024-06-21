@@ -4,6 +4,7 @@ import {
   Text,
   TextInput,
   StyleSheet,
+  Pressable,
   TouchableOpacity,
 } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -128,9 +129,9 @@ const VerifyScreen = ({ navigation }) => {
 
           <View style={styles.btnContainer}>
             <View style={styles.btnOneContainer}>
-              <TouchableOpacity style={styles.btnOne} onPress={handleVerify}>
+              <Pressable style={styles.btnOne} onPress={handleVerify}>
                 <Text style={styles.verifyText}>Verify</Text>
-              </TouchableOpacity>
+              </Pressable>
             </View>
 
             <View style={styles.btnTwoContainer}>

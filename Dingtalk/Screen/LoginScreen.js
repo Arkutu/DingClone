@@ -6,6 +6,7 @@ import {
   Text,
   TextInput,
   StyleSheet,
+  Pressable,
   TouchableOpacity,
   Image,
 } from "react-native";
@@ -107,12 +108,9 @@ const LoginScreen = () => {
               <View style={styles.line} />
             </View>
 
-            <TouchableOpacity
-              style={styles.buttonTwo}
-              onPress={handleCreateAccount}
-            >
+            <Pressable style={styles.buttonTwo} onPress={handleCreateAccount}>
               <Text style={styles.buttonTextTwo}>Create New Account</Text>
-            </TouchableOpacity>
+            </Pressable>
           </View>
         </View>
       </View>
