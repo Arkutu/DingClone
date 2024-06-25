@@ -193,18 +193,22 @@ const HomeScreen = () => {
         return (
           <View style={styles.container}>
             <Text>Chat Content</Text>
+            {/*! Chat code goes here */}
           </View>
         );
       case "bell":
         return (
           <View style={styles.container}>
             <Text>Bell Content</Text>
+            {/*! Notification code goes here */}
           </View>
         );
       case "profile":
         return (
           <View style={styles.container}>
             <Text>Profile Content</Text>
+            {/*! Profile code goes here */}
+            {/*! Write a logic in the home part of the code so that is will display the profile side of the screen */}
           </View>
         );
       default:
