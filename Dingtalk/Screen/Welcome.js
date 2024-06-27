@@ -1,14 +1,14 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { useNavigation } from "@react-navigation/native";
+// import { useNavigation } from "@react-navigation/native";
 import { View, Text, StyleSheet, Pressable, SafeAreaView } from "react-native";
 
-// const Welcome = ({ navigation }) => {
-const Welcome = () => {
-  const navigation = useNavigation();
+const Welcome = ({ navigation }) => {
+  // const Welcome = () => {
+  // const navigation = useNavigation();
 
   const handleHome = () => {
-    navigation.navigate("Home");
+    navigation.navigate("MainTabs");
   };
   const handleSingIn = () => {
     navigation.navigate("Login", { from: "Welcome" });

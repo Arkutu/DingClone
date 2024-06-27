@@ -1,17 +1,8 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  ScrollView,
-  TextInput,
-  Pressable,
-  StyleSheet,
-  SafeAreaView,
-} from "react-native";
+import { View, Text, TextInput, Pressable, StyleSheet } from "react-native";
 import { Ionicons, Octicons, MaterialCommunityIcons } from "@expo/vector-icons";
 
 const HomeScreen = () => {
-  const [currentTab, setCurrentTab] = useState("home");
   const [searchText, setSearchText] = useState("");
   const [showDropdownDM, setShowDropdownDM] = useState(false);
   const [showDropdownChannel, setShowDropdownChannel] = useState(false);
@@ -20,295 +11,157 @@ const HomeScreen = () => {
   const toggleDropdownChannel = () =>
     setShowDropdownChannel(!showDropdownChannel);
 
-  const renderContent = () => {
-    switch (currentTab) {
-      case "home":
-        return (
-          <View style={styles.container}>
-            <View style={styles.headerContainer}>
-              <View style={styles.boxHome}>
-                <View style={styles.box}>
-                  <Text>KK</Text>
-                </View>
-                <Text style={styles.boxText}>Home</Text>
-              </View>
-
-              <View style={styles.searchBar}>
-                <View style={styles.iconContainerOne}>
-                  <Ionicons name="search" size={20} color="gray" />
-                </View>
-                <TextInput
-                  style={styles.searchInput}
-                  placeholder="search anything..."
-                  placeholderTextColor={"gray"}
-                  value={searchText}
-                  onChangeText={setSearchText}
-                />
-              </View>
-            </View>
-
-            <View style={styles.navigate}>
-              <ScrollView>
-                <View style={styles.btns}>
-                  <View style={styles.btn_One}></View>
-                  <View style={styles.btn_One}></View>
-                  <View style={styles.btn_One}></View>
-                  <View style={styles.btn_One}></View>
-                </View>
-
-                <View style={styles.BodyMainContainer}>
-                  <View style={styles.innerBodyMainContainer}>
-                    <View style={styles.wrapper}>
-                      <View>
-                        <Text style={styles.wapText}>New DMs</Text>
-                      </View>
-
-                      <View>
-                        <Pressable
-                          onPress={toggleDropdown}
-                          style={styles.pressable}
-                        >
-                          <View>
-                            <Text style={styles.textBlue}>
-                              {showDropdownDM ? "show less" : ""}
-                            </Text>
-                          </View>
-
-                          <View style={styles.wapIcon}>
-                            <Ionicons
-                              name={showDropdownDM ? "" : "chevron-forward"}
-                              size={24}
-                              color="white"
-                            />
-                          </View>
-                        </Pressable>
-                      </View>
-                    </View>
-
-                    {showDropdownDM && (
-                      <View>
-                        <View style={styles.msgContainer}>
-                          <Ionicons
-                            name="person"
-                            size={24}
-                            color="white"
-                            style={styles.msgIcon}
-                          />
-                          <Text style={styles.msgText}>Mensah Raphael T.</Text>
-                        </View>
-                        <View style={styles.msgContainer}>
-                          <Ionicons
-                            name="person"
-                            size={24}
-                            color="white"
-                            style={styles.msgIcon}
-                          />
-                          <Text style={styles.msgText}>Michael Anim</Text>
-                        </View>
-                        <View style={styles.msgContainer}>
-                          <Ionicons
-                            name="person"
-                            size={24}
-                            color="white"
-                            style={styles.msgIcon}
-                          />
-                          <Text style={styles.msgText}>
-                            Dennis Opoku Amponsah
-                          </Text>
-                        </View>
-                      </View>
-                    )}
-                  </View>
-                </View>
-                <View style={styles.inner}>
-                  <View style={styles.innerChannel}>
-                    <View style={styles.coverChannel}>
-                      <View>
-                        <Text style={styles.innerTextOne}>Channels</Text>
-                      </View>
-                      <View style={styles.icon}>
-                        <Pressable
-                          onPress={toggleDropdownChannel}
-                          style={styles.pressable}
-                        >
-                          <View>
-                            <Text style={styles.textBlue}>
-                              {showDropdownChannel ? "show less" : ""}
-                            </Text>
-                          </View>
-                          <Ionicons
-                            name={showDropdownChannel ? "" : "chevron-forward"}
-                            size={24}
-                            color="white"
-                          />
-                        </Pressable>
-                      </View>
-                    </View>
-                    {showDropdownChannel && (
-                      <View>
-                        <View style={styles.channelContainer}>
-                          <View style={styles.subContainer}>
-                            <Text style={styles.hash}>#</Text>
-                            <Text style={styles.channelText}>general</Text>
-                          </View>
-
-                          <View style={styles.subContainer}>
-                            <Text style={styles.hash}>#</Text>
-                            <Text style={styles.channelText}>meeting</Text>
-                          </View>
-
-                          <View style={styles.subContainer}>
-                            <Text style={styles.hash}>#</Text>
-                            <Text style={styles.channelText}>random</Text>
-                          </View>
-
-                          <View style={styles.addChannelContainer}>
-                            <Pressable style={styles.btnChannel}>
-                              <Text style={styles.btnChannelPlus}>+</Text>
-
-                              <Text style={styles.btnChannelText}>
-                                Create channel
-                              </Text>
-                            </Pressable>
-                          </View>
-                        </View>
-                      </View>
-                    )}
-                  </View>
-                </View>
-
-                <View style={styles.innerTwo}>
-                  <Text style={styles.innerTextTwo}>Direct message</Text>
-                  <View style={styles.icon}>
-                    <Ionicons name="chevron-forward" size={24} color="white" />
-                  </View>
-                </View>
-
-                <View style={styles.push}></View>
-              </ScrollView>
-            </View>
-          </View>
-        );
-      case "chat":
-        return (
-          <View style={styles.container}>
-            <Text>Chat Content</Text>
-            {/*! Chat code goes here */}
-          </View>
-        );
-      case "bell":
-        return (
-          <View style={styles.container}>
-            <Text>Bell Content</Text>
-            {/*! Notification code goes here */}
-          </View>
-        );
-      case "profile":
-        return (
-          <View style={styles.container}>
-            <Text>Profile Content</Text>
-            {/*! Profile code goes here */}
-            {/*! Write a logic in the home part of the code so that is will display the profile side of the screen */}
-          </View>
-        );
-      default:
-        return null;
-    }
-  };
-
   return (
     <View style={styles.container}>
-      {renderContent()}
+      <View style={styles.headerContainer}>
+        <View style={styles.boxHome}>
+          <View style={styles.box}>
+            <Text>KK</Text>
+          </View>
+          <Text style={styles.boxText}>Home</Text>
+        </View>
 
-      <View style={styles.iconContainer}>
-        <Pressable
-          style={[
-            styles.iconItem,
-            currentTab === "home" && styles.iconItemSelected,
-          ]}
-          onPress={() => setCurrentTab("home")}
-        >
-          <Octicons
-            name="home"
-            size={22}
-            color={currentTab === "home" ? "#007bff" : "white"}
+        <View style={styles.searchBar}>
+          <View style={styles.iconContainerOne}>
+            <Ionicons name="search" size={20} color="gray" />
+          </View>
+          <TextInput
+            style={styles.searchInput}
+            placeholder="search anything..."
+            placeholderTextColor={"gray"}
+            value={searchText}
+            onChangeText={setSearchText}
           />
-          <Text
-            style={[
-              styles.iconText,
-              currentTab === "home" && styles.iconItemSelected,
-            ]}
-          >
-            Home
-          </Text>
-        </Pressable>
+        </View>
+      </View>
 
-        <Pressable
-          style={[
-            styles.iconItem,
-            currentTab === "chat" && styles.iconItemSelected,
-          ]}
-          onPress={() => setCurrentTab("chat")}
-        >
-          <Ionicons
-            name="chatbubble-ellipses-outline"
-            size={24}
-            color={currentTab === "chat" ? "#007bff" : "white"}
-          />
-          <Text
-            style={[
-              styles.iconText,
-              currentTab === "chat" && styles.iconItemSelected,
-            ]}
-          >
-            Chats
-          </Text>
-        </Pressable>
+      <View style={styles.navigate}>
+        <View style={styles.btns}>
+          <View style={styles.btn_One}></View>
+          <View style={styles.btn_One}></View>
+          <View style={styles.btn_One}></View>
+          <View style={styles.btn_One}></View>
+        </View>
+        <View style={styles.BodyMainContainer}>
+          <View style={styles.innerBodyMainContainer}>
+            <View style={styles.wrapper}>
+              <View>
+                <Text style={styles.wapText}>New DMs</Text>
+              </View>
 
-        <Pressable
-          style={[
-            styles.iconItem,
-            currentTab === "bell" && styles.iconItemSelected,
-          ]}
-          onPress={() => setCurrentTab("bell")}
-        >
-          <Octicons
-            name="bell"
-            size={22}
-            color={currentTab === "bell" ? "#007bff" : "white"}
-          />
-          <Text
-            style={[
-              styles.iconText,
-              currentTab === "bell" && styles.iconItemSelected,
-            ]}
-          >
-            Notifs
-          </Text>
-        </Pressable>
+              <View>
+                <Pressable onPress={toggleDropdown} style={styles.pressable}>
+                  <View>
+                    <Text style={styles.textBlue}>
+                      {showDropdownDM ? "show less" : ""}
+                    </Text>
+                  </View>
 
-        {/* <Pressable style={styles.iconItem} > */}
-        <Pressable
-          style={[
-            styles.iconItem,
-            currentTab === "profile" && styles.iconItemSelected,
-          ]}
-          onPress={() => setCurrentTab("profile")}
-        >
-          <MaterialCommunityIcons
-            name="account-multiple-outline"
-            size={27}
-            color={currentTab === "profile" ? "#007bff" : "white"}
-          />
-          <Text
-            style={[
-              styles.iconText,
-              currentTab === "profile" && styles.iconItemSelected,
-            ]}
-          >
-            Profile
-          </Text>
-        </Pressable>
+                  <View style={styles.wapIcon}>
+                    <Ionicons
+                      name={showDropdownDM ? "" : "chevron-forward"}
+                      size={24}
+                      color="white"
+                    />
+                  </View>
+                </Pressable>
+              </View>
+            </View>
+
+            {showDropdownDM && (
+              <View>
+                <View style={styles.msgContainer}>
+                  <Ionicons
+                    name="person"
+                    size={24}
+                    color="white"
+                    style={styles.msgIcon}
+                  />
+                  <Text style={styles.msgText}>Mensah Raphael T.</Text>
+                </View>
+                <View style={styles.msgContainer}>
+                  <Ionicons
+                    name="person"
+                    size={24}
+                    color="white"
+                    style={styles.msgIcon}
+                  />
+                  <Text style={styles.msgText}>Michael Anim</Text>
+                </View>
+                <View style={styles.msgContainer}>
+                  <Ionicons
+                    name="person"
+                    size={24}
+                    color="white"
+                    style={styles.msgIcon}
+                  />
+                  <Text style={styles.msgText}>Dennis Opoku Amponsah</Text>
+                </View>
+              </View>
+            )}
+          </View>
+        </View>
+        <View style={styles.inner}>
+          <View style={styles.innerChannel}>
+            <View style={styles.coverChannel}>
+              <View>
+                <Text style={styles.innerTextOne}>Channels</Text>
+              </View>
+              <View style={styles.icon}>
+                <Pressable
+                  onPress={toggleDropdownChannel}
+                  style={styles.pressable}
+                >
+                  <View>
+                    <Text style={styles.textBlue}>
+                      {showDropdownChannel ? "show less" : ""}
+                    </Text>
+                  </View>
+                  <Ionicons
+                    name={showDropdownChannel ? "" : "chevron-forward"}
+                    size={24}
+                    color="white"
+                  />
+                </Pressable>
+              </View>
+            </View>
+            {showDropdownChannel && (
+              <View>
+                <View style={styles.channelContainer}>
+                  <View style={styles.subContainer}>
+                    <Text style={styles.hash}>#</Text>
+                    <Text style={styles.channelText}>general</Text>
+                  </View>
+
+                  <View style={styles.subContainer}>
+                    <Text style={styles.hash}>#</Text>
+                    <Text style={styles.channelText}>meeting</Text>
+                  </View>
+
+                  <View style={styles.subContainer}>
+                    <Text style={styles.hash}>#</Text>
+                    <Text style={styles.channelText}>random</Text>
+                  </View>
+
+                  <View style={styles.addChannelContainer}>
+                    <Pressable style={styles.btnChannel}>
+                      <Text style={styles.btnChannelPlus}>+</Text>
+
+                      <Text style={styles.btnChannelText}>Create channel</Text>
+                    </Pressable>
+                  </View>
+                </View>
+              </View>
+            )}
+          </View>
+        </View>
+        <View style={styles.innerTwo}>
+          <Text style={styles.innerTextTwo}>Direct message</Text>
+          <View style={styles.icon}>
+            <Ionicons name="chevron-forward" size={24} color="white" />
+          </View>
+        </View>
+        <View style={styles.push}></View>
       </View>
     </View>
   );
@@ -508,7 +361,7 @@ const styles = StyleSheet.create({
     color: "white",
   },
   push: {
-    // height: 140,
+    height: "100%",
   },
 
   //? icon Container
@@ -534,5 +387,4 @@ const styles = StyleSheet.create({
     color: "#007bff",
   },
 });
-
 export default HomeScreen;

@@ -21,7 +21,7 @@ const ForgetPassword = ({ navigation }) => {
     } else if (userphone !== userphoneone) {
       alert("Mismatch password");
     } else {
-      navigation.navigate("Home");
+      navigation.navigate("MainTabs");
     }
   };
 

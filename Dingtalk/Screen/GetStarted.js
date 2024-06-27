@@ -11,7 +11,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 
 const GetStarted = ({ navigation }) => {
   const handleNext = () => {
-    navigation.navigate("Home");
+    navigation.navigate("MainTabs");
   };
 
   const goBack = () => {

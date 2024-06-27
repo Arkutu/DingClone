@@ -25,7 +25,7 @@ const LoginScreen = () => {
     if (!email || !password) {
       alert("Enter email and password");
     } else {
-      navigation.navigate("Home");
+      navigation.navigate("MainTabs");
     }
   };
 
