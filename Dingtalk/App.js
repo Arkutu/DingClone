@@ -109,6 +109,8 @@ function MainTabs() {
         tabBarStyle: {
           backgroundColor: "#101223",
           height: 55,
+          // borderColor: "#101223",
+          borderColor: "gray",
         },
       })}
     >
