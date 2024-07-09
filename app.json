@@ -1,0 +1,34 @@
+{
+  "expo": {
+    "name": "OfficeComms",
+    "slug": "OfficeComms",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.arktech.officecomms"
+    },
+    "android": {
+      "package": "com.arktech.officecomms",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      }
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "googleClientId": "51521225167-s903tfi7esi7r2tih3qlpdvr6e4bev70.apps.googleusercontent.com"
+    },
+    "scheme": "officecomms" 
+
+  }
+}
