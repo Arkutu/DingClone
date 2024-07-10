@@ -1,3 +1,4 @@
+// OfficeScreen.js
 import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
 import { Ionicons, Feather, AntDesign, MaterialCommunityIcons, SimpleLineIcons, MaterialIcons, Entypo } from '@expo/vector-icons';
@@ -48,7 +49,7 @@ const OfficeScreen = ({ route, navigation }) => {
 
         <View style={styles.tabsContainer}>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            <TouchableOpacity style={styles.tabItem} onPress={() => navigation.navigate('Calendar')}>
+            <TouchableOpacity style={styles.tabItem} onPress={() => navigation.navigate('CalendarScreen')}>
               <Text style={styles.tabText}>Calendar</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.tabItem} onPress={() => navigation.navigate('ToDo')}>
@@ -79,7 +80,7 @@ const OfficeScreen = ({ route, navigation }) => {
             <MenuButton title="Watermark" icon={MaterialCommunityIcons} iconName="watermark" />
           </View>
           <View style={styles.row}>
-            <MenuButton title="Start Meeting" icon={MaterialIcons} iconName="meeting-room" />
+            <MenuButton title="Start Meeting" icon={MaterialIcons} iconName="meeting-room" onPress={() => navigation.navigate('VideoCall')} />
             <MenuButton title="Start Live" icon={MaterialIcons} iconName="live-tv" />
             <MenuButton title="New Event" icon={MaterialIcons} iconName="event" />
             <MenuButton title="Create to-do" icon={Entypo} iconName="add-to-list" />
@@ -87,9 +88,9 @@ const OfficeScreen = ({ route, navigation }) => {
         </View>
 
         <View style={styles.bottomNav}>
-          <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Home')}>
-            <Ionicons name="home" size={28} color={getActiveRoute() === 'Home' ? '#0d6efd' : '#FFF'} />
-            <Text style={getActiveRoute() === 'Home' ? styles.navTextActive : styles.navTextInactive}>Home</Text>
+          <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('MainHome')}>
+            <Ionicons name="home" size={28} color={getActiveRoute() === 'MainHome' ? '#0d6efd' : '#FFF'} />
+            <Text style={getActiveRoute() === 'MainHome' ? styles.navTextActive : styles.navTextInactive}>Home</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('OfficeScreen', { organizationName })}>
             <MaterialCommunityIcons name="office-building" size={28} color={getActiveRoute() === 'OfficeScreen' ? '#0d6efd' : '#FFF'} />

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { doc, setDoc, updateDoc, arrayUnion } from 'firebase/firestore';
-import { auth, db } from '../firebaseConfig'; // Ensure you have firebaseConfig setup properly
+import { auth, db } from '../firebaseConfig';
+import { createInvitationLink } from '../invitationUtils'; // Adjust path accordingly
 
 const OrganizationScreen = ({ navigation }) => {
   const [organizationName, setOrganizationName] = useState('');
@@ -28,7 +29,9 @@ const OrganizationScreen = ({ navigation }) => {
         organizations: arrayUnion(organizationName),
       });
 
-      Alert.alert('Success', 'Organization created successfully!');
+      const invitationLink = await createInvitationLink(organizationName);
+      Alert.alert('Success', `Organization created successfully! Share this link to invite others: ${invitationLink}`);
+
       navigation.navigate('MainHome', { organizationName });
 
     } catch (error) {

@@ -1,3 +1,4 @@
+// MainHomeScreen.js
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, Image, ActivityIndicator } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
@@ -134,9 +135,9 @@ const MainHomeScreen = ({ route, navigation }) => {
         </KeyboardAwareScrollView>
       </KeyboardAvoidingView>
       <View style={styles.bottomNav}>
-        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Home')}>
-          <Ionicons name="home" size={28} color={getActiveRoute() === 'Home' ? '#0d6efd' : '#FFF'} />
-          <Text style={getActiveRoute() === 'Home' ? styles.navTextActive : styles.navTextInactive}>Home</Text>
+        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('MainHome')}>
+          <Ionicons name="home" size={28} color={getActiveRoute() === 'MainHome' ? '#0d6efd' : '#FFF'} />
+          <Text style={getActiveRoute() === 'MainHome' ? styles.navTextActive : styles.navTextInactive}>Home</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('OfficeScreen', { organizationName })}>
           <MaterialCommunityIcons name="office-building" size={28} color={getActiveRoute() === 'OfficeScreen' ? '#0d6efd' : '#FFF'} />

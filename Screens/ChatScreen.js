@@ -87,7 +87,7 @@ const ChatScreen = ({ route, navigation }) => {
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <Ionicons name="chevron-back" size={24} color="white" />
           </TouchableOpacity>
-          <View>
+          <View style={styles.headerTextContainer}>
             <Text style={styles.channelName}>{channelName}</Text>
             <Text style={styles.channelDescription}>{channelDescription}</Text>
           </View>
@@ -128,11 +128,15 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 40,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
     backgroundColor: '#1a1a2e',
   },
+  headerTextContainer: {
+    marginLeft: 8,
+  },
   channelName: {
-    fontSize: 20,
+    fontSize: 16,
     color: 'white',
     fontWeight: 'bold',
   },
@@ -142,10 +146,12 @@ const styles = StyleSheet.create({
   },
   messageList: {
     flex: 1,
-    padding: 16,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
   },
   messageContainer: {
     flexDirection: 'row',
+    alignItems: 'flex-start',
     marginBottom: 10,
   },
   avatar: {
@@ -155,9 +161,10 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   messageContent: {
-    backgroundColor: '#1a1a2e',
+    backgroundColor: '#2f3136',
     padding: 10,
-    borderRadius: 10,
+    borderRadius: 8,
+    maxWidth: '80%',
   },
   messageAuthor: {
     fontSize: 14,
@@ -172,7 +179,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#1a1a2e',
-    padding: 16,
+    padding: 10,
   },
   input: {
     flex: 1,

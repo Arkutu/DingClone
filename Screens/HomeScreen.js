@@ -8,7 +8,7 @@ const HomeScreen = ({ navigation }) => {
   const [showDropdown, setShowDropdown] = useState(false);
 
   const handleNext = () => {
-    navigation.navigate("CreateNewAccount");
+    navigation.navigate("");
   };
 
   const toggleDropdown = () => {

@@ -28,7 +28,15 @@
     "extra": {
       "googleClientId": "51521225167-s903tfi7esi7r2tih3qlpdvr6e4bev70.apps.googleusercontent.com"
     },
-    "scheme": "officecomms" 
-
+    "scheme": "officecomms",
+    "plugins": [
+      [
+        "expo-calendar",
+        {
+          "calendarPermission": "The app needs to access your calendar.",
+          "remindersPermission": "The app needs to access your reminders."
+        }
+      ]
+    ]
   }
 }

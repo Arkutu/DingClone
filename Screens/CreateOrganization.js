@@ -12,7 +12,7 @@ const CreateOrganization = ({ navigation }) => {
         <Text style={styles.welcomeTitle}>Create Organization</Text>
         <Text style={styles.welcomeSubtitle}>Get started with creating your organization</Text>
 
-        <View style={{ marginBottom: 40 }} />
+        <View style={{ marginBottom: 1 }} />
 
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('OrganizationScreen')}>
@@ -20,6 +20,9 @@ const CreateOrganization = ({ navigation }) => {
           </TouchableOpacity>
           <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('ExistingOrganizations')}>
             <Text style={styles.buttonText}>Existing Organizations</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('InviteLinkScreen')}>
+            <Text style={styles.buttonText}>Invite Link</Text>
           </TouchableOpacity>
         </View>
       </View>
