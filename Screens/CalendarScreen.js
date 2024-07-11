@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, Button, StyleSheet, Platform, TextInput } from 'react-native';
 import { Agenda } from 'react-native-calendars';
 import * as Calendar from 'expo-calendar';
+import { db } from '../firebaseConfig';
+import { collection, getDocs, addDoc } from 'firebase/firestore';
 
 const CalendarScreen = () => {
   const [items, setItems] = useState({});
@@ -10,14 +12,31 @@ const CalendarScreen = () => {
 
   useEffect(() => {
     (async () => {
-      const { status } = await Calendar.requestCalendarPermissionsAsync();
-      if (status === 'granted') {
+      const status = await Calendar.requestCalendarPermissionsAsync();
+      if (status.status === 'granted') {
         const calendars = await Calendar.getCalendarsAsync(Calendar.EntityTypes.EVENT);
-        console.log('Here are all your calendars:');
-        console.log({ calendars });
+        console.log('Here are all your calendars:', calendars);
       }
     })();
+    fetchEvents();
   }, []);
+
+  const fetchEvents = async () => {
+    const eventsSnapshot = await getDocs(collection(db, 'events'));
+    const fetchedEvents = {};
+    eventsSnapshot.forEach(doc => {
+      const data = doc.data();
+      const strTime = data.startDate.toISOString().split('T')[0];
+      if (!fetchedEvents[strTime]) {
+        fetchedEvents[strTime] = [];
+      }
+      fetchedEvents[strTime].push({
+        name: data.title,
+        height: 50,
+      });
+    });
+    setItems(fetchedEvents);
+  };
 
   const loadItems = (day) => {
     setTimeout(() => {
@@ -27,13 +46,6 @@ const CalendarScreen = () => {
         const strTime = new Date(time).toISOString().split('T')[0];
         if (!items[strTime]) {
           newItems[strTime] = [];
-          const numItems = Math.floor(Math.random() * 3 + 1);
-          for (let j = 0; j < numItems; j++) {
-            newItems[strTime].push({
-              name: 'Event ' + strTime,
-              height: Math.max(50, Math.floor(Math.random() * 150)),
-            });
-          }
         } else {
           newItems[strTime] = items[strTime];
         }
@@ -51,30 +63,52 @@ const CalendarScreen = () => {
   };
 
   const createCalendarEvent = async () => {
-    const defaultCalendarSource = Platform.OS === 'ios'
-      ? await getDefaultCalendarSource()
-      : { isLocalAccount: true, name: 'Expo Calendar' };
+    try {
+      const defaultCalendarSource = Platform.OS === 'ios'
+        ? await getDefaultCalendarSource()
+        : { isLocalAccount: true, name: 'Expo Calendar' };
 
-    const newCalendarID = await Calendar.createCalendarAsync({
-      title: 'Expo Calendar',
-      color: 'blue',
-      entityType: Calendar.EntityTypes.EVENT,
-      sourceId: defaultCalendarSource.id,
-      source: defaultCalendarSource,
-      name: 'internalCalendarName',
-      ownerAccount: 'personal',
-      accessLevel: Calendar.CalendarAccessLevel.OWNER,
-    });
+      const newCalendarID = await Calendar.createCalendarAsync({
+        title: 'Expo Calendar',
+        color: 'blue',
+        entityType: Calendar.EntityTypes.EVENT,
+        sourceId: defaultCalendarSource.id,
+        source: defaultCalendarSource,
+        name: 'internalCalendarName',
+        ownerAccount: 'personal',
+        accessLevel: Calendar.CalendarAccessLevel.OWNER,
+      });
 
-    const eventId = await Calendar.createEventAsync(newCalendarID, {
-      title: eventTitle,
-      startDate: new Date(eventDate),
-      endDate: new Date(new Date(eventDate).setHours(new Date(eventDate).getHours() + 1)),
-      timeZone: 'GMT',
-      location: 'Location',
-    });
+      const eventStartDate = new Date(eventDate);
+      const eventEndDate = new Date(eventStartDate);
+      eventEndDate.setHours(eventStartDate.getHours() + 1);
 
-    console.log(`Your new event ID is: ${eventId}`);
+      const eventId = await Calendar.createEventAsync(newCalendarID, {
+        title: eventTitle,
+        startDate: eventStartDate,
+        endDate: eventEndDate,
+        timeZone: 'GMT',
+        location: 'Location',
+      });
+
+      // Store event in Firestore
+      await addDoc(collection(db, 'events'), {
+        title: eventTitle,
+        description: 'Description of the event', // Add this if you want to store descriptions
+        startDate: eventStartDate,
+        endDate: eventEndDate,
+        location: 'Location',
+        calendarId: newCalendarID,
+        eventId: eventId
+      });
+
+      console.log(`Event created with ID: ${eventId}`);
+      alert(`Event created with ID: ${eventId}`);
+      fetchEvents(); // Refresh the events after adding a new one
+    } catch (error) {
+      console.error('Error creating event: ', error);
+      alert('Failed to create event');
+    }
   };
 
   return (

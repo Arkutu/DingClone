@@ -52,7 +52,7 @@ const OfficeScreen = ({ route, navigation }) => {
             <TouchableOpacity style={styles.tabItem} onPress={() => navigation.navigate('CalendarScreen')}>
               <Text style={styles.tabText}>Calendar</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.tabItem} onPress={() => navigation.navigate('ToDo')}>
+            <TouchableOpacity style={styles.tabItem} onPress={() => navigation.navigate('TodoListScreen')}>
               <Text style={styles.tabText}>To-do</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.tabItem} onPress={() => navigation.navigate('DING')}>
@@ -180,7 +180,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   button: {
-    backgroundColor: '#333',
+    backgroundColor: '#00072d',
     paddingVertical: 20,
     paddingHorizontal: 10,
     borderRadius: 10,

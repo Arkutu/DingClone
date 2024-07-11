@@ -28,6 +28,8 @@ import ExistingOrganizations from './Screens/ExistingOrganizations';
 import EditProfile from './Screens/EditProfile';
 import InviteLinkScreen from './Screens/InviteLinkScreen';  
 import CalendarScreen from './Screens/CalendarScreen';
+import TodoListScreen from './Screens/TodoListScreen';
+import AddNewTaskScreen from './Screens/AddNewTaskScreen';
 import { OrganizationProvider } from './OrganizationContext';
 import { handleInvitationLink } from './invitationUtils';
 
@@ -59,6 +61,8 @@ const screens = [
   { name: 'EditProfile', component: EditProfile },
   { name: 'InviteLinkScreen', component: InviteLinkScreen },
   { name: 'CalendarScreen', component: CalendarScreen },
+  { name: 'TodoListScreen', component: TodoListScreen },
+  { name: 'AddNewTask', component: AddNewTaskScreen },
 ];
 
 const prefix = Linking.createURL('/');
