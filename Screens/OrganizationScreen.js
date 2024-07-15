@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import { doc, setDoc, updateDoc, arrayUnion } from 'firebase/firestore';
 import { auth, db } from '../firebaseConfig';
 import { createInvitationLink } from '../invitationUtils'; // Adjust path accordingly
 
 const OrganizationScreen = ({ navigation }) => {
   const [organizationName, setOrganizationName] = useState('');
+  const [buttonLoading, setButtonLoading] = useState(false); // Add loading state
 
   const handleCreateOrganization = async () => {
     if (!organizationName) {
@@ -13,6 +14,7 @@ const OrganizationScreen = ({ navigation }) => {
       return;
     }
 
+    setButtonLoading(true); // Start loading
     try {
       const user = auth.currentUser;
 
@@ -32,9 +34,11 @@ const OrganizationScreen = ({ navigation }) => {
       const invitationLink = await createInvitationLink(organizationName);
       Alert.alert('Success', `Organization created successfully! Share this link to invite others: ${invitationLink}`);
 
+      setButtonLoading(false); // Stop loading
       navigation.navigate('MainHome', { organizationName });
 
     } catch (error) {
+      setButtonLoading(false); // Stop loading
       Alert.alert('Error', error.message);
     }
   };
@@ -63,7 +67,11 @@ const OrganizationScreen = ({ navigation }) => {
           style={styles.button}
           onPress={handleCreateOrganization}
         >
-          <Text style={styles.buttonText}>Create</Text>
+          {buttonLoading ? (
+            <ActivityIndicator size="small" color="#fff" />
+          ) : (
+            <Text style={styles.buttonText}>Create</Text>
+          )}
         </TouchableOpacity>
       </View>
     </View>

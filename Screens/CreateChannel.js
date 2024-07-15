@@ -1,14 +1,28 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { collection, addDoc, Timestamp } from 'firebase/firestore';
+import { db } from '../firebaseConfig';
+import { UserContext } from '../context/UserContext';
 
 const CreateChannel = ({ navigation }) => {
   const [channelName, setChannelName] = useState('');
+  const { user } = useContext(UserContext);
+
+  const handleCreateChannel = async (visibility) => {
+    const newChannel = {
+      name: channelName,
+      visibility,
+      members: visibility === 'Private' ? [user.uid] : [],
+      createdAt: Timestamp.now()
+    };
+    await addDoc(collection(db, 'channels'), newChannel);
+    navigation.navigate('ChannelBrowser');
+  };
 
   return (
     <View style={styles.container}>
-                <View style={{ marginBottom: 40 }} />
-
+      <View style={{ marginBottom: 40 }} />
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={24} color="#FFF" />
@@ -24,7 +38,9 @@ const CreateChannel = ({ navigation }) => {
         value={channelName}
         onChangeText={setChannelName}
       />
-      <Text style={styles.helperText}>Channels are where conversations happen around a topic. Use a name that’s easy to find and understand.</Text>
+      <Text style={styles.helperText}>
+        Channels are where conversations happen around a topic. Use a name that’s easy to find and understand.
+      </Text>
     </View>
   );
 };
@@ -54,7 +70,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#2b2b40',
     borderRadius: 8,
     padding: 10,
-    color: '#FFFF',
+    color: '#FFF',
     marginBottom: 20,
   },
   helperText: {

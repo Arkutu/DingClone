@@ -1,50 +1,78 @@
-// MainHomeScreen.js
-import React, { useState, useEffect } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, Image, ActivityIndicator } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
-import { doc, getDoc } from 'firebase/firestore';
-import { db } from '../firebaseConfig'; // Ensure firebaseConfig.js is set up correctly
+import { UserContext } from '../context/UserContext';
+import { useAppContext } from '../context/AppContext';
+import { auth, db } from '../firebaseConfig';
+import { collection, doc, getDoc, updateDoc } from 'firebase/firestore';
 
 const MainHomeScreen = ({ route, navigation }) => {
-  const { organizationName } = route.params || {};
+  const { organizationName: routeOrganizationName } = route.params || {};
+  const { user, loading } = useContext(UserContext);
+  const { organizationName: contextOrganizationName, setOrganizationName, selectedMembers, setSelectedMembers } = useAppContext();
+
+  const organizationName = routeOrganizationName || contextOrganizationName;
+  const [organizationMembers, setOrganizationMembers] = useState([]);
   const [searchText, setSearchText] = useState('');
   const [channels, setChannels] = useState([
     { name: 'general', description: 'General is a messaging app for groups of people who work together. You can send updates, share files, and organize conversations so that everyone is in the loop.' },
     { name: 'meeting', description: 'Meeting channel for discussing various topics and holding meetings.' },
     { name: 'random', description: 'Random channel for off-topic discussions and fun.' },
   ]);
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  const addChannel = (name, description) => {
-    setChannels([...channels, { name, description }]);
-  };
 
   useEffect(() => {
-    const auth = getAuth();
+    if (routeOrganizationName && routeOrganizationName !== contextOrganizationName) {
+      setOrganizationName(routeOrganizationName);
+    }
+  }, [routeOrganizationName, contextOrganizationName, setOrganizationName]);
 
-    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      if (currentUser) {
+  useEffect(() => {
+    const fetchMembers = async () => {
+      if (organizationName) {
         try {
-          const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
-          if (userDoc.exists()) {
-            setUser(userDoc.data());
+          const orgDoc = await getDoc(doc(db, 'organizations', organizationName));
+          if (orgDoc.exists()) {
+            const membersData = orgDoc.data().members || [];
+            if (membersData.length > 0) {
+              const userPromises = membersData.map(memberId => getDoc(doc(db, 'users', memberId)));
+              const users = await Promise.all(userPromises);
+              const members = users.map(user => ({
+                uid: user.id,
+                displayName: user.data().displayName,
+                photoURL: user.data().photoURL,
+              }));
+              setOrganizationMembers(members);
+            } else {
+              setOrganizationMembers([]);
+            }
           } else {
-            console.log('No user data found!');
+            setOrganizationMembers([]);
           }
         } catch (error) {
-          console.error('Error fetching user data:', error);
+          console.error('Error fetching members:', error);
+          setOrganizationMembers([]);
         }
-      } else {
-        setUser(null);
       }
-      setLoading(false);
-    });
+    };
 
-    return () => unsubscribe();
-  }, []);
+    const fetchDirectMessages = async () => {
+      if (user) {
+        try {
+          const userDoc = await getDoc(doc(db, 'users', user.uid));
+          if (userDoc.exists()) {
+            const directMessages = userDoc.data().directMessages || [];
+            setSelectedMembers(directMessages);
+          }
+        } catch (error) {
+          console.error('Error fetching direct messages:', error);
+        }
+      }
+    };
+
+    fetchMembers();
+    fetchDirectMessages();
+  }, [organizationName, user, setSelectedMembers]);
 
   const firstLetter = organizationName ? organizationName.charAt(0).toUpperCase() : '';
 
@@ -57,6 +85,31 @@ const MainHomeScreen = ({ route, navigation }) => {
       </View>
     );
   }
+
+  const filteredChannels = channels.filter(channel =>
+    !searchText || (channel.name && channel.name.toLowerCase().includes(searchText.toLowerCase()))
+  );
+
+  const startChat = async (member) => {
+    // Save direct message member to Firestore
+    try {
+      const userDoc = doc(db, 'users', user.uid);
+      await updateDoc(userDoc, {
+        directMessages: [...selectedMembers, member.uid],
+      });
+      setSelectedMembers([...selectedMembers, member.uid]);
+    } catch (error) {
+      console.error('Error saving direct message member:', error);
+    }
+
+    navigation.navigate('Chat', { recipientId: member.uid, recipientName: member.displayName, isDirectMessage: true });
+  };
+
+  const openChannel = (channel) => {
+    navigation.navigate('Chat', { channelName: channel.name, channelDescription: channel.description, isDirectMessage: false });
+  };
+
+  const selectedOrganizationMembers = organizationMembers.filter(member => selectedMembers.includes(member.uid));
 
   return (
     <View style={{ flex: 1 }}>
@@ -100,18 +153,18 @@ const MainHomeScreen = ({ route, navigation }) => {
             <ScrollView style={styles.content}>
               <View style={styles.section}>
                 <Text style={styles.sectionTitle}>Workspace</Text>
-                {channels.map((channel, index) => (
+                {filteredChannels.map((channel, index) => (
                   <TouchableOpacity
                     key={index}
                     style={styles.channelItem}
-                    onPress={() => navigation.navigate('Chat', { channelName: channel.name, channelDescription: channel.description })}
+                    onPress={() => openChannel(channel)}
                   >
                     <Text style={styles.channelText}># {channel.name}</Text>
                   </TouchableOpacity>
                 ))}
                 <TouchableOpacity
                   style={styles.addChannel}
-                  onPress={() => navigation.navigate('ChannelBrowser', { addChannel })}
+                  onPress={() => navigation.navigate('ChannelBrowser')}
                 >
                   <Text style={styles.addChannelText}>+ Add channel</Text>
                 </TouchableOpacity>
@@ -119,14 +172,29 @@ const MainHomeScreen = ({ route, navigation }) => {
 
               <View style={styles.section}>
                 <Text style={styles.sectionTitle}>Direct messages</Text>
-                <TouchableOpacity style={styles.channelItem} onPress={() => navigation.navigate('Chat', { channelName: `${user?.displayName} (you)`, channelDescription: 'Direct messages with yourself.' })}>
-                  <Text style={styles.channelText}>{user?.displayName} (you)</Text>
-                </TouchableOpacity>
+                {selectedOrganizationMembers.length > 0 ? (
+                  selectedOrganizationMembers.map((member, index) => (
+                    <TouchableOpacity
+                      key={index}
+                      style={styles.channelItem}
+                      onPress={() => startChat(member)}
+                    >
+                      {member.photoURL ? (
+                        <Image source={{ uri: member.photoURL }} style={styles.profileImage} />
+                      ) : (
+                        <Ionicons name="person-circle" size={40} color="#FFF" />
+                      )}
+                      <Text style={styles.channelText}>{member.displayName}</Text>
+                    </TouchableOpacity>
+                  ))
+                ) : (
+                  <Text style={styles.noMembersText}>No members available for direct messages.</Text>
+                )}
               </View>
 
               <View style={styles.suggestion}>
                 <Text style={styles.suggestionText}>Next, you could...</Text>
-                <TouchableOpacity style={styles.suggestionButton}>
+                <TouchableOpacity style={styles.suggestionButton} onPress={() => navigation.navigate('MembersScreen')}>
                   <Text style={styles.suggestionButtonText}>Add teammates</Text>
                 </TouchableOpacity>
               </View>
@@ -182,7 +250,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 10,
   },
   iconText: {
     color: '#FFF',
@@ -190,10 +257,10 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   headerTitle: {
-    fontSize: 20,
     color: '#FFF',
-    paddingVertical: 10,
-    flex: 1,
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginLeft: 10,
   },
   profileImage: {
     width: 40,
@@ -204,9 +271,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#2b2b40',
-    paddingHorizontal: 10,
-    paddingVertical: 8,
     borderRadius: 30,
+    paddingHorizontal: 10,
+    height: 40,
   },
   searchInput: {
     flex: 1,
@@ -216,46 +283,64 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     paddingHorizontal: 20,
+    paddingTop: 10,
   },
   section: {
-    marginVertical: 10,
+    marginBottom: 20,
   },
   sectionTitle: {
-    fontSize: 18,
     color: '#FFF',
+    fontSize: 16,
+    fontWeight: 'bold',
     marginBottom: 10,
   },
   channelItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#0d6efd',
   },
   channelText: {
     color: '#FFF',
-    fontSize: 16,
+    fontSize: 14,
+    marginLeft: 10,
   },
   addChannel: {
     paddingVertical: 10,
   },
   addChannelText: {
     color: '#0d6efd',
-    fontSize: 16,
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
+  noMembersText: {
+    color: '#888',
+    fontSize: 14,
+    marginBottom: 10,
   },
   suggestion: {
-    paddingVertical: 20,
-    borderTopWidth: 1,
-    borderTopColor: '#333',
+    backgroundColor: '#1a1a2e',
+    borderRadius: 10,
+    padding: 20,
+    alignItems: 'center',
+    marginBottom: 20,
   },
   suggestionText: {
     color: '#888',
+    fontSize: 14,
     marginBottom: 10,
   },
   suggestionButton: {
-    backgroundColor: '#1a1a2e',
-    padding: 10,
-    borderRadius: 10,
+    backgroundColor: '#0d6efd',
+    borderRadius: 5,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
   },
   suggestionButtonText: {
-    color: '#0d6efd',
-    fontSize: 16,
+    color: '#FFF',
+    fontSize: 14,
+    fontWeight: 'bold',
   },
   bottomNav: {
     flexDirection: 'row',
@@ -269,10 +354,12 @@ const styles = StyleSheet.create({
   navTextActive: {
     color: '#0d6efd',
     fontSize: 12,
+    marginTop: 2,
   },
   navTextInactive: {
-    color: '#888',
+    color: '#FFF',
     fontSize: 12,
+    marginTop: 2,
   },
 });
 

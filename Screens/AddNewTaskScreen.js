@@ -1,75 +1,78 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, Pressable } from 'react-native';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import moment from 'moment';
-import Ionicons from 'react-native-vector-icons/Ionicons'; // Make sure to install react-native-vector-icons
+import React, { useState, useEffect } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import RNPickerSelect from 'react-native-picker-select';
+import { collection, addDoc, query, where, getDocs } from 'firebase/firestore';
 import { db, auth } from '../firebaseConfig';
-import { collection, addDoc, Timestamp } from 'firebase/firestore';
 
-const AddNewTaskScreen = ({ navigation }) => {
-  const [title, setTitle] = useState('');
-  const [time, setTime] = useState('');
-  const [date, setDate] = useState(new Date());
-  const [showDatePicker, setShowDatePicker] = useState(false);
+const CreateTaskScreen = ({ navigation, route }) => {
+  const { projectId } = route.params; // Ensure projectId is passed through route.params
+  const [taskTitle, setTaskTitle] = useState('');
+  const [assignedTo, setAssignedTo] = useState('');
+  const [users, setUsers] = useState([]);
+  
+  // Assuming you have a way to get the current organizationId, e.g., from context or auth user details
+  const currentUser = auth.currentUser;
+  const organizationId = currentUser?.organizations?.[0]; // Assuming user belongs to only one organization
 
-  const handleSave = async () => {
-    const userId = auth.currentUser.uid;
-    const dueDate = Timestamp.fromDate(date); // Convert date to Firestore Timestamp
-    const newTask = { title, time, userId, dueDate };
+  useEffect(() => {
+    const fetchUsers = async () => {
+      if (organizationId) {
+        const q = query(collection(db, 'users'), where('organizations', 'array-contains', organizationId));
+        const querySnapshot = await getDocs(q);
+        const usersList = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        setUsers(usersList);
+      }
+    };
+
+    fetchUsers();
+  }, [organizationId]);
+
+  const handleCreateTask = async () => {
+    if (!taskTitle || !assignedTo) {
+      Alert.alert('Please enter a task title and select a user');
+      return;
+    }
 
     try {
-      await addDoc(collection(db, 'tasks'), newTask);
+      const taskRef = await addDoc(collection(db, 'taskmanage'), {
+        title: taskTitle,
+        assignedTo: assignedTo,
+        projectId: projectId,
+        status: 'Not Started',
+        createdAt: new Date(),
+      });
+
+      Alert.alert('Success', 'Task created successfully');
       navigation.goBack();
     } catch (error) {
-      console.error("Error adding document: ", error);
+      Alert.alert('Error', error.message);
     }
   };
 
-  const onChange = (event, selectedDate) => {
-    const currentDate = selectedDate || date;
-    setShowDatePicker(false);
-    setDate(currentDate);
-  };
-
-  const goBack = () => {
-    navigation.goBack();
-  };
+  const userOptions = users.map(user => ({
+    label: user.displayName || user.email,
+    value: user.uid,
+  }));
 
   return (
     <View style={styles.container}>
-      <Ionicons name="chevron-back" size={24} color="white" onPress={goBack} style={styles.icon} />
-      <Text style={styles.headerText}>Add New Task</Text>
-      <Text style={styles.label}>Task Title</Text>
+      <Text style={styles.title}>Create Task</Text>
       <TextInput
         style={styles.input}
-        value={title}
-        onChangeText={setTitle}
-        placeholder="Enter task title"
-        placeholderTextColor={"gray"}
+        placeholder="Task Title"
+        placeholderTextColor="#888"
+        value={taskTitle}
+        onChangeText={setTaskTitle}
       />
-      <Text style={styles.label}>Task Time</Text>
-      <TextInput
-        style={styles.input}
-        value={time}
-        onChangeText={setTime}
-        placeholder="Enter task time"
-        placeholderTextColor={"gray"}
+      <RNPickerSelect
+        onValueChange={(value) => setAssignedTo(value)}
+        items={userOptions}
+        placeholder={{ label: 'Select a user...', value: null }}
+        style={pickerSelectStyles}
       />
-      <Text style={styles.label}>Due Date</Text>
-      <Pressable onPress={() => setShowDatePicker(true)} style={styles.datePickerButton}>
-        <Text style={styles.datePickerText}>{moment(date).format('DD MMM YYYY')}</Text>
-      </Pressable>
-      {showDatePicker && (
-        <DateTimePicker
-          value={date}
-          mode="date"
-          display="default"
-          onChange={onChange}
-        />
-      )}
-      <Pressable style={styles.button} onPress={handleSave}>
-        <Text style={styles.buttonText}>Save</Text>
-      </Pressable>
+      <TouchableOpacity style={styles.button} onPress={handleCreateTask}>
+        <Text style={styles.buttonText}>Create Task</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -77,60 +80,64 @@ const AddNewTaskScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
-    backgroundColor: '#101223',
+    backgroundColor: '#1a1a2e',
+    padding: 20,
   },
-  icon: {
-    marginTop: 40,
-    marginBottom: 20,
-  },
-  headerText: {
-    fontSize: 30,
-    fontWeight: 'bold',
-    color: '#007bff',
-    marginBottom: 20,
+  title: {
+    fontSize: 24,
+    color: '#0d6efd',
     textAlign: 'center',
-  },
-  label: {
-    fontSize: 18,
-    color: 'white',
-    marginVertical: 10,
+    marginBottom: 20,
   },
   input: {
-    height: 40,
-    borderColor: '#fff',
-    backgroundColor: '#fff',
+    height: 50,
+    borderColor: '#888',
     borderWidth: 1,
-    borderRadius: 50,
-    paddingLeft: 18,
-    marginBottom: 12,
-    color: 'black',
-  },
-  datePickerButton: {
-    borderWidth: 1,
-    borderColor: '#CCCCCC',
-    padding: 10,
-    borderRadius: 5,
-    backgroundColor: '#FFFFFF',
-    alignItems: 'center',
-    marginTop: 10,
-  },
-  datePickerText: {
-    fontSize: 18,
-    color: '#333333',
+    borderRadius: 25,
+    paddingHorizontal: 15,
+    color: '#000',
+    backgroundColor: '#FFF',
+    marginBottom: 20,
   },
   button: {
-    backgroundColor: '#007bff',
-    padding: 12,
-    borderRadius: 50,
-    marginVertical: 20,
+    backgroundColor: '#0d6efd',
+    paddingVertical: 15,
+    borderRadius: 25,
+    alignItems: 'center',
+    width: '90%',
+    alignSelf: 'center',
   },
   buttonText: {
-    color: '#fff',
-    textAlign: 'center',
-    fontSize: 16,
-    fontWeight: 'bold',
+    color: '#FFF',
+    fontSize: 18,
   },
 });
 
-export default AddNewTaskScreen;
+const pickerSelectStyles = StyleSheet.create({
+  inputIOS: {
+    fontSize: 16,
+    paddingVertical: 12,
+    paddingHorizontal: 10,
+    borderWidth: 1,
+    borderColor: 'gray',
+    borderRadius: 4,
+    color: 'black',
+    paddingRight: 30,
+    backgroundColor: '#FFF',
+    marginBottom: 20,
+  },
+  inputAndroid: {
+    fontSize: 16,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    borderWidth: 0.5,
+    borderColor: 'purple',
+    borderRadius: 8,
+    color: 'black',
+    paddingRight: 30,
+    backgroundColor: '#FFF',
+    marginBottom: 20,
+  },
+});
+
+export default CreateTaskScreen;

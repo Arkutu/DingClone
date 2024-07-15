@@ -4,6 +4,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 const CreateOrganization = ({ navigation }) => {
   return (
     <View style={styles.container}>
+      
       <Text style={styles.title}>OfficeComms</Text>
 
       <View style={{ marginBottom: 120 }} />
@@ -53,7 +54,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
     height: '50%',
-    marginBottom: -400,
+    marginBottom: -300,
   },
   welcomeTitle: {
     fontSize: 24,
@@ -63,6 +64,7 @@ const styles = StyleSheet.create({
   welcomeSubtitle: {
     fontSize: 16,
     color: '#CCCCCC',
+    marginBottom: 40,
   },
   buttonContainer: {
     width: '80%',

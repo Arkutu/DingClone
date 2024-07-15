@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, Pressable, Alert } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Pressable, Alert, ActivityIndicator } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
@@ -9,6 +9,7 @@ import { auth, db } from '../firebaseConfig';  // Ensure the path is correct to 
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [buttonLoading, setButtonLoading] = useState(false); // Change state name to buttonLoading
   const navigation = useNavigation();
   const route = useRoute();
 
@@ -16,6 +17,7 @@ const LoginScreen = () => {
     if (!email || !password) {
       Alert.alert('Enter email and password');
     } else {
+      setButtonLoading(true);
       try {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
@@ -30,8 +32,10 @@ const LoginScreen = () => {
         }, { merge: true });
 
         Alert.alert('Success', 'Login successful!');
+        setButtonLoading(false);
         navigation.navigate('CreateOrganization'); // Navigate to CreateOrganization
       } catch (error) {
+        setButtonLoading(false);
         Alert.alert('Error', error.message);
       }
     }
@@ -39,6 +43,7 @@ const LoginScreen = () => {
 
   const handleGoogleSignIn = async () => {
     const provider = new GoogleAuthProvider();
+    setButtonLoading(true);
     try {
       const userCredential = await signInWithPopup(auth, provider);
       const user = userCredential.user;
@@ -53,8 +58,10 @@ const LoginScreen = () => {
       }, { merge: true });
 
       Alert.alert('Success', 'Login successful!');
+      setButtonLoading(false);
       navigation.navigate('CreateOrganization'); // Navigate to CreateOrganization
     } catch (error) {
+      setButtonLoading(false);
       Alert.alert('Error', error.message);
     }
   };
@@ -84,7 +91,11 @@ const LoginScreen = () => {
         secureTextEntry
       />
       <Pressable style={styles.button} onPress={handleLogin}>
-        <Text style={styles.buttonText}>Login</Text>
+        {buttonLoading ? (
+          <ActivityIndicator size="small" color="#fff" />
+        ) : (
+          <Text style={styles.buttonText}>Login</Text>
+        )}
       </Pressable>
       <View style={styles.signInContainer}>
         <View style={styles.line} />
@@ -128,6 +139,7 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 50,
     marginBottom: 50,
+    alignItems: 'center',
   },
   buttonText: {
     color: '#fff',

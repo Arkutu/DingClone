@@ -1,20 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { collection, addDoc, Timestamp } from 'firebase/firestore';
+import { db } from '../firebaseConfig';
+import { UserContext } from '../context/UserContext';
 
 const ChannelVisibility = ({ route, navigation }) => {
   const { channelName } = route.params;
   const [visibility, setVisibility] = useState('Public');
+  const { user } = useContext(UserContext);
 
-  const createChannel = () => {
-    // Logic to create the channel
-    navigation.navigate('ChannelDetails', { channelName, visibility });
+  const createChannel = async () => {
+    const newChannel = {
+      name: channelName,
+      visibility,
+      members: visibility === 'Private' ? [user.uid] : [],
+      createdAt: Timestamp.now()
+    };
+    await addDoc(collection(db, 'channels'), newChannel);
+    navigation.navigate('ChannelBrowser');
   };
 
   return (
     <View style={styles.container}>
-                        <View style={{ marginBottom: 40 }} />
-
+      <View style={{ marginBottom: 40 }} />
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={24} color="#FFF" />

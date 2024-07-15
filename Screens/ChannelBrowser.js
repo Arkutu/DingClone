@@ -1,19 +1,50 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, TextInput, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { collection, getDocs, addDoc } from 'firebase/firestore';
+import { db } from '../firebaseConfig';
+import { UserContext } from '../context/UserContext';
+
+const defaultChannels = [
+  { name: 'general', description: 'General channel for general discussions.', visibility: 'Public' },
+  { name: 'meeting', description: 'Channel for meetings.', visibility: 'Public' },
+  { name: 'random', description: 'Channel for random discussions.', visibility: 'Public' },
+];
 
 const ChannelBrowser = ({ navigation }) => {
   const [searchText, setSearchText] = useState('');
+  const [channels, setChannels] = useState(defaultChannels);
+  const { user } = useContext(UserContext);
 
-  const channels = [
-    { name: 'general', memberStatus: 'You are a member' },
-    { name: 'meeting', memberStatus: 'You are a member' },
-    { name: 'random', memberStatus: 'You are a member' },
-  ];
+  useEffect(() => {
+    const fetchChannels = async () => {
+      const querySnapshot = await getDocs(collection(db, 'channels'));
+      const channelsData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      const allChannels = [...defaultChannels, ...channelsData];
+      setChannels(allChannels);
+    };
+
+    fetchChannels();
+  }, []);
+
+  const handleAddChannel = async () => {
+    const newChannel = {
+      name: `new-channel-${Date.now()}`, // Replace with your desired channel name logic
+      description: 'Newly created channel.',
+      visibility: 'Public',
+      createdAt: new Date(),
+    };
+    await addDoc(collection(db, 'channels'), newChannel);
+    setChannels(prevChannels => [...prevChannels, newChannel]);
+  };
+
+  const filteredChannels = channels.filter(channel =>
+    channel.name && channel.name.toLowerCase().includes(searchText.toLowerCase())
+  );
 
   return (
     <View style={styles.container}>
-        <View style={{ marginBottom: 40 }} />
+      <View style={{ marginBottom: 40 }} />
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={24} color="#FFF" />
@@ -31,14 +62,22 @@ const ChannelBrowser = ({ navigation }) => {
         onChangeText={setSearchText}
       />
       <ScrollView>
-        {channels.map((channel, index) => (
-          <View key={index} style={styles.channelItem}>
+        {filteredChannels.map((channel, index) => (
+          <TouchableOpacity
+            key={index}
+            style={styles.channelItem}
+            onPress={() => navigation.navigate('Chat', { channelName: channel.name, channelDescription: channel.description })}
+          >
             <Text style={styles.channelName}>#{channel.name}</Text>
-            <Text style={styles.channelStatus}>{channel.memberStatus}</Text>
-          </View>
+            <Text style={styles.channelStatus}>
+              {channel.visibility === 'Public'
+                ? 'Public Channel'
+                : `Private Channel - ${channel.members?.length || 0} members`}
+            </Text>
+          </TouchableOpacity>
         ))}
       </ScrollView>
-      <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('CreateChannel')}>
+      <TouchableOpacity style={styles.addButton} onPress={handleAddChannel}>
         <Ionicons name="add" size={24} color="#FFF" />
       </TouchableOpacity>
     </View>

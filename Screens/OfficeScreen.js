@@ -1,7 +1,8 @@
-// OfficeScreen.js
-import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
+import React, { useState, useContext } from 'react';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, Image } from 'react-native';
 import { Ionicons, Feather, AntDesign, MaterialCommunityIcons, SimpleLineIcons, MaterialIcons, Entypo } from '@expo/vector-icons';
+import { UserContext } from '../context/UserContext';
+import { useAppContext } from '../context/AppContext';
 
 const MenuButton = ({ title, onPress, icon: Icon, iconName }) => (
   <TouchableOpacity style={styles.button} onPress={onPress}>
@@ -11,8 +12,11 @@ const MenuButton = ({ title, onPress, icon: Icon, iconName }) => (
 );
 
 const OfficeScreen = ({ route, navigation }) => {
-  const { organizationName } = route.params || {};
+  const { organizationName } = useAppContext();
   const [searchText, setSearchText] = useState('');
+  const { user } = useContext(UserContext);
+  
+  ;
 
   const firstLetter = organizationName ? organizationName.charAt(0).toUpperCase() : '';
 
@@ -30,11 +34,15 @@ const OfficeScreen = ({ route, navigation }) => {
               <Text style={styles.iconText}>{firstLetter}</Text>
             </View>
             <Text style={styles.headerTitle}>{organizationName}</Text>
-            <TouchableOpacity>
-              <Ionicons name="person-circle" size={40} color="#FFF" />
+            <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
+              {user && user.photoURL ? (
+                <Image source={{ uri: user.photoURL }} style={styles.profileImage} />
+              ) : (
+                <Ionicons name="person-circle" size={40} color="#FFF" />
+              )}
             </TouchableOpacity>
           </View>
-
+        
           <View style={styles.searchContainer}>
             <Ionicons name="search" size={20} color="#888" />
             <TextInput
@@ -69,21 +77,21 @@ const OfficeScreen = ({ route, navigation }) => {
 
         <View style={styles.mainContent}>
           <View style={styles.row}>
-            <MenuButton title="New Chat" icon={Ionicons} iconName="chatbox-outline" />
+            <MenuButton title="New Chat" icon={Ionicons} iconName="chatbox-outline" onPress={() => navigation.navigate('NewChatsScreen')} />
             <MenuButton title="Add Contact" icon={AntDesign} iconName="contacts" />
-            <MenuButton title="Cast" icon={Feather} iconName="cast" />
+            <MenuButton title="Clock In/Out" icon={Feather} iconName="clock" onPress={() => navigation.navigate('ClockInOutScreen')}/>
             <MenuButton title="Scan QR Code" icon={AntDesign} iconName="qrcode" />
           </View>
           <View style={styles.row}>
-            <MenuButton title="Create/Join organization" icon={SimpleLineIcons} iconName="organization" />
+            <MenuButton title="Create/Join organization" icon={SimpleLineIcons} iconName="organization" onPress={() => navigation.navigate('CreateOrganization')} />
             <MenuButton title="Join" icon={MaterialCommunityIcons} iconName="vector-combine" />
             <MenuButton title="Watermark" icon={MaterialCommunityIcons} iconName="watermark" />
           </View>
           <View style={styles.row}>
             <MenuButton title="Start Meeting" icon={MaterialIcons} iconName="meeting-room" onPress={() => navigation.navigate('VideoCall')} />
             <MenuButton title="Start Live" icon={MaterialIcons} iconName="live-tv" />
-            <MenuButton title="New Event" icon={MaterialIcons} iconName="event" />
-            <MenuButton title="Create to-do" icon={Entypo} iconName="add-to-list" />
+            <MenuButton title="Projects" icon={MaterialIcons} iconName="event" onPress={() => navigation.navigate('ProjectListScreen')} />
+            <MenuButton title="Create Project" icon={Entypo} iconName="add-to-list" onPress={() => navigation.navigate('ProjectScreen')} />
           </View>
         </View>
 
@@ -114,7 +122,7 @@ const styles = StyleSheet.create({
   headerContainer: {
     backgroundColor: '#1a1a2e',
     paddingHorizontal: 20,
-    paddingTop: 40,
+    paddingTop: 45,
     paddingBottom: 10,
   },
   header: {
@@ -130,7 +138,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 10,
+   
   },
   iconText: {
     color: '#FFF',
@@ -138,10 +146,14 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   headerTitle: {
-    fontSize: 20,
-    color: '#FFF',
-    paddingVertical: 10,
-    flex: 1,
+      color: '#FFF',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  profileImage: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
   },
   searchContainer: {
     flexDirection: 'row',

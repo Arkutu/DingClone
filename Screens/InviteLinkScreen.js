@@ -42,7 +42,7 @@ const InviteLinkScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#007bff',
+    backgroundColor: '#101223',
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,

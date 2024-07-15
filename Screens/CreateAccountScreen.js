@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, StyleSheet, Pressable, Alert } from "react-native";
+import { View, Text, TextInput, StyleSheet, Pressable, Alert, ActivityIndicator } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { getAuth, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
@@ -9,6 +9,7 @@ import { auth, db } from "../firebaseConfig"; // Ensure the path is correct to y
 const CreateAccountScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [buttonLoading, setButtonLoading] = useState(false); // Add loading state
   const navigation = useNavigation();
   const route = useRoute();
 
@@ -16,6 +17,7 @@ const CreateAccountScreen = () => {
     if (!email || !password) {
       Alert.alert("Enter email and password");
     } else {
+      setButtonLoading(true); // Start loading
       try {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
@@ -30,8 +32,10 @@ const CreateAccountScreen = () => {
         });
 
         Alert.alert("Success", "Account created successfully!");
+        setButtonLoading(false); // Stop loading
         navigation.navigate("CreateOrganization");
       } catch (error) {
+        setButtonLoading(false); // Stop loading
         Alert.alert("Error", error.message);
       }
     }
@@ -72,7 +76,11 @@ const CreateAccountScreen = () => {
         </Text>
       </Text>
       <Pressable style={styles.button} onPress={handleCreateAccount}>
-        <Text style={styles.buttonText}>Sign Up</Text>
+        {buttonLoading ? (
+          <ActivityIndicator size="small" color="#fff" />
+        ) : (
+          <Text style={styles.buttonText}>Sign Up</Text>
+        )}
       </Pressable>
       <View style={styles.signUpContainer}>
         <View style={styles.line} />
@@ -126,6 +134,7 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 50,
     marginBottom: 150,
+    alignItems: "center",
   },
   buttonText: {
     color: "#fff",

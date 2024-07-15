@@ -1,8 +1,13 @@
-// App.js
-import React from 'react';
+import React, { useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import * as Linking from 'expo-linking';
+import { OrganizationProvider } from './context/OrganizationContext';
+import { ProjectProvider } from './context/ProjectContext';
+import { LoadingProvider } from './context/LoadingContext'; // Adjust the import path as needed
+import { UserProvider } from './context/UserContext';
+import { AppProvider } from './context/AppContext';
+import { handleInvitationLink } from './invitationUtils';
 import Welcome from './Screens/Welcome';
 import LoginScreen from './Screens/LoginScreen';
 import HomeScreen from './Screens/HomeScreen';
@@ -30,8 +35,16 @@ import InviteLinkScreen from './Screens/InviteLinkScreen';
 import CalendarScreen from './Screens/CalendarScreen';
 import TodoListScreen from './Screens/TodoListScreen';
 import AddNewTaskScreen from './Screens/AddNewTaskScreen';
-import { OrganizationProvider } from './OrganizationContext';
-import { handleInvitationLink } from './invitationUtils';
+import ProjectListScreen from './Screens/ProjectListScreen';
+import ProjectScreen from './Screens/ProjectScreen';
+import TaskListScreen from './Screens/TaskListScreen';
+import TaskDetailScreen from './Screens/TaskDetailScreen';
+import CreateTaskScreen from './Screens/CreateTaskScreen';
+import ClockInOutScreen from './Screens/ClockInOutScreen';
+import LeaveRequestScreen from './Screens/LeaveRequestScreen';
+import ActivityScreen from './Screens/ActivityScreen';
+import MembersScreen from './Screens/MembersScreen';
+import NewChatsScreen from './Screens/NewChatsScreen';
 
 const Stack = createStackNavigator();
 
@@ -63,6 +76,16 @@ const screens = [
   { name: 'CalendarScreen', component: CalendarScreen },
   { name: 'TodoListScreen', component: TodoListScreen },
   { name: 'AddNewTask', component: AddNewTaskScreen },
+  { name: 'ProjectListScreen', component: ProjectListScreen },
+  { name: 'ProjectScreen', component: ProjectScreen },
+  { name: 'TaskListScreen', component: TaskListScreen },
+  { name: 'TaskDetailScreen', component: TaskDetailScreen },
+  { name: 'CreateTaskScreen', component: CreateTaskScreen },
+  { name: 'ClockInOutScreen', component: ClockInOutScreen},
+  { name: 'LeaveRequestScreen', component: LeaveRequestScreen },
+  { name: 'Activity', component: ActivityScreen },
+  { name: 'MembersScreen', component: MembersScreen },
+  { name: 'NewChatsScreen', component: NewChatsScreen },
 ];
 
 const prefix = Linking.createURL('/');
@@ -97,23 +120,37 @@ export default function App() {
     }
   };
 
-  React.useEffect(() => {
-    Linking.addEventListener('url', handleDeepLink);
+  useEffect(() => {
+    const subscription = Linking.addEventListener('url', handleDeepLink);
+    console.log('Linking subscription added', subscription);
 
     return () => {
-      Linking.removeEventListener('url', handleDeepLink);
+      if (subscription && subscription.remove) {
+        subscription.remove();
+        console.log('Linking subscription removed');
+      } else {
+        console.error('Linking subscription removal failed', subscription);
+      }
     };
   }, []);
 
   return (
-    <OrganizationProvider>
-      <NavigationContainer linking={linking}>
-        <Stack.Navigator initialRouteName="Welcome" screenOptions={{ headerShown: false }}>
-          {screens.map((screen, index) => (
-            <Stack.Screen key={index} name={screen.name} component={screen.component} />
-          ))}
-        </Stack.Navigator>
-      </NavigationContainer>
-    </OrganizationProvider>
+  <AppProvider>
+    <UserProvider>
+      <OrganizationProvider>
+        <ProjectProvider>
+          <LoadingProvider>
+            <NavigationContainer linking={linking}>
+                <Stack.Navigator initialRouteName="Welcome" screenOptions={{ headerShown: false }}>
+                  {screens.map((screen, index) => (
+                  <Stack.Screen key={index} name={screen.name} component={screen.component} />
+                   ))}
+                </Stack.Navigator>
+            </NavigationContainer>
+          </LoadingProvider>
+        </ProjectProvider>
+      </OrganizationProvider>
+    </UserProvider>
+  </AppProvider>
   );
 }

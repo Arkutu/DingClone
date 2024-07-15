@@ -1,27 +1,31 @@
 import React, { createContext, useState, useEffect } from 'react';
-import { supabase } from './lib/supabase';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '../firebaseConfig';
 
 export const OrganizationContext = createContext();
 
 export const OrganizationProvider = ({ children }) => {
   const [organizations, setOrganizations] = useState([]);
+  const [selectedOrganizationId, setSelectedOrganizationId] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchOrganizations = async () => {
-      const { data, error } = await supabase.from('organizations').select('*');
-      if (error) {
+      try {
+        const querySnapshot = await getDocs(collection(db, 'organizations'));
+        const orgs = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        setOrganizations(orgs);
+      } catch (error) {
         console.error('Error fetching organizations:', error);
-      } else {
-        setOrganizations(data);
       }
       setLoading(false);
     };
+
     fetchOrganizations();
   }, []);
 
   return (
-    <OrganizationContext.Provider value={{ organizations, loading }}>
+    <OrganizationContext.Provider value={{ organizations, selectedOrganizationId, setSelectedOrganizationId, loading }}>
       {children}
     </OrganizationContext.Provider>
   );

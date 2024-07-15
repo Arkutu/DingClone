@@ -2,14 +2,14 @@ import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput, KeyboardAvoidingView, Platform, Alert, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { db, auth, storage } from "../firebaseConfig";
-import { collection, addDoc, query, orderBy, onSnapshot, doc, getDoc, Timestamp } from "firebase/firestore";
+import { collection, addDoc, query, orderBy, onSnapshot, doc, getDoc, Timestamp, where } from "firebase/firestore";
 import { onAuthStateChanged } from 'firebase/auth';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import moment from 'moment';
 import * as ImagePicker from 'expo-image-picker';
 
 const ChatScreen = ({ route, navigation }) => {
-  const { channelName, channelDescription, memberCount } = route.params;
+  const { channelName, channelDescription, memberCount, recipientId, recipientName, isDirectMessage } = route.params;
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
   const [user, setUser] = useState(null);
@@ -42,7 +42,18 @@ const ChatScreen = ({ route, navigation }) => {
   }, []);
 
   useEffect(() => {
-    const q = query(collection(db, 'channels', channelName, 'messages'), orderBy('createdAt', 'asc'));
+    let q;
+    if (isDirectMessage) {
+      q = query(
+        collection(db, 'directMessages'),
+        where('senderId', 'in', [auth.currentUser.uid, recipientId]),
+        where('recipientId', 'in', [auth.currentUser.uid, recipientId]),
+        orderBy('createdAt', 'asc')
+      );
+    } else {
+      q = query(collection(db, 'channels', channelName, 'messages'), orderBy('createdAt', 'asc'));
+    }
+    
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const messagesData = snapshot.docs.map(doc => ({
         id: doc.id,
@@ -53,7 +64,7 @@ const ChatScreen = ({ route, navigation }) => {
     });
 
     return () => unsubscribe();
-  }, [channelName]);
+  }, [channelName, recipientId, isDirectMessage]);
 
   const handleSendMessage = async () => {
     if (message.trim() === '' && !image) {
@@ -76,14 +87,24 @@ const ChatScreen = ({ route, navigation }) => {
         imageUrl = await getDownloadURL(imageRef);
       }
 
-      await addDoc(collection(db, 'channels', channelName, 'messages'), {
+      const messageData = {
         text: message,
         imageUrl,
         createdAt: Timestamp.now(),
         userId: user.uid,
         userName: user.displayName,
         userPhoto: user.photoURL,
-      });
+      };
+
+      if (isDirectMessage) {
+        await addDoc(collection(db, 'directMessages'), {
+          ...messageData,
+          senderId: user.uid,
+          recipientId: recipientId,
+        });
+      } else {
+        await addDoc(collection(db, 'channels', channelName, 'messages'), messageData);
+      }
 
       setMessage('');
       setImage(null);
@@ -101,9 +122,23 @@ const ChatScreen = ({ route, navigation }) => {
       quality: 1,
     });
 
-    if (!result.canceled) {
+    if (!result.cancelled) {
       setImage(result.uri);
     }
+  };
+
+  const getChatTitle = () => {
+    if (isDirectMessage) {
+      return recipientName;
+    }
+    return channelName;
+  };
+
+  const getMemberCount = () => {
+    if (isDirectMessage) {
+      return 1;
+    }
+    return memberCount;
   };
 
   return (
@@ -119,12 +154,16 @@ const ChatScreen = ({ route, navigation }) => {
             <Ionicons name="chevron-back" size={24} color="white" />
           </TouchableOpacity>
           <View style={styles.headerTextContainer}>
-            <Text style={styles.channelName}>#{channelName}</Text>
-            <Text style={styles.memberCount}>{memberCount} member{memberCount !== 1 ? 's' : ''}</Text>
+            <Text style={styles.channelName}>{getChatTitle()}</Text>
+            <Text style={styles.memberCount}>{getMemberCount()} member{getMemberCount() !== 1 ? 's' : ''}</Text>
           </View>
           <View style={styles.headerIcons}>
-            <Ionicons name="add" size={24} color="#FFF" style={styles.headerIcon} />
-            <Ionicons name="headset" size={24} color="#FFF" style={styles.headerIcon} />
+            <TouchableOpacity>
+              <Text><Ionicons name="add" size={24} color="#FFF" style={styles.headerIcon} /></Text>
+            </TouchableOpacity>
+            <TouchableOpacity>
+              <Text><Ionicons name="headset" size={24} color="#FFF" style={styles.headerIcon} /></Text>
+            </TouchableOpacity>
           </View>
         </View>
         <ScrollView style={styles.messageList} ref={scrollViewRef}>
@@ -169,7 +208,7 @@ const ChatScreen = ({ route, navigation }) => {
         </ScrollView>
         <View style={styles.inputContainer}>
           <TouchableOpacity onPress={handlePickImage}>
-            <Ionicons name="add-circle" size={28} color="#FFF" />
+            <Text><Ionicons name="add-circle" size={28} color="#FFF" /></Text>
           </TouchableOpacity>
           <TextInput
             style={styles.input}
@@ -180,7 +219,7 @@ const ChatScreen = ({ route, navigation }) => {
             onSubmitEditing={handleSendMessage}
           />
           <TouchableOpacity onPress={handleSendMessage}>
-            <Ionicons name="send" size={28} color="#FFF" />
+            <Text><Ionicons name="send" size={28} color="#FFF" /></Text>
           </TouchableOpacity>
         </View>
         {image && <Image source={{ uri: image }} style={styles.previewImage} />}
@@ -192,53 +231,60 @@ const ChatScreen = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#00072d',
+    backgroundColor: '#000',
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: 10,
-    backgroundColor: '#1a1a2e',
-    height: 50,
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+    backgroundColor: '#0a0a0a',
   },
   headerTextContainer: {
-    marginLeft: 8,
+    flex: 1,
+    marginLeft: 10,
   },
   channelName: {
-    fontSize: 16,
-    color: 'white',
+    fontSize: 18,
+    color: '#FFF',
     fontWeight: 'bold',
   },
   memberCount: {
-    color: '#888',
     fontSize: 14,
+    color: '#FFF',
   },
   headerIcons: {
     flexDirection: 'row',
   },
   headerIcon: {
-    marginLeft: 15,
+    marginHorizontal: 10,
   },
   messageList: {
     flex: 1,
+    padding: 10,
   },
   messageContainer: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    padding: 10,
+    marginBottom: 10,
   },
   myMessage: {
     alignSelf: 'flex-end',
-    backgroundColor: '#1e3a8a',
-    borderRadius: 10,
-    margin: 10,
+    backgroundColor: '#2b2b2b',
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    borderBottomLeftRadius: 10,
+    padding: 10,
+    marginLeft: 50,
   },
   otherMessage: {
     alignSelf: 'flex-start',
-    backgroundColor: '#27272a',
-    borderRadius: 10,
-    margin: 10,
+    backgroundColor: '#1a1a1a',
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    borderBottomRightRadius: 10,
+    padding: 10,
+    marginRight: 50,
   },
   avatar: {
     width: 40,
@@ -247,39 +293,38 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   messageContent: {
-    maxWidth: '80%',
+    flex: 1,
   },
   messageAuthor: {
-    fontSize: 14,
-    color: '#FFF',
     fontWeight: 'bold',
+    color: '#FFF',
+    marginBottom: 5,
   },
   messageText: {
-    fontSize: 16,
     color: '#FFF',
     marginBottom: 5,
   },
   messageImage: {
     width: 200,
     height: 200,
-    borderRadius: 10,
-    marginTop: 5,
+    marginBottom: 5,
   },
   messageTime: {
     fontSize: 12,
     color: '#888',
-    marginTop: 5,
   },
   welcomeText: {
     fontSize: 24,
-    color: '#FFF',
     fontWeight: 'bold',
-    marginBottom: 10,
+    color: '#FFF',
+    textAlign: 'center',
+    marginTop: 50,
   },
   description: {
-    color: '#FFF',
     fontSize: 16,
-    marginBottom: 20,
+    color: '#FFF',
+    textAlign: 'center',
+    marginTop: 10,
   },
   actionItems: {
     marginTop: 20,
@@ -287,32 +332,33 @@ const styles = StyleSheet.create({
   actionItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 10,
+    marginBottom: 15,
   },
   actionText: {
-    color: '#FFF',
-    fontSize: 16,
     marginLeft: 10,
+    color: '#FFF',
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    backgroundColor: '#0a0a0a',
     padding: 10,
-    backgroundColor: '#1a1a2e',
   },
   input: {
     flex: 1,
     height: 40,
-    backgroundColor: '#FFF',
+    borderColor: '#FFF',
+    borderWidth: 1,
     borderRadius: 20,
     paddingHorizontal: 10,
     marginHorizontal: 10,
+    color: '#FFF',
   },
   previewImage: {
     width: 100,
     height: 100,
-    alignSelf: 'center',
-    marginVertical: 10,
+    marginBottom: 10,
+    marginLeft: 10,
   },
 });
 
