@@ -91,10 +91,25 @@ const CreateAccountScreen = ({ navigation }) => {
         });
         // navigation.navigate("CreateOrganization");
 
+        // navigation.dispatch(
+        //   CommonActions.reset({
+        //     index: 0,
+        //     // routes: [{ name: "MainHome" }],
+        //     routes: [{ name: ("MainTabs", { screen: "MainHome" }) }],
+        //   })
+        // );
+
         navigation.dispatch(
           CommonActions.reset({
             index: 0,
-            routes: [{ name: "Home" }],
+            routes: [
+              {
+                name: "MainTabs",
+                state: {
+                  routes: [{ name: "MainHome" }],
+                },
+              },
+            ],
           })
         );
       } catch (error) {
@@ -168,7 +183,7 @@ const CreateAccountScreen = ({ navigation }) => {
             <Button
               title={
                 loading ? (
-                  <ActivityIndicator size="small" color="#ddd" />
+                  <ActivityIndicator size="small" color="#007bff" />
                 ) : (
                   "Sign In"
                 )

@@ -184,8 +184,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 250,
-    marginBottom: 80,
+    marginTop: 280,
+    marginBottom: 140,
   },
   img: {
     width: 100,
@@ -199,7 +199,7 @@ const styles = StyleSheet.create({
     marginRight: 20,
   },
   headerTextBlack: {
-    color: "#333",
+    color: "#444",
     fontSize: 35,
     fontWeight: "800",
   },

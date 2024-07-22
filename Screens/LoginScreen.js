@@ -35,7 +35,6 @@ const LoginScreen = ({ navigation }) => {
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      title: "Login",
       headerTitleStyle: { color: "#fff" },
       headerLeft: () => (
         <TouchableOpacity style={styles.iconHeader}>
@@ -88,10 +87,24 @@ const LoginScreen = ({ navigation }) => {
 
         //navigation.navigate("CreateOrganization"); // Navigate to CreateOrganization
 
+        // navigation.dispatch(
+        //   CommonActions.reset({
+        //     index: 0,
+        //     routes: [{ name: ("MainTabs", { screen: "MainHome" }) }],
+        //     // routes: [{ name: "MainHome" }],
+        //   })
+        // );
         navigation.dispatch(
           CommonActions.reset({
             index: 0,
-            routes: [{ name: "Home" }],
+            routes: [
+              {
+                name: "MainTabs",
+                state: {
+                  routes: [{ name: "MainHome" }],
+                },
+              },
+            ],
           })
         );
       } catch (error) {
@@ -137,7 +150,7 @@ const LoginScreen = ({ navigation }) => {
       navigation.dispatch(
         CommonActions.reset({
           index: 0,
-          routes: [{ name: "Home" }],
+          routes: [{ name: "MainHome" }],
         })
       );
     } catch (error) {
@@ -199,7 +212,7 @@ const LoginScreen = ({ navigation }) => {
             <Button
               title={
                 loading ? (
-                  <ActivityIndicator size="small" color="#ddd" />
+                  <ActivityIndicator size="small" color="#007bff" />
                 ) : (
                   "Login"
                 )
@@ -251,7 +264,8 @@ const styles = StyleSheet.create({
   },
   iconHeader: {
     marginLeft: 15,
-    marginBottom: 20,
+    alignItems: "center",
+    // marginBottom: 20,
   },
   innerContainer: {
     padding: 10,
