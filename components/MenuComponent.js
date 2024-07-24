@@ -193,7 +193,7 @@ const MenuComponent = ({ isVisible, onClose, navigation }) => {
                     activeOpacity={0.5}
                     style={styles.upContainer}
                     onPress={() => {
-                      navigation.navigate("SwitchAccount");
+                      navigation.navigate("AddNewAccount");
                       onClose();
                     }}
                   >

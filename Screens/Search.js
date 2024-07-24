@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useLayoutEffect } from "react";
 import {
   View,
   Text,
@@ -8,12 +8,43 @@ import {
   TouchableOpacity,
   Alert,
 } from "react-native";
+import { Ionicons, AntDesign } from "@expo/vector-icons";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "../firebaseConfig"; // Adjust import path if needed
 
 const Search = ({ navigation }) => {
   const [searchText, setSearchText] = useState("");
   const [results, setResults] = useState([]);
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerTitleStyle: {
+        color: "#fff",
+        marginLeft: 30,
+        justifyContent: "center",
+      },
+      headerStyle: { backgroundColor: "#fff" },
+      headerLeft: () => {
+        return (
+          <View style={{ marginLeft: 13 }}>
+            <TouchableOpacity
+              activeOpacity={0.5}
+              style={styles.leftIconContainer}
+              onPress={() => navigation.goBack()}
+            >
+              <Ionicons name="chevron-back-sharp" size={28} color="#333" />
+            </TouchableOpacity>
+          </View>
+        );
+      },
+      headerRight: () => {
+        return (
+          <View>
+            <Text></Text>
+          </View>
+        );
+      },
+    });
+  }, [navigation]);
 
   useEffect(() => {
     if (searchText.length === 0) {
@@ -59,13 +90,30 @@ const Search = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <TextInput
-        style={styles.input}
-        placeholder="Search..."
-        placeholderTextColor="#888"
-        value={searchText}
-        onChangeText={setSearchText}
-      />
+      <View style={styles.innerContainer}>
+        <TouchableOpacity
+          activeOpacity={0.5}
+          style={styles.leftIconContainer}
+          onPress={() => navigation.goBack()}
+        >
+          <Ionicons name="chevron-back-sharp" size={28} color="#333" />
+        </TouchableOpacity>
+
+        <View style={styles.searchContainer}>
+          <View style={styles.icon}>
+            <AntDesign name="search1" size={20} color="gray" />
+          </View>
+          <TextInput
+            placeholder="Search..."
+            placeholderTextColor={"gray"}
+            autoFocus
+            value={searchText}
+            onChangeText={setSearchText}
+            style={styles.search}
+          />
+        </View>
+      </View>
+
       <FlatList
         data={results}
         renderItem={renderItem}
@@ -82,17 +130,43 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: "#f5f5f5",
-  },
-  input: {
-    height: 50,
-    borderColor: "#ccc",
-    borderWidth: 1,
-    borderRadius: 25,
-    paddingHorizontal: 15,
     backgroundColor: "#fff",
-    marginBottom: 20,
   },
+  innerContainer: {
+    flexDirection: "row",
+    marginTop: 30,
+    marginRight: 40,
+  },
+  leftIconContainer: {
+    marginTop: 5,
+    marginRight: 2,
+  },
+  searchContainer: {
+    width: "100%",
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 10,
+    marginBottom: 30,
+  },
+  search: {
+    position: "absolute",
+    width: "100%",
+    borderWidth: 1,
+    borderColor: "#f0f0f0",
+    borderRadius: 5,
+    backgroundColor: "#f0f0f0",
+    padding: 4,
+    fontSize: 16,
+    paddingHorizontal: 40,
+    color: "#333",
+    marginLeft: 10,
+    zIndex: 0,
+  },
+  icon: {
+    marginLeft: 20,
+    zIndex: 1,
+  },
+
   item: {
     padding: 15,
     backgroundColor: "#fff",

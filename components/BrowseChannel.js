@@ -36,37 +36,37 @@ const ChannelBrowser = ({ navigation }) => {
   const [channels, setChannels] = useState(defaultChannels);
   const { user } = useContext(UserContext);
 
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      title: "Workspace Browser",
-      headerTitleStyle: {
-        color: "#555",
-        marginLeft: 30,
-        justifyContent: "center",
-      },
-      headerStyle: { backgroundColor: "#fff" },
-      headerLeft: () => {
-        return (
-          <View style={{ marginLeft: 13 }}>
-            <TouchableOpacity
-              activeOpacity={0.5}
-              style={styles.leftIconContainer}
-              onPress={() => navigation.goBack()}
-            >
-              <Ionicons name="chevron-back-sharp" size={28} color="#333" />
-            </TouchableOpacity>
-          </View>
-        );
-      },
-      headerRight: () => {
-        return (
-          <View>
-            <Text style={styles.memberCount}>{channels.length} cha...</Text>
-          </View>
-        );
-      },
-    });
-  }, [navigation]);
+  //   useLayoutEffect(() => {
+  //     navigation.setOptions({
+  //       title: "Workspace Browser",
+  //       headerTitleStyle: {
+  //         color: "#555",
+  //         marginLeft: 30,
+  //         justifyContent: "center",
+  //       },
+  //       headerStyle: { backgroundColor: "#fff" },
+  //       headerLeft: () => {
+  //         return (
+  //           <View style={{ marginLeft: 13 }}>
+  //             <TouchableOpacity
+  //               activeOpacity={0.5}
+  //               style={styles.leftIconContainer}
+  //               onPress={() => navigation.goBack()}
+  //             >
+  //               <Ionicons name="chevron-back-sharp" size={28} color="#333" />
+  //             </TouchableOpacity>
+  //           </View>
+  //         );
+  //       },
+  //       headerRight: () => {
+  //         return (
+  //           <View>
+  //             <Text style={styles.memberCount}>{channels.length} cha...</Text>
+  //           </View>
+  //         );
+  //       },
+  //     });
+  //   }, [navigation]);
 
   useEffect(() => {
     const fetchChannels = async () => {
@@ -101,7 +101,7 @@ const ChannelBrowser = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.searchContainer}>
+      {/* <View style={styles.searchContainer}>
         <View style={styles.icon}>
           <AntDesign name="search1" size={18} color="gray" />
         </View>
@@ -112,9 +112,9 @@ const ChannelBrowser = ({ navigation }) => {
           onChangeText={setSearchText}
           style={styles.search}
         />
-      </View>
+      </View> */}
 
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView>
         {filteredChannels.map((channel, index) => (
           <TouchableOpacity
             activeOpacity={0.5}
@@ -137,9 +137,9 @@ const ChannelBrowser = ({ navigation }) => {
         ))}
       </ScrollView>
 
-      <TouchableOpacity style={styles.addButton} onPress={handleAddChannel}>
+      {/* <TouchableOpacity style={styles.addButton} onPress={handleAddChannel}>
         <Ionicons name="add" size={24} color="#FFF" />
-      </TouchableOpacity>
+      </TouchableOpacity> */}
     </SafeAreaView>
   );
 };

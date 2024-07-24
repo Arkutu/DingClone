@@ -15,6 +15,8 @@ import { useRoute } from "@react-navigation/native";
 import { useAppContext } from "../context/AppContext";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../firebaseConfig";
+import { fonts } from "react-native-elements/dist/config";
+import { color } from "react-native-elements/dist/helpers";
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -34,7 +36,6 @@ const Work = ({ navigation }) => {
         <TouchableOpacity
           activeOpacity={0.5}
           //   onPress={() => navigation.navigate("UserInformation")}
-          //   onPress={() => navigation.navigate("AddNewTask")}
           onPress={() => navigation.navigate("CreateOrganization")}
         >
           <View style={styles.iconTop}>
@@ -131,45 +132,192 @@ const Work = ({ navigation }) => {
           setActiveSection(sectionIndex);
         }}
         scrollEventThrottle={16}
+        // showsVerticalScrollIndicator={false}
+        showsHorizontalScrollIndicator={false}
       >
+        {/* Locaiton */}
         <ImageBackground
           source={require("../assets/1.png")}
           style={styles.section}
         >
-          <Text style={styles.sectionText}>Phone</Text>
-          <Text>Phone</Text>
+          <View style={styles.linIcon}>
+            <Text style={styles.inText}>OfficeComms Attendance</Text>
+            <Text style={styles.inTextNext}>
+              Create or join a organization, you will get
+            </Text>
+          </View>
 
-          <Text>Walker</Text>
+          <View style={styles.lsectionTextHeader}>
+            <View style={styles.textFC}>
+              <Text style={styles.textF}>
+                Salary calculation efficiency raises
+              </Text>
+              <Text style={styles.NumOne}>400%</Text>
+            </View>
+
+            <View style={styles.textFC}>
+              <Text style={styles.textF}>Company expense reduces</Text>
+              <Text style={styles.NumOne}>100%</Text>
+            </View>
+          </View>
+
+          <View style={styles.sectionTextContain}>
+            <Text style={styles.sectionText}>
+              Check your team status on mobile and generate attendance report in
+              one step
+            </Text>
+          </View>
         </ImageBackground>
 
+        {/* Person */}
         <ImageBackground
           source={require("../assets/3.png")}
           style={styles.section}
         >
-          <Text style={styles.sectionText}>Location</Text>
+          <View style={styles.pinIcon}>
+            <Text style={styles.inText}>OfficeComms Approval</Text>
+            <Text style={styles.inTextNext}>
+              Create or join a organization, you will get
+            </Text>
+          </View>
+
+          <View style={styles.psectionTextHeader}>
+            <View style={styles.textFC}>
+              <Text style={styles.textF}>Company OA expense reduces</Text>
+              <Text style={styles.NumOne}>$10,000</Text>
+            </View>
+
+            <View style={styles.textFC}>
+              <Text style={styles.textF}>Approval process raises</Text>
+              <Text style={styles.NumOne}>10X</Text>
+            </View>
+          </View>
+
+          <View style={styles.sectionTextContain}>
+            <Text style={styles.sectionText}>
+              Customised templates suit all types of business connecting to
+              Attendance system and Office
+            </Text>
+          </View>
         </ImageBackground>
 
+        {/* Video Call */}
         <ImageBackground
           source={require("../assets/4.png")}
           style={styles.section}
         >
-          <Text style={styles.sectionText}>Video Call</Text>
+          <View style={styles.vcinIcon}>
+            <Text style={styles.inText}>Unified Communucation</Text>
+            <Text style={styles.inTextNext}>
+              Create or join a organization, you will get
+            </Text>
+          </View>
+
+          <View style={styles.vcsectionTextHeader}>
+            <View style={styles.textFC}>
+              <Text style={styles.textF}>Company expense reduces</Text>
+              <Text style={styles.NumOne}>$10,000</Text>
+              <Text style={styles.textF}>/yr</Text>
+            </View>
+
+            <View style={styles.textFC}>
+              <Text style={styles.textF}>Deployment expense reduces</Text>
+              <Text style={styles.NumOne}>99%</Text>
+            </View>
+          </View>
+
+          <View style={styles.sectionTextContain}>
+            <Text style={styles.sectionText}>
+              Free internet call and conference for internal and external
+              contacts
+            </Text>
+          </View>
         </ImageBackground>
 
+        {/* Cloud */}
         <ImageBackground
           source={require("../assets/5.png")}
           style={styles.section}
         >
-          <Text style={styles.sectionText}>Cloud</Text>
+          <View style={styles.inIcon}>
+            <Text style={styles.inText}>OfficeComms</Text>
+            <Text style={styles.inTextNext}>
+              Create or join a organization, you will get
+            </Text>
+          </View>
+
+          <View style={styles.sectionTextHeader}>
+            <View style={styles.textFC}>
+              <Text style={styles.textF}>Deployment expense reduces</Text>
+              <Text style={styles.NumOne}>$10,000</Text>
+            </View>
+
+            <View style={styles.textFC}>
+              <Text style={styles.textF}>Daily work saves</Text>
+              <Text style={styles.NumOne}>60</Text>
+              <Text style={styles.textF}>min/day</Text>
+            </View>
+          </View>
+
+          <View style={styles.sectionTextContain}>
+            <Text style={styles.sectionText}>
+              Free with permission management to keep bank level data security
+              Easy to store enables collabrate easily with external contacts
+            </Text>
+          </View>
         </ImageBackground>
 
+        {/* Messages */}
         <ImageBackground
           source={require("../assets/2.png")}
           style={styles.section}
         >
-          <Text style={styles.sectionText}>Messages</Text>
+          <View style={styles.minIcon}>
+            <Text style={styles.inText}>OfficeComms Mail</Text>
+            <Text style={styles.inTextNext}>
+              Create or join a organization, you will get
+            </Text>
+          </View>
+
+          <View style={styles.msectionTextHeader}>
+            <View style={styles.textFC}>
+              <Text style={styles.textF}>Company expense reduces</Text>
+              <Text style={styles.NumOne}>$10,000</Text>
+              <Text style={styles.textF}>/yr</Text>
+            </View>
+
+            <View style={styles.textFC}>
+              <Text style={styles.textF}>Deployment efficiency raises</Text>
+              <Text style={styles.NumOne}>90%</Text>
+            </View>
+          </View>
+
+          <View style={styles.sectionTextContain}>
+            <Text style={styles.sectionText}>
+              Mobile based management, integrated with IM and one step
+              transforming into Office notice
+            </Text>
+          </View>
         </ImageBackground>
       </ScrollView>
+
+      <View style={styles.chaOrgContainer}>
+        <TouchableOpacity
+          style={styles.addButton}
+          activeOpacity={0.5}
+          onPress={() => navigation.navigate()}
+        >
+          <Text style={styles.addButtonText}>Find Friends</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.addTeam}
+          activeOpacity={0.5}
+          onPress={() => navigation.navigate("OrganizationScreen")}
+        >
+          <Text style={styles.addTeamText}>Create organization</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -211,9 +359,120 @@ const styles = StyleSheet.create({
     padding: 20,
     flex: 1,
   },
-  sectionText: {
+
+  // ? Paragraph
+  // ? Person
+  pinIcon: {
+    marginTop: 180,
+    width: "100%",
+  },
+  psectionTextHeader: {
+    marginTop: 20,
+    marginBottom: 130,
+  },
+
+  // ? Location
+  linIcon: {
+    marginTop: 180,
+    width: "100%",
+  },
+  lsectionTextHeader: {
+    marginTop: 20,
+    marginBottom: 130,
+  },
+
+  //? Message
+  minIcon: {
+    marginTop: 180,
+    width: "100%",
+  },
+  msectionTextHeader: {
+    marginTop: 20,
+    marginBottom: 130,
+  },
+
+  //? VCall
+  vcinIcon: {
+    marginTop: 180,
+    width: "100%",
+  },
+  vcsectionTextHeader: {
+    marginTop: 20,
+    marginBottom: 140,
+  },
+
+  //?Cloud
+  inIcon: {
+    marginTop: 190,
+    width: "100%",
+  },
+  inText: {
     fontSize: 18,
+    color: "#fff",
+  },
+  inTextNext: {
+    fontSize: 15,
+    color: "#fff",
+  },
+  sectionTextHeader: {
+    marginTop: 20,
+    marginBottom: 110,
+  },
+  textFC: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  textF: {
     color: "#333",
+    fontSize: 16,
+    fontWeight: "700",
+    marginTop: 10,
+  },
+  NumOne: {
+    marginLeft: 5,
+    color: "#333",
+    fontSize: 30,
+    fontWeight: "700",
+  },
+  sectionTextContain: {
+    width: "100%",
+  },
+  sectionText: {
+    fontSize: 16,
+    color: "#aaa",
+  },
+
+  // ?
+  chaOrgContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 20,
+    marginBottom: 15,
+  },
+  addButton: {
+    width: 160,
+    backgroundColor: "#eee",
+    padding: 12,
+    borderRadius: 5,
+    alignItems: "center",
+  },
+  addTeam: {
+    width: 160,
+    backgroundColor: "#007bff",
+    padding: 12,
+    borderRadius: 5,
+    alignItems: "center",
+  },
+  addButtonText: {
+    color: "#555",
+    fontSize: 14,
+    fontWeight: "800",
+  },
+  addTeamText: {
+    color: "#fff",
+    fontSize: 14,
+    fontWeight: "800",
   },
 });
 

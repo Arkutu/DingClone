@@ -1,8 +1,21 @@
-import React, { useState, useContext, useEffect } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
-import { collection, addDoc, Timestamp, query, where, getDocs, orderBy, limit, updateDoc, doc } from 'firebase/firestore';
-import { db } from '../firebaseConfig';
-import { UserContext } from '../context/UserContext';
+import React, { useState, useContext, useEffect, useLayoutEffect } from "react";
+import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
+import {
+  collection,
+  addDoc,
+  Timestamp,
+  query,
+  where,
+  getDocs,
+  orderBy,
+  limit,
+  updateDoc,
+  doc,
+} from "firebase/firestore";
+import { db } from "../firebaseConfig";
+import { UserContext } from "../context/UserContext";
+import { Ionicons } from "@expo/vector-icons";
+import { StatusBar } from "expo-status-bar";
 
 const ClockInOutScreen = ({ navigation }) => {
   const { user } = useContext(UserContext);
@@ -10,12 +23,35 @@ const ClockInOutScreen = ({ navigation }) => {
   const [clockInTime, setClockInTime] = useState(null);
   const [attendanceDocId, setAttendanceDocId] = useState(null);
 
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerTitleStyle: { color: "#ccc" },
+      headerStyle: {
+        backgroundColor: "#ccc",
+      },
+      headerLeft: () => (
+        <TouchableOpacity
+          activeOpacity={0.5}
+          style={{ marginLeft: 13 }}
+          onPress={() => navigation.goBack()}
+        >
+          <Ionicons name="chevron-back-sharp" size={28} color="#333" />
+        </TouchableOpacity>
+      ),
+      headerRight: () => (
+        <View>
+          <Text style={styles.textTop}>Clock In&Out</Text>
+        </View>
+      ),
+    });
+  }, [navigation]);
+
   useEffect(() => {
     const checkIfClockedIn = async () => {
       const q = query(
-        collection(db, 'attendance'),
-        where('userId', '==', user.uid),
-        orderBy('clockIn', 'desc'),
+        collection(db, "attendance"),
+        where("userId", "==", user.uid),
+        orderBy("clockIn", "desc"),
         limit(1)
       );
       try {
@@ -29,11 +65,13 @@ const ClockInOutScreen = ({ navigation }) => {
           }
         }
       } catch (error) {
-        console.error('Error checking if clocked in:', error);
+        console.error("Error checking if clocked in:", error);
       }
     };
 
-    checkIfClockedIn().catch((error) => console.error('Error in useEffect:', error));
+    checkIfClockedIn().catch((error) =>
+      console.error("Error in useEffect:", error)
+    );
   }, [user.uid]);
 
   const handleClockIn = async () => {
@@ -42,14 +80,14 @@ const ClockInOutScreen = ({ navigation }) => {
     setClockedIn(true);
 
     try {
-      const docRef = await addDoc(collection(db, 'attendance'), {
+      const docRef = await addDoc(collection(db, "attendance"), {
         userId: user.uid,
         clockIn: currentTime,
         clockOut: null,
       });
       setAttendanceDocId(docRef.id);
     } catch (error) {
-      console.error('Error clocking in:', error);
+      console.error("Error clocking in:", error);
     }
   };
 
@@ -58,42 +96,55 @@ const ClockInOutScreen = ({ navigation }) => {
     setClockedIn(false);
 
     try {
-      await updateDoc(doc(db, 'attendance', attendanceDocId), {
+      await updateDoc(doc(db, "attendance", attendanceDocId), {
         clockOut: currentTime,
       });
     } catch (error) {
-      console.error('Error clocking out:', error);
+      console.error("Error clocking out:", error);
     }
   };
 
   return (
     <View style={styles.container}>
-      <View style={{ marginBottom: 30 }} />
-      <View style={styles.headerContainer}>
-        {user.photoURL ? (
-          <Image source={{ uri: user.photoURL }} style={styles.avatar} />
-        ) : (
-          <Image source={{ uri: 'https://via.placeholder.com/150' }} style={styles.avatar} />
-        )}
-        <Text style={styles.name}>{user.displayName || 'User Name'}</Text>
-      </View>
-      <Text style={styles.title}>Attendance Management</Text>
-      <View style={styles.buttonContainer}>
-        {!clockedIn ? (
-          <TouchableOpacity style={styles.button} onPress={handleClockIn}>
-            <Text style={styles.buttonText}>Clock In</Text>
+      <StatusBar />
+      <View style={styles.innerContainer}>
+        <View style={styles.headerContainer}>
+          {user.photoURL ? (
+            <Image source={{ uri: user.photoURL }} style={styles.avatar} />
+          ) : (
+            <Image
+              source={{ uri: "https://via.placeholder.com/150" }}
+              style={styles.avatar}
+            />
+          )}
+          <Text style={styles.name}>{user.displayName || "User Name"}</Text>
+        </View>
+
+        <Text style={styles.title}>Attendance Management</Text>
+
+        <View style={styles.buttonContainer}>
+          {!clockedIn ? (
+            <TouchableOpacity style={styles.button} onPress={handleClockIn}>
+              <Text style={styles.buttonText}>Clock In</Text>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity style={[styles.button]} onPress={handleClockOut}>
+              <Text style={styles.buttonText}>Clock Out</Text>
+            </TouchableOpacity>
+          )}
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => navigation.navigate("LeaveRequestScreen")}
+          >
+            <Text style={styles.buttonText}>Request Leave</Text>
           </TouchableOpacity>
-        ) : (
-          <TouchableOpacity style={[styles.button, styles.clockOutButton]} onPress={handleClockOut}>
-            <Text style={styles.buttonText}>Clock Out</Text>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => navigation.navigate("AttendanceChart")}
+          >
+            <Text style={styles.buttonText}>View Attendance Chart</Text>
           </TouchableOpacity>
-        )}
-        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('LeaveRequestScreen')}>
-          <Text style={styles.buttonText}>Request Leave</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('AttendanceChart')}>
-          <Text style={styles.buttonText}>View Attendance Chart</Text>
-        </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
@@ -102,12 +153,21 @@ const ClockInOutScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#101223',
-    padding: 16,
-    alignItems: 'center',
+    backgroundColor: "#ccc",
+    padding: 10,
+  },
+  textTop: {
+    fontSize: 24,
+    fontWeight: "600",
+    color: "#555",
+    marginRight: 10,
+  },
+  innerContainer: {
+    padding: 10,
+    alignItems: "center",
   },
   headerContainer: {
-    alignItems: 'center',
+    alignItems: "center",
     marginVertical: 20,
   },
   avatar: {
@@ -118,33 +178,34 @@ const styles = StyleSheet.create({
   },
   name: {
     fontSize: 24,
-    color: '#FFF',
-    fontWeight: 'bold',
+    color: "#FFF",
+    fontWeight: "bold",
   },
   title: {
     fontSize: 24,
-    marginVertical: 20,
-    color: '#FFF',
+    color: "#eee",
+    fontWeight: "600",
+    textAlign: "center",
+    marginBottom: 50,
   },
   buttonContainer: {
-    width: '100%',
-    alignItems: 'center',
+    width: "100%",
+    alignItems: "center",
     marginTop: 20,
   },
   button: {
-    backgroundColor: '#4CAF50',
-    paddingVertical: 15,
-    borderRadius: 25,
-    alignItems: 'center',
-    width: '90%',
+    width: "100%",
+    borderWidth: 1,
+    borderRadius: 5,
+    borderColor: "#555",
+    backgroundColor: "#555",
+    padding: 13,
+    alignItems: "center",
     marginBottom: 10,
   },
-  clockOutButton: {
-    backgroundColor: '#F44336',
-  },
   buttonText: {
-    color: '#FFF',
-    fontSize: 18,
+    color: "#eee",
+    fontSize: 17,
   },
 });
 

@@ -101,7 +101,6 @@ import {
   ScrollView,
 } from "react-native";
 import { AntDesign, FontAwesome, Ionicons, Entypo } from "@expo/vector-icons";
-// import MenuComponent from "../Customize/MenuComponent";
 import { db } from "../firebaseConfig";
 import {
   collection,
@@ -119,7 +118,6 @@ const ToDoScreen = ({ navigation, placeholder, style, ...props }) => {
   const [tasks, setTasks] = useState([]);
   const [newTask, setNewTask] = useState("");
   const [newTaskDesc, setNewTaskDesc] = useState("");
-  // const [isPopupVisible, setPopupVisible] = useState(false);
   const [showFooter, setShowFooter] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
@@ -136,10 +134,6 @@ const ToDoScreen = ({ navigation, placeholder, style, ...props }) => {
 
   const userId = currentUser.uid;
 
-  // const togglePopup = () => {
-  //   setPopupVisible(!isPopupVisible);
-  // };
-
   const toggleFooter = () => {
     setShowFooter(!showFooter);
   };
@@ -151,11 +145,10 @@ const ToDoScreen = ({ navigation, placeholder, style, ...props }) => {
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      title: "To-dos",
       headerStyle: {
-        backgroundColor: "#fff",
+        backgroundColor: "#ccc",
       },
-      headerTitleStyle: { color: "#333" },
+      headerTitleStyle: { color: "#ccc" },
       headerTintColor: "black",
       headerLeft: () => {
         return (
@@ -176,19 +169,8 @@ const ToDoScreen = ({ navigation, placeholder, style, ...props }) => {
       },
       headerRight: () => {
         return (
-          <View
-            style={{
-              marginRight: 13,
-            }}
-          >
-            <TouchableOpacity
-              activeOpacity={0.5}
-              onPress={() => navigation.navigate()}
-            >
-              <Entypo name="dots-three-vertical" size={24} color="#333" />
-            </TouchableOpacity>
-
-            {/* <MenuComponent isVisible={isPopupVisible} onClose={togglePopup} /> */}
+          <View>
+            <Text style={styles.textTop}>To-dos</Text>
           </View>
         );
       },
@@ -237,57 +219,6 @@ const ToDoScreen = ({ navigation, placeholder, style, ...props }) => {
     <SafeAreaView style={styles.container}>
       <StatusBar style="dark" />
 
-      {/* search bar */}
-      <View>
-        <View style={styles.searchContainer}>
-          <View style={styles.icon}>
-            <AntDesign name="search1" size={24} color="gray" />
-          </View>
-          <TextInput
-            placeholder="Search to-dos"
-            placeholderTextColor={"gray"}
-            value={searchTodos}
-            onChangeText={(text) => setSearchTodos(text)}
-            style={styles.search}
-          />
-        </View>
-      </View>
-
-      {/* Tasks */}
-      <ScrollView>
-        {filteredTasks.map((task) => (
-          <View key={task.id} style={styles.taskContainer}>
-            <View style={styles.taskMainContainer}>
-              <TouchableOpacity
-                style={styles.circleIcon}
-                onPress={() => handleTaskPress(task)}
-              >
-                <FontAwesome name="circle-thin" size={24} color="gray" />
-              </TouchableOpacity>
-              <Text style={styles.taskTextMain}>{task.task}</Text>
-            </View>
-
-            <View style={styles.taskTextDescContainer}>
-              {task.description ? (
-                <Text style={styles.taskTextDesc}>
-                  Description: {task.description}
-                </Text>
-              ) : null}
-            </View>
-          </View>
-        ))}
-      </ScrollView>
-
-      {/* Button to add tasks  */}
-      <TouchableOpacity
-        activeOpacity={0.5}
-        style={styles.floatingButton}
-        onPress={toggleFooter}
-      >
-        <Entypo name="plus" size={24} color="white" />
-      </TouchableOpacity>
-      {/* </View> */}
-
       {/* Modal and inputtext */}
       {showFooter && (
         <View style={styles.footerContainer}>
@@ -298,7 +229,11 @@ const ToDoScreen = ({ navigation, placeholder, style, ...props }) => {
 
             <Text style={styles.todoText}>Create new to-do</Text>
 
-            <TouchableOpacity onPress={addTask} activeOpacity={0.5}>
+            <TouchableOpacity
+              onPress={addTask}
+              activeOpacity={0.5}
+              style={styles.confBtnContainer}
+            >
               <Text style={styles.confBtn}>Save</Text>
             </TouchableOpacity>
           </View>
@@ -324,6 +259,60 @@ const ToDoScreen = ({ navigation, placeholder, style, ...props }) => {
           </View>
         </View>
       )}
+
+      {/* ?? */}
+      <View style={styles.innerContainer}>
+        {/* search bar */}
+        <View style={styles.searchContainer}>
+          <View style={styles.icon}>
+            <AntDesign name="search1" size={24} color="gray" />
+          </View>
+          <TextInput
+            placeholder="Search to-dos"
+            placeholderTextColor={"gray"}
+            value={searchTodos}
+            onChangeText={(text) => setSearchTodos(text)}
+            style={styles.search}
+          />
+        </View>
+
+        {/* Tasks */}
+        <ScrollView>
+          {filteredTasks.map((task) => (
+            <View style={styles.taskOuterContainer}>
+              <View key={task.id} style={styles.taskContainer}>
+                <View style={styles.taskMainContainer}>
+                  <TouchableOpacity
+                    style={styles.circleIcon}
+                    onPress={() => handleTaskPress(task)}
+                  >
+                    <FontAwesome name="circle-thin" size={24} color="gray" />
+                  </TouchableOpacity>
+                  <Text style={styles.taskTextMain}>{task.task}</Text>
+                </View>
+
+                <View style={styles.taskTextDescContainer}>
+                  {task.description ? (
+                    <Text style={styles.taskTextDesc}>
+                      Description: {task.description}
+                    </Text>
+                  ) : null}
+                </View>
+              </View>
+            </View>
+          ))}
+        </ScrollView>
+      </View>
+
+      {/* Button to add tasks  */}
+      <TouchableOpacity
+        activeOpacity={0.5}
+        style={styles.floatingButton}
+        onPress={toggleFooter}
+      >
+        <Entypo name="plus" size={24} color="white" />
+      </TouchableOpacity>
+      {/* </View> */}
 
       {/* Modal for Task Deletion Confirmation */}
       <Modal
@@ -364,15 +353,24 @@ export default ToDoScreen;
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+    // padding: 10,
+    backgroundColor: "#ccc",
+  },
+  textTop: {
+    fontSize: 24,
+    fontWeight: "600",
+    color: "#555",
+    marginRight: 10,
+  },
+  innerContainer: {
     padding: 10,
   },
-
   // ! Search style
   searchContainer: {
     width: "100%",
     borderColor: "#ddd",
-    marginTop: 10,
-    marginBottom: 20,
+    marginBottom: 10,
     padding: 10,
     flexDirection: "row",
     alignItems: "center",
@@ -382,9 +380,9 @@ const styles = StyleSheet.create({
     position: "absolute",
     width: "100%",
     borderWidth: 1,
-    borderRadius: 50,
-    borderColor: "gray",
-    backgroundColor: "#f1f2f6",
+    borderRadius: 5,
+    borderColor: "#eee",
+    backgroundColor: "#eee",
     padding: 8,
     fontSize: 16,
     paddingHorizontal: 40,
@@ -402,7 +400,8 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 630,
     right: 20,
-    backgroundColor: "#2b68e6",
+    // backgroundColor: "#2b68e6",
+    backgroundColor: "#555",
     width: 60,
     height: 60,
     borderRadius: 30,
@@ -418,27 +417,9 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
   },
-
-  displayTast: {
-    flexDirection: "row",
-    alignItems: "center",
-    padding: 15,
-    borderRadius: 8,
-    marginVertical: 8,
-    borderWidth: 1,
-    borderColor: "#ddd",
-    backgroundColor: "#f1f2f6",
-  },
-  displayText: {
-    marginLeft: 10,
-    fontSize: 15,
-    fontWeight: "500",
-    color: "#555",
-  },
-
   //! Task input
   footerContainer: {
-    marginTop: 150,
+    marginTop: 280,
     width: "100%",
     height: "100%",
     backgroundColor: "#fff",
@@ -450,6 +431,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.8,
     shadowRadius: 2,
     elevation: 5,
+    zIndex: 10,
   },
   todoTastContainer: {
     marginTop: 5,
@@ -462,9 +444,17 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "500",
   },
+  confBtnContainer: {
+    borderWidth: 1,
+    borderRadius: 5,
+    borderColor: "#2b68e6",
+    backgroundColor: "#2b68e6",
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+  },
   confBtn: {
     fontSize: 16,
-    color: "#2b68e6",
+    color: "#fff",
     fontWeight: "500",
     marginRight: 2,
   },
@@ -482,6 +472,10 @@ const styles = StyleSheet.create({
   },
 
   //! Model style
+  taskOuterContainer: {
+    // paddingHorizontal: 10,
+    zIndex: 1,
+  },
   taskContainer: {
     marginVertical: 6,
     backgroundColor: "#f1f2f6",
@@ -493,7 +487,7 @@ const styles = StyleSheet.create({
   taskMainContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 6,
+    marginBottom: 4,
   },
   taskTextDescContainer: {
     marginLeft: 30,

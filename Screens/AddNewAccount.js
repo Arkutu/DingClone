@@ -18,16 +18,11 @@ import FontAwesome from "react-native-vector-icons/FontAwesome";
 import Toast from "react-native-toast-message";
 import { StatusBar } from "expo-status-bar";
 import { CommonActions } from "@react-navigation/native";
-import {
-  getAuth,
-  createUserWithEmailAndPassword,
-  GoogleAuthProvider,
-  signInWithPopup,
-} from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { auth, db } from "../firebaseConfig";
 
-const CreateAccountScreen = ({ navigation }) => {
+const AddNewAccount = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [termsChecked, setTermsChecked] = useState(false);
@@ -36,7 +31,7 @@ const CreateAccountScreen = ({ navigation }) => {
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      title: "Create New Account",
+      title: "Add New Account",
       headerTitleStyle: { color: "#fff" },
       headerLeft: () => (
         <TouchableOpacity style={styles.iconHeader}>
@@ -51,7 +46,7 @@ const CreateAccountScreen = ({ navigation }) => {
     });
   }, [navigation]);
 
-  const handleCreateAccount = async () => {
+  const handleAddAccount = async () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!email || !password) {
@@ -85,11 +80,10 @@ const CreateAccountScreen = ({ navigation }) => {
         });
 
         Toast.show({
-          type: "Success",
+          type: "success",
           text1: "Success",
           text2: "Account created successfully!",
         });
-        // navigation.navigate("CreateOrganization");
 
         navigation.dispatch(
           CommonActions.reset({
@@ -123,7 +117,9 @@ const CreateAccountScreen = ({ navigation }) => {
           <StatusBar style="light-content" />
 
           <SafeAreaView style={styles.innerContainer}>
-            <Text style={styles.headerText}>Create your new account</Text>
+            <View style={styles.headerTextContainer}>
+              <Text style={styles.headerText}>Add your new account</Text>
+            </View>
 
             <TextInput
               style={styles.input}
@@ -167,7 +163,7 @@ const CreateAccountScreen = ({ navigation }) => {
               <Text style={styles.textMain}>
                 I have read and agree{" "}
                 <Text style={styles.textBlue}>
-                  Privacy Policy,Terms of Service
+                  Privacy Policy, Terms of Service
                 </Text>
               </Text>
             </View>
@@ -177,10 +173,10 @@ const CreateAccountScreen = ({ navigation }) => {
                 loading ? (
                   <ActivityIndicator size="small" color="#007bff" />
                 ) : (
-                  "Sign In"
+                  "Add Account"
                 )
               }
-              onPress={handleCreateAccount}
+              onPress={handleAddAccount}
               containerStyle={styles.button}
               buttonStyle={styles.customizeButton}
               titleStyle={styles.buttonText}
@@ -193,10 +189,7 @@ const CreateAccountScreen = ({ navigation }) => {
               <View style={styles.line} />
             </View>
 
-            <TouchableOpacity
-              activiteopacity={0.5}
-              style={styles.iconContainer}
-            >
+            <TouchableOpacity activeOpacity={0.5} style={styles.iconContainer}>
               <Image
                 source={require("../assets/google.png")}
                 style={styles.iconGoogle}
@@ -223,6 +216,9 @@ const styles = StyleSheet.create({
   },
   innerContainer: {
     padding: 10,
+  },
+  headerTextContainer: {
+    alignItems: "center",
   },
   headerText: {
     fontSize: 30,
@@ -333,4 +329,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CreateAccountScreen;
+export default AddNewAccount;

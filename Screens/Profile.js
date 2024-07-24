@@ -104,7 +104,7 @@ const Profile = ({ navigation }) => {
             <TouchableOpacity
               activeOpacity={0.5}
               style={styles.settingsContainer}
-              onPress={() => navigation.navigate()}
+              onPress={() => navigation.navigate("EditProfile")}
             >
               <View style={styles.items}>
                 <Text style={styles.text}>Profile Picture</Text>
@@ -121,7 +121,7 @@ const Profile = ({ navigation }) => {
             <TouchableOpacity
               activeOpacity={0.5}
               style={styles.settingsContainer}
-              onPress={() => navigation.navigate()}
+              onPress={() => navigation.navigate("EditProfile")}
             >
               <View style={styles.items}>
                 <Text style={styles.text}>Nickname</Text>
@@ -140,7 +140,7 @@ const Profile = ({ navigation }) => {
             <TouchableOpacity
               activeOpacity={0.5}
               style={styles.settingsContainer}
-              onPress={() => navigation.navigate()}
+              onPress={() => navigation.navigate("EditProfile")}
             >
               <View style={styles.items}>
                 <Text style={styles.text}>Email</Text>
@@ -152,11 +152,11 @@ const Profile = ({ navigation }) => {
               </View>
             </TouchableOpacity>
 
-            <View style={styles.space}>
+            {/* <View style={styles.space}>
               <View style={styles.line} />
-            </View>
+            </View> */}
 
-            <TouchableOpacity
+            {/* <TouchableOpacity
               activeOpacity={0.5}
               style={styles.settingsContainer}
               onPress={() => navigation.navigate()}
@@ -167,7 +167,7 @@ const Profile = ({ navigation }) => {
               <View>
                 <Ionicons name="chevron-forward" size={24} color="black" />
               </View>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </View>
 
           <View style={{ marginTop: 10 }} />
@@ -176,7 +176,7 @@ const Profile = ({ navigation }) => {
             <TouchableOpacity
               activeOpacity={0.5}
               style={styles.settingsContainer}
-              onPress={() => navigation.navigate()}
+              onPress={() => navigation.navigate("EditProfile")}
             >
               <View style={styles.items}>
                 <Text style={styles.text}>Gender</Text>
@@ -194,7 +194,7 @@ const Profile = ({ navigation }) => {
             <TouchableOpacity
               activeOpacity={0.5}
               style={styles.settingsContainer}
-              onPress={() => navigation.navigate()}
+              onPress={() => navigation.navigate("EditProfile")}
             >
               <View style={styles.items}>
                 <Text style={styles.text}>Date of Birth</Text>
@@ -213,7 +213,7 @@ const Profile = ({ navigation }) => {
             <TouchableOpacity
               activeOpacity={0.5}
               style={styles.settingsContainer}
-              onPress={() => navigation.navigate()}
+              onPress={() => navigation.navigate("Settings")}
             >
               <View style={styles.items}>
                 <Text style={styles.text}>Settings & Privacy</Text>

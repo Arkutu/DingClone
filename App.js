@@ -1114,6 +1114,9 @@ import NewChatsScreen from "./Screens/NewChatsScreen";
 import Search from "./Screens/Search";
 import Docs from "./Screens/Docs";
 import UserInfo from "./Screens/UserInfo";
+import Settings from "./Screens/Settings";
+import Logout from "./Screens/Logout";
+import AddNewAccount from "./Screens/AddNewAccount";
 
 // Import icons
 import {
@@ -1274,6 +1277,13 @@ export default function App() {
                         }}
                       />
                       <Stack.Screen
+                        name="AddNewAccount"
+                        component={AddNewAccount}
+                        options={{
+                          ...TransitionPresets.ModalSlideFromBottomIOS,
+                        }}
+                      />
+                      <Stack.Screen
                         name="CreateOrganization"
                         component={CreateOrganization}
                         options={{ ...TransitionPresets.ModalPresentationIOS }}
@@ -1419,12 +1429,28 @@ export default function App() {
                       <Stack.Screen
                         name="Search"
                         component={Search}
-                        options={{ ...TransitionPresets.SlideFromRightIOS }}
+                        options={{
+                          headerShown: false,
+                          ...TransitionPresets.SlideFromRightIOS,
+                        }}
                       />
                       <Stack.Screen
                         name="UserInformation"
                         component={UserInfo}
                         options={{ ...TransitionPresets.SlideFromRightIOS }}
+                      />
+                      <Stack.Screen
+                        name="Settings"
+                        component={Settings}
+                        options={{ ...TransitionPresets.SlideFromRightIOS }}
+                      />
+                      <Stack.Screen
+                        name="Logout"
+                        component={Logout}
+                        options={{
+                          // headerShown: false,
+                          ...TransitionPresets.SlideFromRightIOS,
+                        }}
                       />
                       <Stack.Screen
                         name="MainTabs"

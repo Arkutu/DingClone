@@ -33,7 +33,6 @@ import { useAppContext } from "../context/AppContext";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../firebaseConfig";
 import { useRoute } from "@react-navigation/native";
-// import BrowseChannel from "../components/BrowseChannel";
 
 const screenHeight = Dimensions.get("window").height;
 const screenWidth = Dimensions.get("window").width;
@@ -71,26 +70,18 @@ const OfficeScreen = ({ navigation }) => {
           onPress={() => navigation.navigate("Profile")}
           style={styles.userInfoContainer}
         >
-          {/* {user && user.photoURL ? ( */}
-          <View style={styles.imgTop}>
+          {user && user.photoURL ? (
             <Image
-              source={
-                user?.photoURL
-                  ? { uri: user.photoURL }
-                  : require("../assets/avart.png")
-              }
-              style={styles.avatar}
+              source={{ uri: user.photoURL }}
+              style={styles.profileImage}
             />
-          </View>
-
-          {/* ) : (
+          ) : (
             <Ionicons name="person-circle" size={50} color="#333" />
-          )} */}
+          )}
 
           <View style={styles.userInfo}>
-            <Text style={styles.userName}>
-              {user?.displayName || "User Name"}
-            </Text>
+            <Text style={styles.userName}>Name</Text>
+            {/* <Text style={styles.userName}>{user.displayName}</Text> */}
           </View>
         </TouchableOpacity>
       ),
@@ -103,40 +94,6 @@ const OfficeScreen = ({ navigation }) => {
       ),
     });
   }, [navigation]);
-
-  //? Fetching user information
-  useEffect(() => {
-    const fetchUser = async () => {
-      const auth = getAuth();
-      const currentUser = auth.currentUser;
-
-      if (currentUser) {
-        try {
-          const userDoc = await getDoc(doc(db, "users", currentUser.uid));
-          if (userDoc.exists()) {
-            const userData = userDoc.data();
-            setUser({
-              email: currentUser.email,
-              displayName: userData.displayName || currentUser.displayName,
-              photoURL: userData.photoURL || currentUser.photoURL,
-            });
-          } else {
-            setUser({
-              email: currentUser.email,
-              displayName: currentUser.displayName,
-              photoURL: currentUser.photoURL,
-            });
-          }
-        } catch (error) {
-          console.error("Error fetching user data:", error);
-        }
-      } else {
-        console.error("No user is signed in.");
-      }
-    };
-
-    fetchUser();
-  }, []);
 
   //? Fetch channels and organization members
   useEffect(() => {
@@ -178,6 +135,13 @@ const OfficeScreen = ({ navigation }) => {
     });
   };
 
+  // const firstLetter = organizationName
+  //   ? organizationName.charAt(0).toUpperCase()
+  //   : "";
+
+  // const getActiveRoute = () =>
+  //   navigation.getState().routes[navigation.getState().index].name;
+
   const toggleMenu = () => {
     if (visible) {
       Animated.timing(slideAnim, {
@@ -216,6 +180,140 @@ const OfficeScreen = ({ navigation }) => {
       style={styles.container}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
+      {/* <ScrollView
+          contentContainerStyle={{ flexGrow: 1 }}
+          keyboardShouldPersistTaps="handled"
+        >
+          <View style={styles.headerContainer}>
+            <View style={styles.header}>
+              <View style={styles.iconContainer}>
+                <Text style={styles.iconText}>{firstLetter}</Text>
+              </View>
+              <Text style={styles.headerTitle}>{organizationName}</Text>
+              <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
+                {user && user.photoURL ? (
+                  <Image
+                    source={{ uri: user.photoURL }}
+                    style={styles.profileImage}
+                  />
+                ) : (
+                  <Ionicons name="person-circle" size={40} color="#FFF" />
+                )}
+              </TouchableOpacity>
+            </View>
+  
+            <View style={styles.searchContainer}>
+              <Ionicons name="search" size={20} color="#888" />
+              <TextInput
+                style={styles.searchInput}
+                placeholder="Jump to or search..."
+                placeholderTextColor="#888"
+                value={searchText}
+                // onChangeText={setSearchText}
+              />
+            </View>
+          </View>
+  
+          <View style={styles.tabsContainer}>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+              <TouchableOpacity
+                style={styles.tabItem}
+                onPress={() => navigation.navigate("CalendarScreen")}
+              >
+                <Text style={styles.tabText}>Calendar</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.tabItem}
+                onPress={() => navigation.navigate("TodoListScreen")}
+              >
+                <Text style={styles.tabText}>To-do</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.tabItem}
+                onPress={() => navigation.navigate("DING")}
+              >
+                <Text style={styles.tabText}>DING</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.tabItem}
+                onPress={() => navigation.navigate("Docs")}
+              >
+                <Text style={styles.tabText}>Docs</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.tabItem}
+                onPress={() => navigation.navigate("More")}
+              >
+                <Text style={styles.tabText}>More</Text>
+              </TouchableOpacity>
+            </ScrollView>
+          </View>
+  
+          <View style={styles.mainContent}></View>
+  
+          <View style={styles.bottomNav}>
+            <TouchableOpacity
+              style={styles.navItem}
+              onPress={() => navigation.navigate("MainHome")}
+            >
+              <Ionicons
+                name="home"
+                size={28}
+                color={getActiveRoute() === "MainHome" ? "#0d6efd" : "#FFF"}
+              />
+              <Text
+                style={
+                  getActiveRoute() === "MainHome"
+                    ? styles.navTextActive
+                    : styles.navTextInactive
+                }
+              >
+                Home
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.navItem}
+              onPress={() =>
+                navigation.navigate("OfficeScreen", { organizationName })
+              }
+            >
+              <MaterialCommunityIcons
+                name="office-building"
+                size={28}
+                color={getActiveRoute() === "OfficeScreen" ? "#0d6efd" : "#FFF"}
+              />
+              <Text
+                style={
+                  getActiveRoute() === "OfficeScreen"
+                    ? styles.navTextActive
+                    : styles.navTextInactive
+                }
+              >
+                Office
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.navItem}
+              onPress={() => navigation.navigate("Activity")}
+            >
+              <Ionicons
+                name="notifications"
+                size={28}
+                color={getActiveRoute() === "Activity" ? "#0d6efd" : "#FFF"}
+              />
+              <Text
+                style={
+                  getActiveRoute() === "Activity"
+                    ? styles.navTextActive
+                    : styles.navTextInactive
+                }
+              >
+                Activity
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </ScrollView> */}
+
       <View style={styles.navBar}>
         <TouchableOpacity
           onPress={() => handleSectionChange(0)}
@@ -256,7 +354,7 @@ const OfficeScreen = ({ navigation }) => {
       >
         {/* Channel */}
         <View style={styles.section}>
-          {/* <FlatList
+          <FlatList
             data={channels}
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => (
@@ -267,11 +365,12 @@ const OfficeScreen = ({ navigation }) => {
                 <Text style={styles.channelName}>#{item.name}</Text>
               </TouchableOpacity>
             )}
-          /> */}
+          />
         </View>
 
         {/* Organization */}
         <View style={styles.section}>
+          {/* <Text style={styles.sectionText}>Content for Section 2</Text> */}
           <FlatList
             data={organizationMembers}
             keyExtractor={(item) => item.id}
@@ -333,6 +432,11 @@ const OfficeScreen = ({ navigation }) => {
                     toggleMenu();
                   }}
                 />
+                {/* <MenuButton
+                    title="Add Contact"
+                    icon={AntDesign}
+                    iconName="contacts"
+                  /> */}
                 <MenuButton
                   title="Clock In/Out"
                   icon={Feather}
@@ -371,6 +475,16 @@ const OfficeScreen = ({ navigation }) => {
                     toggleMenu();
                   }}
                 />
+                {/* <MenuButton
+                    title="Watermark"
+                    icon={MaterialCommunityIcons}
+                    iconName="watermark"
+                    onPress={() => {
+                      navigation.navigate("WatermarkScreen");
+                      toggleMenu();
+                    }}
+                  /> */}
+
                 <MenuButton
                   title="Start Meeting"
                   icon={MaterialIcons}
@@ -382,6 +496,15 @@ const OfficeScreen = ({ navigation }) => {
                 />
               </View>
               <View style={styles.row}>
+                {/* <MenuButton
+                    title="Start Meeting"
+                    icon={MaterialIcons}
+                    iconName="meeting-room"
+                    onPress={() => {
+                      navigation.navigate("VideoCall");
+                      toggleMenu();
+                    }}
+                  /> */}
                 <MenuButton
                   title="Start Live"
                   icon={MaterialIcons}
@@ -430,20 +553,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginLeft: 10,
   },
-  imgTop: {
-    marginLeft: 10,
-  },
-  avatar: {
-    width: 45,
-    height: 45,
-    borderRadius: 18,
-  },
   userInfo: {
-    marginLeft: 10,
+    marginLeft: 2,
   },
   userName: {
-    // marginTop: 15,
-    fontSize: 16,
     color: "#555",
     textAlign: "center",
   },
@@ -565,6 +678,9 @@ const styles = StyleSheet.create({
   },
   section: {
     width: screenWidth,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
   },
   sectionText: {
     fontSize: 18,
