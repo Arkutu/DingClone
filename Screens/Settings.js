@@ -44,134 +44,80 @@ const Settings = () => {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
-        {/* Properties of the profile */}
         <View>
           <Text style={styles.textHeader}>Available</Text>
 
-          {/* Profile and Notification */}
           <View style={{ marginTop: 10 }} />
 
-          {/* One start here */}
           <View style={styles.profile}>
-            <TouchableOpacity
-              activeOpacity={0.5}
-              style={styles.settingsContainer}
-              onPress={() => navigation.navigate()}
-            >
+            <View style={styles.settingsContainer}>
               <View style={styles.items}>
                 <Text style={styles.text}>General</Text>
               </View>
-              <View>
-                <Ionicons name="chevron-forward" size={24} color="black" />
-              </View>
-            </TouchableOpacity>
+            </View>
             <View style={styles.space}>
               <View style={styles.line} />
             </View>
 
-            <TouchableOpacity
-              activeOpacity={0.5}
-              style={styles.settingsContainer}
-              onPress={() => navigation.navigate()}
-            >
+            <View style={styles.settingsContainer}>
               <View style={styles.items}>
                 <Text style={styles.text}>New Message Notification</Text>
               </View>
-              <View>
-                <Ionicons name="chevron-forward" size={24} color="black" />
-              </View>
-            </TouchableOpacity>
+            </View>
           </View>
-          {/* one ends here */}
 
-          {/* Two start here */}
           <View style={{ marginTop: 10 }} />
           <Text style={styles.textHeader}>Privacy</Text>
+
           <View style={styles.profile}>
-            <TouchableOpacity
-              activeOpacity={0.5}
-              style={styles.settingsContainer}
-              onPress={() => navigation.navigate()}
-            >
+            <View style={styles.settingsContainer}>
               <View style={styles.items}>
                 <Text style={styles.text}>Permission</Text>
               </View>
-              <View>
-                <Ionicons name="chevron-forward" size={24} color="black" />
-              </View>
-            </TouchableOpacity>
+            </View>
+
             <View style={styles.space}>
               <View style={styles.line} />
             </View>
 
-            <TouchableOpacity
-              activeOpacity={0.5}
-              style={styles.settingsContainer}
-              onPress={() => navigation.navigate()}
-            >
+            <View style={styles.settingsContainer}>
               <View style={styles.items}>
                 <Text style={styles.text}>Display of External Info...</Text>
               </View>
-              <View>
-                <Ionicons name="chevron-forward" size={24} color="black" />
-              </View>
-            </TouchableOpacity>
+            </View>
 
             <View style={styles.space}>
               <View style={styles.line} />
             </View>
 
-            <TouchableOpacity
-              activeOpacity={0.5}
-              style={styles.settingsContainer}
-              onPress={() => navigation.navigate()}
-            >
+            <View style={styles.settingsContainer}>
               <View style={styles.items}>
                 <Text style={styles.text}>Persional Information inqu...</Text>
               </View>
-              <View>
-                <Ionicons name="chevron-forward" size={24} color="black" />
-              </View>
-            </TouchableOpacity>
+            </View>
           </View>
-          {/* two ends here */}
 
-          {/* three start here */}
           <View style={{ marginTop: 10 }} />
           <Text style={styles.textHeader}>Help</Text>
+
           <View style={styles.profile}>
-            <TouchableOpacity
-              activeOpacity={0.5}
-              style={styles.settingsContainer}
-              onPress={() => navigation.navigate()}
-            >
+            <View style={styles.settingsContainer}>
               <View style={styles.items}>
                 <Text style={styles.text}>Help and Feedback</Text>
               </View>
-              <View>
-                <Ionicons name="chevron-forward" size={24} color="black" />
-              </View>
-            </TouchableOpacity>
+            </View>
+
             <View style={styles.space}>
               <View style={styles.line} />
             </View>
 
-            <TouchableOpacity
-              activeOpacity={0.5}
-              style={styles.settingsContainer}
-              onPress={() => navigation.navigate()}
-            >
+            <View style={styles.settingsContainer}>
               <View style={styles.items}>
                 <Text style={styles.text}>About OfficeComms</Text>
               </View>
-              <View>
-                <Ionicons name="chevron-forward" size={24} color="black" />
-              </View>
-            </TouchableOpacity>
+            </View>
           </View>
-          {/* three ends here */}
 
-          {/* switch account and log out */}
           <View style={{ marginTop: 10 }} />
           <View style={styles.profile}>
             <TouchableOpacity
@@ -198,7 +144,6 @@ const Settings = () => {
             </TouchableOpacity>
           </View>
           <View style={{ marginBottom: 50 }} />
-          {/* two ends here */}
         </View>
       </ScrollView>
     </SafeAreaView>

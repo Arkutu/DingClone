@@ -15,8 +15,8 @@ import {
 import { Button } from "react-native-elements";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
-import Toast from "react-native-toast-message";
 import { StatusBar } from "expo-status-bar";
+import Toast from "react-native-toast-message";
 import { CommonActions } from "@react-navigation/native";
 import {
   getAuth,
@@ -46,6 +46,15 @@ const CreateAccountScreen = ({ navigation }) => {
             color="#333"
             onPress={() => navigation.goBack()}
           />
+        </TouchableOpacity>
+      ),
+      headerRight: () => (
+        <TouchableOpacity
+          activeOpacity={0.5}
+          style={styles.textTopContainer}
+          onPress={() => navigation.navigate("Login")}
+        >
+          <Text style={styles.textTop}>Login</Text>
         </TouchableOpacity>
       ),
     });
@@ -85,23 +94,15 @@ const CreateAccountScreen = ({ navigation }) => {
         });
 
         Toast.show({
-          type: "Success",
+          type: "success",
           text1: "Success",
           text2: "Account created successfully!",
         });
-        // navigation.navigate("CreateOrganization");
 
         navigation.dispatch(
           CommonActions.reset({
             index: 0,
-            routes: [
-              {
-                name: "MainTabs",
-                state: {
-                  routes: [{ name: "MainHome" }],
-                },
-              },
-            ],
+            routes: [{ name: "UserInformation" }],
           })
         );
       } catch (error) {
@@ -128,7 +129,6 @@ const CreateAccountScreen = ({ navigation }) => {
             <TextInput
               style={styles.input}
               placeholder="Enter your email address"
-              autoFocus
               placeholderTextColor={"gray"}
               value={email}
               onChangeText={(text) => setEmail(text)}
@@ -218,8 +218,24 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   iconHeader: {
-    marginLeft: 15,
+    marginLeft: 10,
     marginBottom: 20,
+  },
+  textTopContainer: {
+    width: 80,
+    borderWidth: 1,
+    borderRadius: 5,
+    borderColor: "#007bff",
+    backgroundColor: "#007bff",
+    padding: 5,
+    alignItems: "center",
+    marginRight: 10,
+    marginBottom: 20,
+  },
+  textTop: {
+    fontSize: 15,
+    fontWeight: "500",
+    color: "#fff",
   },
   innerContainer: {
     padding: 10,

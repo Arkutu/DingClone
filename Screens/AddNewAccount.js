@@ -124,7 +124,6 @@ const AddNewAccount = ({ navigation }) => {
             <TextInput
               style={styles.input}
               placeholder="Enter your email address"
-              autoFocus
               placeholderTextColor={"gray"}
               value={email}
               onChangeText={(text) => setEmail(text)}

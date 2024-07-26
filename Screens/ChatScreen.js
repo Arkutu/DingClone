@@ -1,26 +1,95 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput, KeyboardAvoidingView, Platform, Alert, Image } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import React, { useState, useRef, useEffect, useLayoutEffect } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+  TextInput,
+  KeyboardAvoidingView,
+  Platform,
+  Image,
+  ActivityIndicator,
+} from "react-native";
+import { Ionicons, Entypo } from "@expo/vector-icons";
 import { db, auth, storage } from "../firebaseConfig";
-import { collection, addDoc, query, orderBy, onSnapshot, doc, getDoc, Timestamp, where } from "firebase/firestore";
-import { onAuthStateChanged } from 'firebase/auth';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import moment from 'moment';
-import * as ImagePicker from 'expo-image-picker';
+import {
+  collection,
+  addDoc,
+  query,
+  orderBy,
+  onSnapshot,
+  doc,
+  getDoc,
+  Timestamp,
+  where,
+} from "firebase/firestore";
+import { onAuthStateChanged } from "firebase/auth";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import moment from "moment";
+import * as ImagePicker from "expo-image-picker";
+import Toast from "react-native-toast-message";
 
 const ChatScreen = ({ route, navigation }) => {
-  const { channelName, channelDescription, memberCount, recipientId, recipientName, isDirectMessage } = route.params;
-  const [message, setMessage] = useState('');
+  const {
+    channelName,
+    channelDescription,
+    memberCount,
+    recipientId,
+    recipientName,
+    isDirectMessage,
+  } = route.params;
+  const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const [user, setUser] = useState(null);
   const [image, setImage] = useState(null);
+  const [loading, setLoading] = useState(false);
   const scrollViewRef = useRef();
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerTitleStyle: { color: "#fff" },
+      headerLeft: () => (
+        <View>
+          <TouchableOpacity
+            style={styles.leftContainer}
+            activeOpacity={0.5}
+            onPress={() => navigation.goBack()}
+          >
+            <Ionicons name="chevron-back" size={28} color="#333" />
+
+            <View style={styles.leftTextContainer}>
+              <Text style={styles.channelName}>{getChatTitle()}</Text>
+              <Text style={styles.memberCount}>
+                {getMemberCount()} member{getMemberCount() !== 1 ? "s" : ""}
+              </Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+      ),
+      headerRight: () => (
+        <View style={styles.rightContainer}>
+          <TouchableOpacity
+            activeOpacity={0.5}
+            onPress={() => navigation.navigate()}
+          >
+            <Entypo
+              name="dots-three-vertical"
+              size={24}
+              color="black"
+              style={styles.rightIcon}
+            />
+          </TouchableOpacity>
+        </View>
+      ),
+    });
+  }, [navigation]);
 
   useEffect(() => {
     const fetchUser = async () => {
       const currentUser = auth.currentUser;
       if (currentUser) {
-        const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
+        const userDoc = await getDoc(doc(db, "users", currentUser.uid));
         if (userDoc.exists()) {
           const userData = userDoc.data();
           setUser({
@@ -45,39 +114,51 @@ const ChatScreen = ({ route, navigation }) => {
     let q;
     if (isDirectMessage) {
       q = query(
-        collection(db, 'directMessages'),
-        where('senderId', 'in', [auth.currentUser.uid, recipientId]),
-        where('recipientId', 'in', [auth.currentUser.uid, recipientId]),
-        orderBy('createdAt', 'asc')
+        collection(db, "directMessages"),
+        where("senderId", "in", [auth.currentUser.uid, recipientId]),
+        where("recipientId", "in", [auth.currentUser.uid, recipientId]),
+        orderBy("createdAt", "asc")
       );
     } else {
-      q = query(collection(db, 'channels', channelName, 'messages'), orderBy('createdAt', 'asc'));
+      q = query(
+        collection(db, "channels", channelName, "messages"),
+        orderBy("createdAt", "asc")
+      );
     }
-    
+
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      const messagesData = snapshot.docs.map(doc => ({
+      const messagesData = snapshot.docs.map((doc) => ({
         id: doc.id,
-        ...doc.data()
+        ...doc.data(),
       }));
       setMessages(messagesData);
-      scrollViewRef.current?.scrollToEnd({ animated: true }); // Auto-scroll
+      scrollViewRef.current?.scrollToEnd({ animated: true });
     });
 
     return () => unsubscribe();
   }, [channelName, recipientId, isDirectMessage]);
 
   const handleSendMessage = async () => {
-    if (message.trim() === '' && !image) {
-      Alert.alert('Message cannot be empty.');
+    if (message.trim() === "" && !image) {
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Message cannot be empty!",
+      });
       return;
     }
 
     if (!user) {
-      Alert.alert('No user is signed in.');
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "No user is signed in!",
+      });
       return;
     }
 
     try {
+      setLoading(true);
       let imageUrl = null;
       if (image) {
         const imageRef = ref(storage, `images/${Date.now()}-${user.uid}`);
@@ -97,20 +178,30 @@ const ChatScreen = ({ route, navigation }) => {
       };
 
       if (isDirectMessage) {
-        await addDoc(collection(db, 'directMessages'), {
+        await addDoc(collection(db, "directMessages"), {
           ...messageData,
           senderId: user.uid,
           recipientId: recipientId,
         });
       } else {
-        await addDoc(collection(db, 'channels', channelName, 'messages'), messageData);
+        await addDoc(
+          collection(db, "channels", channelName, "messages"),
+          messageData
+        );
       }
 
-      setMessage('');
+      setMessage("");
       setImage(null);
-      scrollViewRef.current?.scrollToEnd({ animated: true }); // Auto-scroll after sending message
+      scrollViewRef.current?.scrollToEnd({ animated: true });
     } catch (error) {
-      console.error('Error sending message: ', error);
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: "Error sending message: ",
+        error,
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -144,28 +235,10 @@ const ChatScreen = ({ route, navigation }) => {
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
       keyboardVerticalOffset={90}
     >
       <View style={styles.container}>
-        <View style={{ marginBottom: 43 }} />
-        <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Ionicons name="chevron-back" size={24} color="white" />
-          </TouchableOpacity>
-          <View style={styles.headerTextContainer}>
-            <Text style={styles.channelName}>{getChatTitle()}</Text>
-            <Text style={styles.memberCount}>{getMemberCount()} member{getMemberCount() !== 1 ? 's' : ''}</Text>
-          </View>
-          <View style={styles.headerIcons}>
-            <TouchableOpacity>
-              <Text><Ionicons name="add" size={24} color="#FFF" style={styles.headerIcon} /></Text>
-            </TouchableOpacity>
-            <TouchableOpacity>
-              <Text><Ionicons name="headset" size={24} color="#FFF" style={styles.headerIcon} /></Text>
-            </TouchableOpacity>
-          </View>
-        </View>
         <ScrollView style={styles.messageList} ref={scrollViewRef}>
           {messages.length > 0 ? (
             messages.map((msg) => (
@@ -173,15 +246,49 @@ const ChatScreen = ({ route, navigation }) => {
                 key={msg.id}
                 style={[
                   styles.messageContainer,
-                  msg.userId === user?.uid ? styles.myMessage : styles.otherMessage
+                  msg.userId === user?.uid
+                    ? styles.myMessage
+                    : styles.otherMessage,
                 ]}
               >
-                <Image source={{ uri: msg.userPhoto || 'https://via.placeholder.com/150' }} style={styles.avatar} />
+                <Image
+                  source={{
+                    uri: msg.userPhoto || "https://via.placeholder.com/150",
+                  }}
+                  style={styles.avatar}
+                />
                 <View style={styles.messageContent}>
-                  <Text style={styles.messageAuthor}>{msg.userName || 'User'}</Text>
-                  {msg.text ? <Text style={styles.messageText}>{msg.text}</Text> : null}
-                  {msg.imageUrl ? <Image source={{ uri: msg.imageUrl }} style={styles.messageImage} /> : null}
-                  <Text style={styles.messageTime}>{moment(msg.createdAt.toDate()).format('h:mm A')}</Text>
+                  <Text
+                    style={[
+                      styles.messageAuthor,
+                      {
+                        color: msg.userId === user?.uid ? "#fff" : "#555",
+                      },
+                    ]}
+                  >
+                    {msg.userName || "Anonymous"}
+                  </Text>
+                  {msg.text ? (
+                    <Text
+                      style={[
+                        styles.messageText,
+                        {
+                          color: msg.userId === user?.uid ? "#fff" : "#555",
+                        },
+                      ]}
+                    >
+                      {msg.text}
+                    </Text>
+                  ) : null}
+                  {msg.imageUrl ? (
+                    <Image
+                      source={{ uri: msg.imageUrl }}
+                      style={styles.messageImage}
+                    />
+                  ) : null}
+                  <Text style={styles.messageTime}>
+                    {moment(msg.createdAt.toDate()).format("h:mm A")}
+                  </Text>
                 </View>
               </View>
             ))
@@ -189,26 +296,34 @@ const ChatScreen = ({ route, navigation }) => {
             <View>
               <Text style={styles.welcomeText}>Welcome!</Text>
               <Text style={styles.description}>{channelDescription}</Text>
+
               <View style={styles.actionItems}>
                 <TouchableOpacity style={styles.actionItem}>
-                  <Ionicons name="information-circle" size={24} color="#FFF" />
-                  <Text style={styles.actionText}>Learn about {channelName}</Text>
+                  <Ionicons name="information-circle" size={24} color="#333" />
+                  <Text style={styles.actionText}>
+                    Learn about {channelName}
+                  </Text>
                 </TouchableOpacity>
+
                 <TouchableOpacity style={styles.actionItem}>
-                  <Ionicons name="person-add" size={24} color="#FFF" />
+                  <Ionicons name="person-add" size={24} color="#333" />
                   <Text style={styles.actionText}>Invite people</Text>
                 </TouchableOpacity>
+
                 <TouchableOpacity style={styles.actionItem}>
-                  <Ionicons name="link" size={24} color="#FFF" />
+                  <Ionicons name="link" size={24} color="#333" />
                   <Text style={styles.actionText}>Connect apps</Text>
                 </TouchableOpacity>
               </View>
             </View>
           )}
         </ScrollView>
+
         <View style={styles.inputContainer}>
           <TouchableOpacity onPress={handlePickImage}>
-            <Text><Ionicons name="add-circle" size={28} color="#FFF" /></Text>
+            <Text>
+              <Ionicons name="add-circle" size={28} color="#333" />
+            </Text>
           </TouchableOpacity>
           <TextInput
             style={styles.input}
@@ -219,11 +334,14 @@ const ChatScreen = ({ route, navigation }) => {
             onSubmitEditing={handleSendMessage}
           />
           <TouchableOpacity onPress={handleSendMessage}>
-            <Text><Ionicons name="send" size={28} color="#FFF" /></Text>
+            <Text>
+              <Ionicons name="send" size={28} color="#333" />
+            </Text>
           </TouchableOpacity>
         </View>
         {image && <Image source={{ uri: image }} style={styles.previewImage} />}
       </View>
+      <Toast ref={(ref) => Toast.setRef(ref)} />
     </KeyboardAvoidingView>
   );
 };
@@ -231,46 +349,45 @@ const ChatScreen = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000',
+    backgroundColor: "#fff",
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 15,
-    backgroundColor: '#0a0a0a',
+  leftContainer: {
+    marginLeft: 13,
+    flexDirection: "row",
+    alignItems: "center",
   },
-  headerTextContainer: {
-    flex: 1,
+  leftTextContainer: {
     marginLeft: 10,
   },
   channelName: {
     fontSize: 18,
-    color: '#FFF',
-    fontWeight: 'bold',
+    fontWeight: "bold",
+    color: "#333",
   },
   memberCount: {
     fontSize: 14,
-    color: '#FFF',
+    color: "#555",
   },
-  headerIcons: {
-    flexDirection: 'row',
+  rightContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginRight: 15,
   },
-  headerIcon: {
-    marginHorizontal: 10,
+  rightIcon: {
+    // marginLeft: 10,
   },
   messageList: {
     flex: 1,
     padding: 10,
   },
   messageContainer: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
+    flexDirection: "row",
+    alignItems: "flex-start",
     marginBottom: 10,
   },
   myMessage: {
-    alignSelf: 'flex-end',
-    backgroundColor: '#2b2b2b',
+    alignSelf: "flex-end",
+    backgroundColor: "#2f3542",
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
     borderBottomLeftRadius: 10,
@@ -278,8 +395,8 @@ const styles = StyleSheet.create({
     marginLeft: 50,
   },
   otherMessage: {
-    alignSelf: 'flex-start',
-    backgroundColor: '#1a1a1a',
+    alignSelf: "flex-start",
+    backgroundColor: "#dfe4ea",
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
     borderBottomRightRadius: 10,
@@ -296,12 +413,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   messageAuthor: {
-    fontWeight: 'bold',
-    color: '#FFF',
+    fontWeight: "bold",
+    // color: "#555",
     marginBottom: 5,
   },
   messageText: {
-    color: '#FFF',
+    // color: "#333",
     marginBottom: 5,
   },
   messageImage: {
@@ -311,48 +428,46 @@ const styles = StyleSheet.create({
   },
   messageTime: {
     fontSize: 12,
-    color: '#888',
+    color: "#888",
   },
   welcomeText: {
     fontSize: 24,
-    fontWeight: 'bold',
-    color: '#FFF',
-    textAlign: 'center',
-    marginTop: 50,
+    fontWeight: "bold",
+    marginTop: 5,
+    color: "#555",
+    textAlign: "center",
   },
   description: {
     fontSize: 16,
-    color: '#FFF',
-    textAlign: 'center',
-    marginTop: 10,
+    color: "#555",
+    textAlign: "center",
   },
   actionItems: {
-    marginTop: 20,
+    marginTop: 5,
   },
   actionItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 15,
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 10,
   },
   actionText: {
     marginLeft: 10,
-    color: '#FFF',
+    color: "#555",
   },
   inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#0a0a0a',
+    flexDirection: "row",
+    alignItems: "center",
     padding: 10,
   },
   input: {
     flex: 1,
     height: 40,
-    borderColor: '#FFF',
+    borderColor: "#212121",
     borderWidth: 1,
     borderRadius: 20,
     paddingHorizontal: 10,
     marginHorizontal: 10,
-    color: '#FFF',
+    color: "#333",
   },
   previewImage: {
     width: 100,

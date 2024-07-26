@@ -450,16 +450,16 @@ const styles = StyleSheet.create({
     gap: 20,
     marginBottom: 15,
   },
-  addButton: {
+  addTeam: {
     width: 160,
-    backgroundColor: "#eee",
+    backgroundColor: "#007bff",
     padding: 12,
     borderRadius: 5,
     alignItems: "center",
   },
-  addTeam: {
+  addButton: {
     width: 160,
-    backgroundColor: "#007bff",
+    backgroundColor: "#eee",
     padding: 12,
     borderRadius: 5,
     alignItems: "center",

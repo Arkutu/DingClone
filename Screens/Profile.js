@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   ScrollView,
 } from "react-native";
-import { Ionicons, FontAwesome } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import { getAuth } from "firebase/auth";
 import { db } from "../firebaseConfig";
 import { doc, getDoc } from "firebase/firestore";
@@ -28,8 +28,14 @@ const Profile = ({ navigation }) => {
           if (userDoc.exists()) {
             const userData = userDoc.data();
             setUser({
-              email: currentUser.email,
+              // email: currentUser.email,
+              // displayName: userData.displayName || currentUser.displayName,
+              // photoURL: userData.photoURL || currentUser.photoURL,
+
+              email: userData.email || currentUser.email,
               displayName: userData.displayName || currentUser.displayName,
+              gender: userData.gender,
+              dateOfBirth: userData.dateOfBirth,
               photoURL: userData.photoURL || currentUser.photoURL,
             });
           } else {
@@ -57,15 +63,7 @@ const Profile = ({ navigation }) => {
 
       <View style={styles.profileMe}>
         <View style={styles.profContainer}>
-          <TouchableOpacity
-            activeOpacity={0.5}
-            style={styles.profileEdit}
-            onPress={() => navigation.navigate("EditProfile")}
-          >
-            <FontAwesome name="edit" size={30} color="#666" />
-          </TouchableOpacity>
-
-          <Text style={styles.name}>{user?.displayName || "User Name"}</Text>
+          <Text style={styles.name}>{user?.displayName || "Anonymous"}</Text>
 
           <View style={{ marginLeft: 10, marginRight: 10, marginTop: 40 }}>
             <View
@@ -79,7 +77,7 @@ const Profile = ({ navigation }) => {
           </View>
 
           <View style={styles.emailContainer}>
-            <Text style={styles.email}>{user?.email || "email@....."}</Text>
+            <Text style={styles.email}>{user?.email || "user@email.com"}</Text>
           </View>
         </View>
       </View>
@@ -107,7 +105,7 @@ const Profile = ({ navigation }) => {
               onPress={() => navigation.navigate("EditProfile")}
             >
               <View style={styles.items}>
-                <Text style={styles.text}>Profile Picture</Text>
+                <Text style={styles.text}>Profile</Text>
               </View>
               <View>
                 <Ionicons name="chevron-forward" size={24} color="black" />
@@ -118,97 +116,71 @@ const Profile = ({ navigation }) => {
               <View style={styles.line} />
             </View>
 
-            <TouchableOpacity
-              activeOpacity={0.5}
-              style={styles.settingsContainer}
-              onPress={() => navigation.navigate("EditProfile")}
-            >
+            <View style={styles.settingsContainer}>
               <View style={styles.items}>
-                <Text style={styles.text}>Nickname</Text>
+                <Text style={styles.text}>Username</Text>
               </View>
 
-              <View>{/* call username here */}</View>
               <View>
-                <Ionicons name="chevron-forward" size={24} color="black" />
+                <Text style={styles.itemsText}>
+                  {user?.displayName || "Anonymous"}
+                </Text>
               </View>
-            </TouchableOpacity>
+            </View>
 
             <View style={styles.space}>
               <View style={styles.line} />
             </View>
 
-            <TouchableOpacity
-              activeOpacity={0.5}
-              style={styles.settingsContainer}
-              onPress={() => navigation.navigate("EditProfile")}
-            >
+            <View style={styles.settingsContainer}>
               <View style={styles.items}>
                 <Text style={styles.text}>Email</Text>
               </View>
 
-              <View>{/* callin the user email */}</View>
               <View>
-                <Ionicons name="chevron-forward" size={24} color="black" />
+                <Text style={styles.itemsText}>
+                  {user?.email || "user@email.com"}
+                </Text>
               </View>
-            </TouchableOpacity>
-
-            {/* <View style={styles.space}>
-              <View style={styles.line} />
-            </View> */}
-
-            {/* <TouchableOpacity
-              activeOpacity={0.5}
-              style={styles.settingsContainer}
-              onPress={() => navigation.navigate()}
-            >
-              <View style={styles.items}>
-                <Text style={styles.text}>Phone Number</Text>
-              </View>
-              <View>
-                <Ionicons name="chevron-forward" size={24} color="black" />
-              </View>
-            </TouchableOpacity> */}
+            </View>
           </View>
 
           <View style={{ marginTop: 10 }} />
           <Text style={styles.textHeader}>More</Text>
+
           <View style={styles.profile}>
-            <TouchableOpacity
-              activeOpacity={0.5}
-              style={styles.settingsContainer}
-              onPress={() => navigation.navigate("EditProfile")}
-            >
+            <View style={styles.settingsContainer}>
               <View style={styles.items}>
                 <Text style={styles.text}>Gender</Text>
               </View>
 
-              <View>{/* add a text saying (Not Set) */}</View>
               <View>
-                <Ionicons name="chevron-forward" size={24} color="black" />
+                <Text style={styles.itemsText}>
+                  {user?.gender || "male/female"}
+                </Text>
               </View>
-            </TouchableOpacity>
+            </View>
+
             <View style={styles.space}>
               <View style={styles.line} />
             </View>
 
-            <TouchableOpacity
-              activeOpacity={0.5}
-              style={styles.settingsContainer}
-              onPress={() => navigation.navigate("EditProfile")}
-            >
+            <View style={styles.settingsContainer}>
               <View style={styles.items}>
                 <Text style={styles.text}>Date of Birth</Text>
               </View>
 
-              <View>{/* add a text saying (Not Set) */}</View>
               <View>
-                <Ionicons name="chevron-forward" size={24} color="black" />
+                <Text style={styles.itemsText}>
+                  {user?.dateOfBirth || "YYYY-MM-DD"}
+                </Text>
               </View>
-            </TouchableOpacity>
+            </View>
           </View>
 
           <View style={{ marginTop: 10 }} />
           <Text style={styles.textHeader}>Privacy</Text>
+
           <View style={styles.profileSeetings}>
             <TouchableOpacity
               activeOpacity={0.5}
@@ -219,7 +191,6 @@ const Profile = ({ navigation }) => {
                 <Text style={styles.text}>Settings & Privacy</Text>
               </View>
 
-              <View>{/* callin the user email */}</View>
               <View>
                 <Ionicons name="chevron-forward" size={24} color="black" />
               </View>
@@ -269,8 +240,12 @@ const styles = StyleSheet.create({
     marginTop: 70,
   },
   img: {
+    width: "25%",
+    borderColor: "#fff",
+    borderRadius: 18,
     marginTop: 40,
     marginLeft: 25,
+    backgroundColor: "#fff",
   },
   avatar: {
     width: 90,
@@ -292,21 +267,6 @@ const styles = StyleSheet.create({
     color: "gray",
     fontSize: 14,
   },
-  profileEdit: {
-    width: 70,
-    position: "absolute",
-    top: 10,
-    right: 10,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    borderWidth: 1,
-    borderColor: "#ddd",
-    backgroundColor: "#fff",
-    paddingVertical: 6,
-    paddingHorizontal: 10,
-    borderRadius: 5,
-  },
   editIcon: {
     marginRight: 5,
   },
@@ -325,6 +285,10 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginBottom: 5,
     marginLeft: 20,
+  },
+  itemsText: {
+    color: "#bbb",
+    fontSize: 12,
   },
   settingsContainerTop: {
     flexDirection: "row",

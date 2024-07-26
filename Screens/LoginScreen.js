@@ -46,6 +46,15 @@ const LoginScreen = ({ navigation }) => {
           />
         </TouchableOpacity>
       ),
+      headerRight: () => (
+        <TouchableOpacity
+          activeOpacity={0.5}
+          style={styles.textTopContainer}
+          onPress={() => navigation.navigate("CreateNewAccount")}
+        >
+          <Text style={styles.textTop}>Sign Up</Text>
+        </TouchableOpacity>
+      ),
     });
   }, [navigation]);
 
@@ -85,15 +94,6 @@ const LoginScreen = ({ navigation }) => {
           text2: "Login successful!",
         });
 
-        //navigation.navigate("CreateOrganization"); // Navigate to CreateOrganization
-
-        // navigation.dispatch(
-        //   CommonActions.reset({
-        //     index: 0,
-        //     routes: [{ name: ("MainTabs", { screen: "MainHome" }) }],
-        //     // routes: [{ name: "MainHome" }],
-        //   })
-        // );
         navigation.dispatch(
           CommonActions.reset({
             index: 0,
@@ -181,7 +181,6 @@ const LoginScreen = ({ navigation }) => {
             <TextInput
               style={styles.input}
               placeholder="Enter your email address"
-              autoFocus
               placeholderTextColor={"gray"}
               value={email}
               onChangeText={setEmail}
@@ -266,6 +265,22 @@ const styles = StyleSheet.create({
     marginLeft: 15,
     alignItems: "center",
     // marginBottom: 20,
+  },
+  textTopContainer: {
+    width: 80,
+    borderWidth: 1,
+    borderRadius: 5,
+    borderColor: "#007bff",
+    backgroundColor: "#007bff",
+    padding: 5,
+    alignItems: "center",
+    marginRight: 10,
+    marginBottom: 20,
+  },
+  textTop: {
+    fontSize: 15,
+    fontWeight: "500",
+    color: "#fff",
   },
   innerContainer: {
     padding: 10,
