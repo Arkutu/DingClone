@@ -15,8 +15,6 @@ import { useRoute } from "@react-navigation/native";
 import { useAppContext } from "../context/AppContext";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../firebaseConfig";
-import { fonts } from "react-native-elements/dist/config";
-import { color } from "react-native-elements/dist/helpers";
 
 const screenWidth = Dimensions.get("window").width;
 

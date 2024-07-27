@@ -24,7 +24,6 @@ import { db } from "../firebaseConfig";
 import { AntDesign, FontAwesome6, MaterialIcons } from "@expo/vector-icons";
 import { useRoute } from "@react-navigation/native";
 import MenuComponent from "../components/MenuComponent";
-import BrowseChannel from "../components/BrowseChannel";
 import { StatusBar } from "expo-status-bar";
 
 const screenWidth = Dimensions.get("window").width;
@@ -56,6 +55,39 @@ const MainHome = ({ navigation }) => {
     },
   ]);
 
+  useEffect(() => {
+    const fetchUser = async () => {
+      const auth = getAuth();
+      const currentUser = auth.currentUser;
+
+      if (currentUser) {
+        try {
+          const userDoc = await getDoc(doc(db, "users", currentUser.uid));
+          if (userDoc.exists()) {
+            const userData = userDoc.data();
+            setUser({
+              email: userData.email || currentUser.email,
+              displayName: userData.displayName || currentUser.displayName,
+              photoURL: userData.photoURL || currentUser.photoURL,
+            });
+          } else {
+            setUser({
+              email: currentUser.email,
+              displayName: currentUser.displayName,
+              photoURL: currentUser.photoURL,
+            });
+          }
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+        }
+      } else {
+        console.error("No user is signed in.");
+      }
+    };
+
+    fetchUser();
+  }, []);
+
   useLayoutEffect(() => {
     navigation.setOptions({
       headerTitleStyle: { color: "#fff" },
@@ -78,7 +110,7 @@ const MainHome = ({ navigation }) => {
 
           <View style={styles.userInfo}>
             <Text style={styles.userName}>
-              {/* {user?.displayName || "Anonymous"} */}
+              {user?.displayName || "Anonymous"}
             </Text>
           </View>
         </TouchableOpacity>
@@ -102,39 +134,6 @@ const MainHome = ({ navigation }) => {
       ),
     });
   }, [navigation, isMenuVisible, user]);
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      const auth = getAuth();
-      const currentUser = auth.currentUser;
-
-      if (currentUser) {
-        try {
-          const userDoc = await getDoc(doc(db, "users", currentUser.uid));
-          if (userDoc.exists()) {
-            const userData = userDoc.data();
-            setUser({
-              email: currentUser.email,
-              displayName: userData.displayName || currentUser.displayName,
-              photoURL: userData.photoURL || currentUser.photoURL,
-            });
-          } else {
-            setUser({
-              email: currentUser.email,
-              displayName: currentUser.displayName,
-              photoURL: currentUser.photoURL,
-            });
-          }
-        } catch (error) {
-          console.error("Error fetching user data:", error);
-        }
-      } else {
-        console.error("No user is signed in.");
-      }
-    };
-
-    fetchUser();
-  }, []);
 
   useEffect(() => {
     const fetchDirectMessages = async () => {
@@ -223,6 +222,10 @@ const MainHome = ({ navigation }) => {
     setActiveSection(index);
   };
 
+  const handleSearch = () => {
+    navigation.navigate("Search", { searchText });
+  };
+
   return (
     <SafeAreaView
       style={styles.container}
@@ -233,7 +236,7 @@ const MainHome = ({ navigation }) => {
         <TouchableOpacity
           activeOpacity={0.5}
           style={styles.searchContainer}
-          onPress={() => navigation.navigate("Search")}
+          onPress={handleSearch}
         >
           <View style={styles.search}>
             <View>
@@ -334,7 +337,7 @@ const MainHome = ({ navigation }) => {
               <TouchableOpacity
                 activeOpacity={0.5}
                 style={styles.imgContainer}
-                onPress={() => navigation.navigate()}
+                onPress={() => navigation.navigate("Aichat")}
               >
                 <Image
                   source={require("../assets/ocicon.png")}
@@ -416,6 +419,15 @@ const MainHome = ({ navigation }) => {
                 />
               </TouchableOpacity>
             ))}
+
+            {/* Browse Channel */}
+            <TouchableOpacity
+              style={styles.addChannel}
+              activeOpacity={0.5}
+              onPress={() => navigation.navigate("ChannelBrowser")}
+            >
+              <Text style={styles.addChannelText}>Browse Channel</Text>
+            </TouchableOpacity>
           </View>
 
           {/* Friends */}
@@ -464,30 +476,28 @@ const styles = StyleSheet.create({
   userInfoContainer: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
-    marginRight: 10,
+    marginLeft: 10,
   },
   imgTop: {
-    borderRadius: 25,
-    overflow: "hidden",
-    marginRight: 10,
-    marginLeft: 15,
-  },
-  avatar: {
-    width: 40,
-    height: 40,
+    borderWidth: 2,
+    borderColor: "#444",
+    borderRadius: 50,
+    padding: 2,
   },
   userInfo: {
-    justifyContent: "center",
+    marginLeft: 5,
   },
   userName: {
-    color: "#000",
     fontSize: 16,
-    marginTop: 20,
-    textAlign: "center",
+    fontWeight: "bold",
+  },
+  avatar: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
   },
   iconTop: {
-    marginRight: 15,
+    marginRight: 10,
   },
   scrollViewContent: {
     flexDirection: "row",
@@ -546,10 +556,14 @@ const styles = StyleSheet.create({
   messageItem: {
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: 10,
+    justifyContent: "space-between",
+    borderWidth: 1,
+    borderRadius: 5,
+    padding: 15,
+    marginBottom: 10,
   },
   messageText: {
-    marginLeft: 10,
+    fontWeight: "bold",
     color: "#000",
   },
   channelItem: {
@@ -564,6 +578,20 @@ const styles = StyleSheet.create({
   channelName: {
     fontWeight: "bold",
     color: "#000",
+  },
+  addChannel: {
+    width: 160,
+    backgroundColor: "#eee",
+    padding: 12,
+    borderRadius: 5,
+    alignItems: "center",
+    top: 245,
+    left: 180,
+  },
+  addChannelText: {
+    color: "#555",
+    fontSize: 14,
+    fontWeight: "800",
   },
   //? AI
   imgContainer: {

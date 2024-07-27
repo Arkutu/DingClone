@@ -1,4 +1,3 @@
-//???????????????? Test Two ???????????????????????
 import React, { useState, useLayoutEffect } from "react";
 import {
   View,
@@ -83,42 +82,6 @@ const EditProfile = ({ navigation }) => {
       setImage(result.assets[0].uri);
     }
   };
-
-  // const handleSaveProfile = async () => {
-  //   // const auth = getAuth();
-  //   // const currentUser = auth.currentUser;
-
-  //   try {
-  //     setLoading(true);
-  //     let photoURL = currentUser.photoURL;
-  //     if (image) {
-  //       const storage = getStorage();
-  //       const storageRef = ref(storage, `profiles/${currentUser.uid}`);
-  //       const img = await fetch(image);
-  //       const bytes = await img.blob();
-  //       await uploadBytes(storageRef, bytes);
-  //       photoURL = await getDownloadURL(storageRef);
-  //     }
-
-  //     await updateUserProfile(username, photoURL, newGender, newDateOfBirth);
-
-  //     Toast.show({
-  //       type: "success",
-  //       text1: "Success",
-  //       text2: "Profile updated successfully!",
-  //     });
-  //     navigation.navigate("Profile");
-  //   } catch (error) {
-  //     console.error("Error updating profile:", error);
-  //     Toast.show({
-  //       type: "error",
-  //       text1: "Error updating profile:",
-  //       text2: error.message,
-  //     });
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
 
   const handleSaveProfile = async () => {
     try {

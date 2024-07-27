@@ -33,7 +33,6 @@ import { useAppContext } from "../context/AppContext";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../firebaseConfig";
 import { useRoute } from "@react-navigation/native";
-// import BrowseChannel from "../components/BrowseChannel";
 
 const screenHeight = Dimensions.get("window").height;
 const screenWidth = Dimensions.get("window").width;
@@ -46,9 +45,8 @@ const MenuButton = ({ title, onPress, icon: Icon, iconName }) => (
 );
 
 const OfficeScreen = ({ navigation }) => {
+  const { user, setUser } = useContext(UserContext);
   const { organizationName } = useAppContext();
-  const [searchText, setSearchText] = useState("");
-  const { user } = useContext(UserContext);
   const [visible, setVisible] = useState(false);
   const slideAnim = useRef(new Animated.Value(-screenHeight / 2 + 50)).current;
   const route = useRoute();
@@ -62,48 +60,6 @@ const OfficeScreen = ({ navigation }) => {
   const [activeSection, setActiveSection] = useState(0);
   const scrollViewRef = React.createRef();
 
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerTitleStyle: { color: "#fff" },
-      headerLeft: () => (
-        <TouchableOpacity
-          activeOpacity={0.5}
-          onPress={() => navigation.navigate("Profile")}
-          style={styles.userInfoContainer}
-        >
-          {/* {user && user.photoURL ? ( */}
-          <View style={styles.imgTop}>
-            <Image
-              source={
-                user?.photoURL
-                  ? { uri: user.photoURL }
-                  : require("../assets/avart.png")
-              }
-              style={styles.avatar}
-            />
-          </View>
-
-          {/* ) : (
-            <Ionicons name="person-circle" size={50} color="#333" />
-          )} */}
-
-          <View style={styles.userInfo}>
-            <Text style={styles.userName}>
-              {user?.displayName || "User Name"}
-            </Text>
-          </View>
-        </TouchableOpacity>
-      ),
-      headerRight: () => (
-        <View>
-          <TouchableOpacity onPress={toggleMenu} style={styles.menuButton}>
-            <Feather name="menu" size={30} color="black" />
-          </TouchableOpacity>
-        </View>
-      ),
-    });
-  }, [navigation]);
-
   //? Fetching user information
   useEffect(() => {
     const fetchUser = async () => {
@@ -116,7 +72,7 @@ const OfficeScreen = ({ navigation }) => {
           if (userDoc.exists()) {
             const userData = userDoc.data();
             setUser({
-              email: currentUser.email,
+              email: userData.email || currentUser.email,
               displayName: userData.displayName || currentUser.displayName,
               photoURL: userData.photoURL || currentUser.photoURL,
             });
@@ -137,6 +93,43 @@ const OfficeScreen = ({ navigation }) => {
 
     fetchUser();
   }, []);
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerTitleStyle: { color: "#fff" },
+      headerLeft: () => (
+        <TouchableOpacity
+          activeOpacity={0.5}
+          onPress={() => navigation.navigate("Profile")}
+          style={styles.userInfoContainer}
+        >
+          <View style={styles.imgTop}>
+            <Image
+              source={
+                user?.photoURL
+                  ? { uri: user.photoURL }
+                  : require("../assets/avart.png")
+              }
+              style={styles.avatar}
+            />
+          </View>
+
+          <View style={styles.userInfo}>
+            <Text style={styles.userName}>
+              {user?.displayName || "Anonymous"}
+            </Text>
+          </View>
+        </TouchableOpacity>
+      ),
+      headerRight: () => (
+        <View>
+          <TouchableOpacity onPress={toggleMenu} style={styles.menuButton}>
+            <Feather name="menu" size={30} color="black" />
+          </TouchableOpacity>
+        </View>
+      ),
+    });
+  }, [navigation]);
 
   //? Fetch channels and organization members
   useEffect(() => {
@@ -256,7 +249,7 @@ const OfficeScreen = ({ navigation }) => {
       >
         {/* Channel */}
         <View style={styles.section}>
-          {/* <FlatList
+          <FlatList
             data={channels}
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => (
@@ -265,13 +258,39 @@ const OfficeScreen = ({ navigation }) => {
                 style={styles.channelItem}
               >
                 <Text style={styles.channelName}>#{item.name}</Text>
+
+                <MaterialIcons
+                  name="arrow-forward-ios"
+                  size={18}
+                  color="#333"
+                />
               </TouchableOpacity>
             )}
-          /> */}
+          />
+
+          <View style={styles.chaOrgContainer}>
+            <TouchableOpacity
+              style={styles.addButton}
+              activeOpacity={0.5}
+              onPress={() => navigation.navigate("CreateChannel")}
+            >
+              <Text style={styles.addButtonText}>Add Channel</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.addTeam}
+              activeOpacity={0.5}
+              onPress={() => navigation.navigate("MembersScreen")}
+            >
+              <Text style={styles.addTeamText}>Add Teammates</Text>
+            </TouchableOpacity>
+          </View>
         </View>
 
         {/* Organization */}
         <View style={styles.section}>
+          <Text style={styles.organizationName}>{organizationName}</Text>
+
           <FlatList
             data={organizationMembers}
             keyExtractor={(item) => item.id}
@@ -285,26 +304,6 @@ const OfficeScreen = ({ navigation }) => {
       </ScrollView>
 
       {/* Channels and add team */}
-      <Text style={styles.organizationName}>{organizationName}</Text>
-
-      <View style={styles.chaOrgContainer}>
-        <TouchableOpacity
-          style={styles.addButton}
-          activeOpacity={0.5}
-          // onPress={() => navigation.navigate("ChannelBrowser")}
-          onPress={() => navigation.navigate("CreateChannel")}
-        >
-          <Text style={styles.addButtonText}>Add Channel</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.addTeam}
-          activeOpacity={0.5}
-          onPress={() => navigation.navigate("MembersScreen")}
-        >
-          <Text style={styles.addTeamText}>Add Teammates</Text>
-        </TouchableOpacity>
-      </View>
 
       {/* ShowDown menu */}
       {visible && (
@@ -431,118 +430,32 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   imgTop: {
-    marginLeft: 10,
+    borderWidth: 2,
+    borderColor: "#444",
+    borderRadius: 50,
+    padding: 2,
   },
   avatar: {
-    width: 45,
-    height: 45,
-    borderRadius: 18,
+    width: 30,
+    height: 30,
+    borderRadius: 15,
   },
   userInfo: {
-    marginLeft: 10,
+    marginLeft: 5,
   },
   userName: {
-    // marginTop: 15,
     fontSize: 16,
-    color: "#555",
-    textAlign: "center",
+    fontWeight: "bold",
   },
   iconTop: {
-    marginRight: 12,
+    marginRight: 10,
   },
-
-  //?
-  // headerContainer: {
-  //   backgroundColor: "#1a1a2e",
-  //   paddingHorizontal: 20,
-  //   paddingTop: 45,
-  //   paddingBottom: 10,
-  // },
-  // header: {
-  //   flexDirection: "row",
-  //   justifyContent: "space-between",
-  //   alignItems: "center",
-  //   marginBottom: 10,
-  // },
-  // iconContainer: {
-  //   backgroundColor: "#0d6efd",
-  //   width: 40,
-  //   height: 40,
-  //   borderRadius: 20,
-  //   justifyContent: "center",
-  //   alignItems: "center",
-  // },
-  // iconText: {
-  //   color: "#FFF",
-  //   fontSize: 20,
-  //   fontWeight: "bold",
-  // },
-  // headerTitle: {
-  //   color: "#FFF",
-  //   fontSize: 18,
-  //   fontWeight: "bold",
-  // },
-  // profileImage: {
-  //   width: 40,
-  //   height: 40,
-  //   borderRadius: 20,
-  // },
-  // searchContainer: {
-  //   flexDirection: "row",
-  //   alignItems: "center",
-  //   backgroundColor: "#2b2b40",
-  //   paddingHorizontal: 10,
-  //   paddingVertical: 8,
-  //   borderRadius: 30,
-  // },
-  // searchInput: {
-  //   flex: 1,
-  //   color: "#FFF",
-  //   marginLeft: 10,
-  // },
-  // tabsContainer: {
-  //   flexDirection: "row",
-  //   backgroundColor: "#1a1a2e",
-  //   paddingVertical: 10,
-  //   paddingHorizontal: 15,
-  // },
-  // tabItem: {
-  //   marginHorizontal: 10,
-  // },
-  // tabText: {
-  //   color: "#FFF",
-  //   fontSize: 16,
-  // },
-  // mainContent: {
-  //   flex: 1,
-  //   justifyContent: "center",
-  //   alignItems: "center",
-  // },
-
-  // bottomNav: {
-  //   flexDirection: "row",
-  //   justifyContent: "space-around",
-  //   backgroundColor: "#1a1a2e",
-  //   paddingVertical: 10,
-  // },
-  // navItem: {
-  //   alignItems: "center",
-  // },
-  // navTextActive: {
-  //   color: "#0d6efd",
-  //   fontSize: 12,
-  // },
-  // navTextInactive: {
-  //   color: "#888",
-  //   fontSize: 12,
-  // },
 
   //? Scrolling stying
   navBar: {
     flexDirection: "row",
     justifyContent: "space-around",
     paddingVertical: 15,
-    // borderBottomWidth: 1,
     borderBottomColor: "#ddd",
   },
   navItem: {
@@ -577,12 +490,17 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   channelItem: {
-    padding: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    borderWidth: 1,
+    borderRadius: 5,
+    padding: 15,
+    marginBottom: 10,
   },
   channelName: {
-    fontSize: 16,
+    fontWeight: "bold",
+    color: "#000",
   },
   memberItem: {
     padding: 12,
@@ -626,7 +544,6 @@ const styles = StyleSheet.create({
   //? Show down menu style
   menuButton: {
     padding: 10,
-    // marginRight: 2,
   },
   overlay: {
     flex: 1,

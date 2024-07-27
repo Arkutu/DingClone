@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   StyleSheet,
 } from "react-native";
-import { Ionicons, AntDesign } from "@expo/vector-icons";
+import { Ionicons, AntDesign, MaterialIcons } from "@expo/vector-icons";
 import { collection, getDocs, addDoc } from "firebase/firestore";
 import { db } from "../firebaseConfig";
 import { UserContext } from "../context/UserContext";
@@ -127,12 +127,16 @@ const ChannelBrowser = ({ navigation }) => {
               })
             }
           >
-            <Text style={styles.channelName}>#{channel.name}</Text>
-            <Text style={styles.channelStatus}>
-              {channel.visibility === "Public"
-                ? "Public Channel"
-                : `Private Channel - ${channel.members?.length || 0} members`}
-            </Text>
+            <View>
+              <Text style={styles.channelName}>#{channel.name}</Text>
+              <Text style={styles.channelStatus}>
+                {channel.visibility === "Public"
+                  ? "Public Channel"
+                  : `Private Channel - ${channel.members?.length || 0} members`}
+              </Text>
+            </View>
+
+            <MaterialIcons name="arrow-forward-ios" size={18} color="#333" />
           </TouchableOpacity>
         ))}
       </ScrollView>
@@ -182,17 +186,18 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   channelItem: {
-    padding: 8,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     borderWidth: 1,
     borderRadius: 5,
-    borderColor: "#ddd",
-    backgroundColor: "#eee",
+    padding: 8,
     marginBottom: 10,
   },
   channelName: {
-    fontSize: 16,
+    fontWeight: "bold",
+    color: "#000",
     marginBottom: 5,
-    color: "#555",
   },
   channelStatus: {
     color: "#888",

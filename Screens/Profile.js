@@ -28,10 +28,6 @@ const Profile = ({ navigation }) => {
           if (userDoc.exists()) {
             const userData = userDoc.data();
             setUser({
-              // email: currentUser.email,
-              // displayName: userData.displayName || currentUser.displayName,
-              // photoURL: userData.photoURL || currentUser.photoURL,
-
               email: userData.email || currentUser.email,
               displayName: userData.displayName || currentUser.displayName,
               gender: userData.gender,
@@ -243,7 +239,7 @@ const styles = StyleSheet.create({
     width: "25%",
     borderColor: "#fff",
     borderRadius: 18,
-    marginTop: 40,
+    marginTop: 35,
     marginLeft: 25,
     backgroundColor: "#fff",
   },
@@ -257,7 +253,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "500",
     marginTop: 10,
-    marginLeft: 110,
+    marginLeft: 120,
   },
   emailContainer: {
     marginLeft: 18,

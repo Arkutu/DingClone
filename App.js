@@ -1117,6 +1117,7 @@ import UserInfo from "./Screens/UserInfo";
 import Settings from "./Screens/Settings";
 import Logout from "./Screens/Logout";
 import AddNewAccount from "./Screens/AddNewAccount";
+import AiScreen from "./Screens/AiScreen";
 
 // Import icons
 import {
@@ -1443,6 +1444,13 @@ export default function App() {
                         name="Settings"
                         component={Settings}
                         options={{ ...TransitionPresets.SlideFromRightIOS }}
+                      />
+                      <Stack.Screen
+                        name="Aichat"
+                        component={AiScreen}
+                        options={{
+                          ...TransitionPresets.SlideFromRightIOS,
+                        }}
                       />
                       <Stack.Screen
                         name="Logout"

@@ -9,7 +9,6 @@ import {
   KeyboardAvoidingView,
   Platform,
   Image,
-  ActivityIndicator,
 } from "react-native";
 import { Ionicons, Entypo } from "@expo/vector-icons";
 import { db, auth, storage } from "../firebaseConfig";
@@ -373,9 +372,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginRight: 15,
   },
-  rightIcon: {
-    // marginLeft: 10,
-  },
   messageList: {
     flex: 1,
     padding: 10,
@@ -414,11 +410,9 @@ const styles = StyleSheet.create({
   },
   messageAuthor: {
     fontWeight: "bold",
-    // color: "#555",
     marginBottom: 5,
   },
   messageText: {
-    // color: "#333",
     marginBottom: 5,
   },
   messageImage: {
