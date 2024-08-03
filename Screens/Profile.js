@@ -199,7 +199,7 @@ const Profile = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#00072d',
+    backgroundColor: '#333',
   },
   profile: {
     borderWidth: 1,

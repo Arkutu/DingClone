@@ -29,7 +29,7 @@ const ChannelBrowser = ({ navigation }) => {
 
   const handleAddChannel = async () => {
     const newChannel = {
-      name: `new-channel-${Date.now()}`, // Replace with your desired channel name logic
+      name: `new-channel-${Date.now()}`,
       description: 'Newly created channel.',
       visibility: 'Public',
       createdAt: new Date(),
@@ -45,22 +45,25 @@ const ChannelBrowser = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={24} color="#FFF" />
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+          <Ionicons name="arrow-back" size={24} color="#000" />
         </TouchableOpacity>
         <View style={styles.headerInfo}>
           <Text style={styles.headerTitle}>Workspace Browser</Text>
           <Text style={styles.memberCount}>{channels.length} channels</Text>
         </View>
       </View>
-      <TextInput
-        style={styles.searchInput}
-        placeholder="Search for channels"
-        placeholderTextColor="#888"
-        value={searchText}
-        onChangeText={setSearchText}
-      />
-      <ScrollView>
+      <View style={styles.searchContainer}>
+        <Ionicons name="search" size={20} color="#888" style={styles.searchIcon} />
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Search for channels"
+          placeholderTextColor="#888"
+          value={searchText}
+          onChangeText={setSearchText}
+        />
+      </View>
+      <ScrollView style={styles.channelList}>
         {filteredChannels.map((channel, index) => (
           <TouchableOpacity
             key={index}
@@ -86,42 +89,57 @@ const ChannelBrowser = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#00072d',
-    padding: 20,
+    backgroundColor: '#FFF',
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 20,
+    backgroundColor: '#DADADA',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+  },
+  backButton: {
+    marginRight: 10,
   },
   headerInfo: {
-    marginLeft: 10,
+    flex: 1,
   },
   headerTitle: {
-    color: '#FFF',
+    color: '#000',
     fontSize: 20,
     fontWeight: 'bold',
   },
   memberCount: {
     color: '#888',
   },
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#DADADA',
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    
+  },
+  searchIcon: {
+    marginRight: 10,
+  },
   searchInput: {
-    backgroundColor: '#2b2b40',
-    padding: 10,
-    color: '#FFF',
-    marginBottom: 20,
-    borderWidth: 2,
-    borderColor: '#888',
-    borderRadius: 20,
+    flex: 1,
+    color: '#000',
+    fontSize: 16,
+  },
+  channelList: {
+    flex: 1,
   },
   channelItem: {
     padding: 15,
     borderBottomWidth: 1,
-    borderBottomColor: '#444',
+    borderBottomColor: '#E0E0E0',
   },
   channelName: {
-    color: '#FFF',
+    color: '#000',
     fontSize: 16,
+    fontWeight: 'bold',
   },
   channelStatus: {
     color: '#888',
@@ -131,7 +149,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 20,
     right: 20,
-    backgroundColor: '#6200EA',
+    backgroundColor: '#034BAD',
     borderRadius: 30,
     padding: 15,
   },

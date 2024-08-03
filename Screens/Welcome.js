@@ -54,7 +54,7 @@ const Welcome = () => {
 const styles = StyleSheet.create({
   root: {
     height: '100%',
-    backgroundColor: '#00072d',
+    backgroundColor: '#FFF',
   },
   container: {
     flex: 1,
@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
     width: '100%',
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
-    backgroundColor: '#007bff',
+    backgroundColor: '#545454',
     position: 'absolute',
     bottom: -40,
   },
@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
   btnTwo: {
     padding: 12,
     borderRadius: 12,
-    backgroundColor: '#333',
+    backgroundColor: '#034BAD',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 20,
@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
   btnThree: {
     padding: 12,
     borderRadius: 12,
-    backgroundColor: '#333',
+    backgroundColor: '#034BAD',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 80,

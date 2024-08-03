@@ -42,14 +42,14 @@ const InviteLinkScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#101223',
+    backgroundColor: '#FFF',
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
   },
   title: {
     fontSize: 24,
-    color: '#FFFFFF',
+    color: '#034BAD',
     marginBottom: 20,
   },
   input: {
@@ -59,10 +59,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 10,
     marginBottom: 20,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#DADADA',
   },
   button: {
-    backgroundColor: '#0d6efd',
+    backgroundColor: '#034BAD',
     paddingVertical: 15,
     borderRadius: 15,
     alignItems: 'center',

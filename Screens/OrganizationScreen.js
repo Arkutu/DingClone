@@ -1,12 +1,22 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
+import { 
+  View, 
+  Text, 
+  TextInput, 
+  StyleSheet, 
+  TouchableOpacity, 
+  Alert, 
+  ActivityIndicator, 
+  Clipboard 
+} from 'react-native';
 import { doc, setDoc, updateDoc, arrayUnion } from 'firebase/firestore';
 import { auth, db } from '../firebaseConfig';
-import { createInvitationLink } from '../invitationUtils'; // Adjust path accordingly
+import { createInvitationLink } from '../invitationUtils';
 
 const OrganizationScreen = ({ navigation }) => {
   const [organizationName, setOrganizationName] = useState('');
-  const [buttonLoading, setButtonLoading] = useState(false); // Add loading state
+  const [buttonLoading, setButtonLoading] = useState(false);
+  const [inviteLink, setInviteLink] = useState('');
 
   const handleCreateOrganization = async () => {
     if (!organizationName) {
@@ -14,7 +24,7 @@ const OrganizationScreen = ({ navigation }) => {
       return;
     }
 
-    setButtonLoading(true); // Start loading
+    setButtonLoading(true);
     try {
       const user = auth.currentUser;
 
@@ -32,14 +42,32 @@ const OrganizationScreen = ({ navigation }) => {
       });
 
       const invitationLink = await createInvitationLink(organizationName);
-      Alert.alert('Success', `Organization created successfully! Share this link to invite others: ${invitationLink}`);
+      setInviteLink(invitationLink);
 
-      setButtonLoading(false); // Stop loading
-      navigation.navigate('MainHome', { organizationName });
+      Clipboard.setString(invitationLink);
+
+      Alert.alert(
+        'Success',
+        'Organization created successfully! The invitation link has been copied to your clipboard.',
+        [
+          {
+            text: 'OK',
+            onPress: () => navigation.replace('MainHome', { organizationName })
+          }
+        ]
+      );
 
     } catch (error) {
-      setButtonLoading(false); // Stop loading
       Alert.alert('Error', error.message);
+    } finally {
+      setButtonLoading(false);
+    }
+  };
+
+  const copyInviteLink = () => {
+    if (inviteLink) {
+      Clipboard.setString(inviteLink);
+      Alert.alert('Copied', 'Invitation link copied to clipboard!');
     }
   };
 
@@ -50,7 +78,7 @@ const OrganizationScreen = ({ navigation }) => {
       </TouchableOpacity>
       <Text style={styles.title}>Create Your Organization</Text>
 
-      <View style={{ marginBottom: 120 }} />
+      <View style={{ marginBottom: 20 }} />
 
       <TextInput
         style={styles.input}
@@ -74,6 +102,12 @@ const OrganizationScreen = ({ navigation }) => {
           )}
         </TouchableOpacity>
       </View>
+
+      {inviteLink && (
+        <TouchableOpacity style={styles.linkButton} onPress={copyInviteLink}>
+          <Text style={styles.linkButtonText}>Copy Invite Link</Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 };
@@ -81,7 +115,7 @@ const OrganizationScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1a1a2e',
+    backgroundColor: '#FFF',
     padding: 20,
     justifyContent: 'center',
   },
@@ -92,7 +126,7 @@ const styles = StyleSheet.create({
   },
   backButtonText: {
     fontSize: 40,
-    color: '#FFFFFF',
+    color: '#0d6efd',
   },
   title: {
     fontSize: 24,
@@ -123,6 +157,19 @@ const styles = StyleSheet.create({
     width: '90%',
   },
   buttonText: {
+    color: '#FFF',
+    fontSize: 18,
+  },
+  linkButton: {
+    marginTop: 20,
+    backgroundColor: '#28a745',
+    paddingVertical: 15,
+    borderRadius: 25,
+    alignItems: 'center',
+    width: '90%',
+    alignSelf: 'center',
+  },
+  linkButtonText: {
     color: '#FFF',
     fontSize: 18,
   },

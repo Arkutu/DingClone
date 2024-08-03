@@ -102,7 +102,7 @@ const ClockInOutScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#101223',
+    backgroundColor: '#fff',
     padding: 16,
     alignItems: 'center',
   },
@@ -118,13 +118,13 @@ const styles = StyleSheet.create({
   },
   name: {
     fontSize: 24,
-    color: '#FFF',
+    color: '#000',
     fontWeight: 'bold',
   },
   title: {
     fontSize: 24,
     marginVertical: 20,
-    color: '#FFF',
+    color: '#000',
   },
   buttonContainer: {
     width: '100%',
@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   button: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: '#034BAD',
     paddingVertical: 15,
     borderRadius: 25,
     alignItems: 'center',

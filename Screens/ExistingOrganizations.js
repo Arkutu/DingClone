@@ -63,10 +63,13 @@ const ExistingOrganizations = () => {
     }
   };
 
-  const handleOrganizationPress = (organizationName) => {
-    setSelectedOrganizationId(organizationName);
-    navigation.navigate('MainHome', { organizationName });
-  };
+ const handleOrganizationPress = (organizationName) => {
+  setSelectedOrganizationId(organizationName);
+  navigation.reset({
+    index: 0,
+    routes: [{ name: 'MainHome', params: { organizationName } }],
+  });
+};
 
   if (loading) {
     return (
@@ -103,7 +106,7 @@ const ExistingOrganizations = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1a1a2e',
+    backgroundColor: '#FFF',
     padding: 20,
   },
   title: {
@@ -113,7 +116,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   card: {
-    backgroundColor: '#fff',
+    backgroundColor: '#DADADA',
     borderRadius: 8,
     padding: 16,
     marginBottom: 16,

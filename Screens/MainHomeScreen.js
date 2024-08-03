@@ -1,16 +1,16 @@
-import React, { useState, useContext, useEffect } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, Image, ActivityIndicator, Modal, TouchableWithoutFeedback  } from 'react-native';
+import React, { useState, useContext, useEffect, useCallback } from 'react';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, ScrollView, KeyboardAvoidingView, Platform, Image, ActivityIndicator, Modal, TouchableWithoutFeedback } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Feather from 'react-native-vector-icons/Feather';
-
-
+import Entypo from 'react-native-vector-icons/Entypo';
+import { CommonActions } from '@react-navigation/native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { UserContext } from '../context/UserContext';
 import { useAppContext } from '../context/AppContext';
 import { auth, db } from '../firebaseConfig';
-import { collection, doc, getDoc, updateDoc } from 'firebase/firestore';
+import { collection, doc, getDoc, updateDoc, getDocs } from 'firebase/firestore';
 
 const MainHomeScreen = ({ route, navigation }) => {
   const { organizationName: routeOrganizationName } = route.params || {};
@@ -22,64 +22,93 @@ const MainHomeScreen = ({ route, navigation }) => {
   const organizationName = routeOrganizationName || contextOrganizationName;
   const [organizationMembers, setOrganizationMembers] = useState([]);
   const [searchText, setSearchText] = useState('');
-  const [channels, setChannels] = useState([
-    { name: 'general', description: 'General is a messaging app for groups of people who work together. You can send updates, share files, and organize conversations so that everyone is in the loop.' },
-    { name: 'meeting', description: 'Meeting channel for discussing various topics and holding meetings.' },
-    { name: 'random', description: 'Random channel for off-topic discussions and fun.' },
-  ]);
+  const [channels, setChannels] = useState([]);
+  const [showAllChannels, setShowAllChannels] = useState(false);
+  
+
+  useEffect(() => {
+    if (!organizationName) {
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'ExistingOrganizations' }],
+      });
+    }
+  }, [organizationName, navigation]);
 
   useEffect(() => {
     if (routeOrganizationName && routeOrganizationName !== contextOrganizationName) {
       setOrganizationName(routeOrganizationName);
     }
-  }, [routeOrganizationName, contextOrganizationName, setOrganizationName]);
+  }, [routeOrganizationName]);
 
-  useEffect(() => {
-    const fetchMembers = async () => {
-      if (organizationName) {
-        try {
-          const orgDoc = await getDoc(doc(db, 'organizations', organizationName));
-          if (orgDoc.exists()) {
-            const membersData = orgDoc.data().members || [];
-            if (membersData.length > 0) {
-              const userPromises = membersData.map(memberId => getDoc(doc(db, 'users', memberId)));
-              const users = await Promise.all(userPromises);
-              const members = users.map(user => ({
-                uid: user.id,
-                displayName: user.data().displayName,
-                photoURL: user.data().photoURL,
-              }));
-              setOrganizationMembers(members);
-            } else {
-              setOrganizationMembers([]);
-            }
+  const fetchMembers = useCallback(async () => {
+    if (organizationName) {
+      try {
+        const orgDoc = await getDoc(doc(db, 'organizations', organizationName));
+        if (orgDoc.exists()) {
+          const membersData = orgDoc.data().members || [];
+          if (membersData.length > 0) {
+            const userPromises = membersData.map(memberId => getDoc(doc(db, 'users', memberId)));
+            const users = await Promise.all(userPromises);
+            const members = users.map(user => ({
+              uid: user.id,
+              displayName: user.data().displayName,
+              photoURL: user.data().photoURL,
+            }));
+            setOrganizationMembers(members);
           } else {
             setOrganizationMembers([]);
           }
-        } catch (error) {
-          console.error('Error fetching members:', error);
+        } else {
           setOrganizationMembers([]);
         }
+      } catch (error) {
+        console.error('Error fetching members:', error);
+        setOrganizationMembers([]);
       }
-    };
+    }
+  }, [organizationName]);
 
-    const fetchDirectMessages = async () => {
-      if (user) {
-        try {
-          const userDoc = await getDoc(doc(db, 'users', user.uid));
-          if (userDoc.exists()) {
-            const directMessages = userDoc.data().directMessages || [];
-            setSelectedMembers(directMessages);
-          }
-        } catch (error) {
-          console.error('Error fetching direct messages:', error);
+  const fetchDirectMessages = useCallback(async () => {
+    if (user) {
+      try {
+        const userDoc = await getDoc(doc(db, 'users', user.uid));
+        if (userDoc.exists()) {
+          const directMessages = userDoc.data().directMessages || [];
+          setSelectedMembers(prev => {
+            if (JSON.stringify(prev) !== JSON.stringify(directMessages)) {
+              return directMessages;
+            }
+            return prev;
+          });
         }
+      } catch (error) {
+        console.error('Error fetching direct messages:', error);
       }
-    };
+    }
+  }, [user, setSelectedMembers]);
 
+  useEffect(() => {
     fetchMembers();
     fetchDirectMessages();
-  }, [organizationName, user, setSelectedMembers]);
+  }, [fetchMembers, fetchDirectMessages]);
+
+  useEffect(() => {
+    const fetchChannels = async () => {
+      try {
+        const channelsSnapshot = await getDocs(collection(db, 'channels'));
+        const channelsData = channelsSnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        setChannels(channelsData);
+      } catch (error) {
+        console.error('Error fetching channels:', error);
+      }
+    };
+
+    fetchChannels();
+  }, []);
 
   const firstLetter = organizationName ? organizationName.charAt(0).toUpperCase() : '';
 
@@ -98,13 +127,12 @@ const MainHomeScreen = ({ route, navigation }) => {
   );
 
   const startChat = async (member) => {
-    // Save direct message member to Firestore
     try {
       const userDoc = doc(db, 'users', user.uid);
       await updateDoc(userDoc, {
         directMessages: [...selectedMembers, member.uid],
       });
-      setSelectedMembers([...selectedMembers, member.uid]);
+      setSelectedMembers(prev => [...prev, member.uid]);
     } catch (error) {
       console.error('Error saving direct message member:', error);
     }
@@ -118,21 +146,15 @@ const MainHomeScreen = ({ route, navigation }) => {
 
   const selectedOrganizationMembers = organizationMembers.filter(member => selectedMembers.includes(member.uid));
 
-
   const handleSectionChange = (index) => {
-  setActiveSection(index);
-};
-
-
-
-
+    setActiveSection(index);
+  };
 
   const toggleDropdown = () => {
-  setIsDropdownVisible(!isDropdownVisible);
+    setIsDropdownVisible(!isDropdownVisible);
   };
 
   const renderDropdown = () => (
-
     <Modal
       transparent={true}
       visible={isDropdownVisible}
@@ -142,28 +164,28 @@ const MainHomeScreen = ({ route, navigation }) => {
         <View style={styles.modalOverlay}>
           <View style={styles.dropdownContainer}>
             <View style={styles.dropdown}>
-              <TouchableOpacity style={styles.dropdownItem}>
-                <Ionicons name="chatbubble-outline" size={20} color="#FFF" />
-                <Text style={styles.dropdownText}>New Chat</Text>
+              <TouchableOpacity style={styles.dropdownItem} onPress={() => navigation.navigate('NewsScreen')}>
+                <Entypo name="news" size={20} color="#000" />
+                <Text style={styles.dropdownText}>News</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.dropdownItem}>
-                <Ionicons name="people-outline" size={20} color="#FFF" />
+              <TouchableOpacity style={styles.dropdownItem} onPress={() => navigation.navigate('CreateOrganization')} >
+                <Ionicons name="people-outline" size={20} color="#000" />
                 <Text style={styles.dropdownText}>Create/Join organization</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.dropdownItem}>
-                <Ionicons name="person-add-outline" size={20} color="#FFF" />
+              <TouchableOpacity style={styles.dropdownItem} onPress={() => navigation.navigate('Login')}>
+                <Ionicons name="person-add-outline" size={20} color="#000" />
                 <Text style={styles.dropdownText}>Switch account</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.dropdownItem}>
-                <Ionicons name="person-circle-outline" size={20} color="#FFF" />
-                <Text style={styles.dropdownText}>Profile</Text>
+              <TouchableOpacity style={styles.dropdownItem} onPress={() => navigation.navigate('Profile')} >
+               <Ionicons name="person-circle-outline" size={20} color="#000" />
+               <Text style={styles.dropdownText}>Profile</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.dropdownItem}>
-                <Ionicons name="settings-outline" size={20} color="#FFF" />
+              <TouchableOpacity style={styles.dropdownItem} onPress={() => navigation.navigate('Settings')} >
+                <Ionicons name="settings-outline" size={20} color="#000" />
                 <Text style={styles.dropdownText}>Settings & Privacy</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.dropdownItem} onPress={toggleDropdown}>
-                <Ionicons name="close-outline" size={20} color="#FFF" />
+                <Ionicons name="close-outline" size={20} color="#000" />
                 <Text style={styles.dropdownText}>Close</Text>
               </TouchableOpacity>
             </View>
@@ -171,113 +193,105 @@ const MainHomeScreen = ({ route, navigation }) => {
         </View>
       </TouchableWithoutFeedback>
     </Modal>
-
   );
 
+  const renderContent = () => {
+    const defaultChannels = [
+    { id: 'general', name: 'general' },
+    { id: 'meeting', name: 'meeting' },
+    { id: 'random', name: 'random' }
+  ];
 
-
-
-  return (
-    <View style={{ flex: 1 }}>
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      >
-        <KeyboardAwareScrollView
-          contentContainerStyle={{ flexGrow: 1 }}
-          keyboardShouldPersistTaps="handled"
-        >
-          <View style={styles.container}>
-            
-            <View style={styles.headerContainer}>
-              <View style={styles.header}>
-                
-                 <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
-                  {user && user.photoURL ? (
-                    <Image source={{ uri: user.photoURL }} style={styles.profileImage} />
-                  ) : (
-                    <Ionicons name="person-circle" size={40} color="#FFF" />
-                  )}
-                </TouchableOpacity>
-                <Text style={styles.headerTitle}>{organizationName}</Text>
-                <TouchableOpacity style={styles.addButton} onPress={toggleDropdown}>
-                  <Ionicons name="add" size={24} color="#FFF" />
-                </TouchableOpacity>
-              </View>
-  
- 
-
-
-              <View style={styles.searchContainer}>
-                <Ionicons name="search" size={20} color="#888" />
-                <TextInput
-                  style={styles.searchInput}
-                  placeholder="Jump to or search..."
-                  placeholderTextColor="#888"
-                  value={searchText}
-                  onChangeText={setSearchText}
-                />
-              </View>
-
-              
-          </View>
-               <ScrollView showsHorizontalScrollIndicator={false} horizontal>
-                    <View style={styles.navBar}>
-                      {["All", "Messages", "Chats", "Channels"].map(
-                        (title, index) => (
-                        <TouchableOpacity
-                         key={title}
-                         onPress={() => handleSectionChange(index)}
-                        style={[
-                        styles.navItems,
-                        activeSection === index
-                       ? styles.activeNavItem
-                      : styles.inactiveNavItem,
-                   ]}
+  const allChannels = [...defaultChannels, ...filteredChannels.filter(channel => 
+    !defaultChannels.some(dc => dc.id === channel.id)
+  )];
+    return (
+      <View style={styles.sectionContainer}>
+        {(() => {
+          switch (activeSection) {
+            case 0: // All
+            const channelsToShowAll = showAllChannels ? allChannels : allChannels.slice(0, 6);
+            return (
+              <>
+                <View style={styles.section}>
+                  <Text style={styles.sectionTitle}>Workspace</Text>
+                  {channelsToShowAll.map((channel) => (
+                    <TouchableOpacity
+                      key={channel.id}
+                      style={styles.channelItem}
+                      onPress={() => openChannel(channel)}
                     >
-                 <Text
-                     style={
-                     activeSection === index
-                    ? styles.activeNavText
-                    : styles.inactiveNavText
-                    }
-                   >
-                    {title}
-                  </Text>
-                  </TouchableOpacity>
-                )
-               )}
-          
-          
-          </View>
-                </ScrollView>
-                
-                  
+                      <Text style={styles.channelText}># {channel.name}</Text>
+                    </TouchableOpacity>
+                  ))}
+                  {allChannels.length > 6 && (
+                    <TouchableOpacity
+                      style={styles.showMoreButton}
+                      onPress={() => setShowAllChannels(!showAllChannels)}
+                    >
+                      <Text style={styles.showMoreText}>
+                        {showAllChannels ? 'Show Less' : `Show ${allChannels.length - 6} More`}
+                      </Text>
+                    </TouchableOpacity>
+                  )}
+                 
+                </View>
 
-            <ScrollView style={styles.content}>
-              <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Workspace</Text>
-                {filteredChannels.map((channel, index) => (
-                  <TouchableOpacity
-                    key={index}
-                    style={styles.channelItem}
-                    onPress={() => openChannel(channel)}
-                  >
-                    <Text style={styles.channelText}># {channel.name}</Text>
-                  </TouchableOpacity>
-                ))}
-                <TouchableOpacity
-                  style={styles.addChannel}
-                  onPress={() => navigation.navigate('ChannelBrowser')}
-                >
-                  <Text style={styles.addChannelText}>+ Add channel</Text>
-                </TouchableOpacity>
-              </View>
+                <View style={styles.section}>
+                  <Text style={styles.sectionTitle}>Direct messages</Text>
+                  {selectedOrganizationMembers.length > 0 ? (
+                    selectedOrganizationMembers.map((member, index) => (
+                      <TouchableOpacity
+                        key={index}
+                        style={styles.channelItem}
+                        onPress={() => startChat(member)}
+                      >
+                        {member.photoURL ? (
+                          <Image source={{ uri: member.photoURL }} style={styles.profileImage} />
+                        ) : (
+                          <Ionicons name="person-circle" size={40} color="#FFF" />
+                        )}
+                        <Text style={styles.channelText}>{member.displayName}</Text>
+                      </TouchableOpacity>
+                    ))
+                  ) : (
+                    <Text style={styles.noMembersText}>No members available for direct messages.</Text>
+                  )}
+                </View>
+              </>
+            );
 
-              <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Direct messages</Text>
-                {selectedOrganizationMembers.length > 0 ? (
-                  selectedOrganizationMembers.map((member, index) => (
+            
+            case 1: // Messages
+              return (
+                <View style={styles.section}>
+                  <Text style={styles.sectionTitle}>Direct messages</Text>
+                  {selectedOrganizationMembers.length > 0 ? (
+                    selectedOrganizationMembers.map((member, index) => (
+                      <TouchableOpacity
+                        key={index}
+                        style={styles.channelItem}
+                        onPress={() => startChat(member)}
+                      >
+                        {member.photoURL ? (
+                          <Image source={{ uri: member.photoURL }} style={styles.profileImage} />
+                        ) : (
+                          <Ionicons name="person-circle" size={40} color="#FFF" />
+                        )}
+                        <Text style={styles.channelText}>{member.displayName}</Text>
+                      </TouchableOpacity>
+                    ))
+                  ) : (
+                    <Text style={styles.noMembersText}>No members available for direct messages.</Text>
+                  )}
+                </View>
+              );
+            case 2: // Chats
+              return (    
+                <View style={styles.section}>
+                  <View style={{ marginTop: 10 }} />
+                  <Text style={styles.sectionTitle}>All Users</Text>
+                  {organizationMembers.map((member, index) => (
                     <TouchableOpacity
                       key={index}
                       style={styles.channelItem}
@@ -290,12 +304,123 @@ const MainHomeScreen = ({ route, navigation }) => {
                       )}
                       <Text style={styles.channelText}>{member.displayName}</Text>
                     </TouchableOpacity>
-                  ))
-                ) : (
-                  <Text style={styles.noMembersText}>No members available for direct messages.</Text>
+                  ))}
+                </View>
+              );
+            case 3: // Channels
+            const channelsToShow = showAllChannels ? allChannels : allChannels.slice(0, 6);
+            return (
+              <View style={styles.section}>
+                <Text style={styles.sectionTitle}>Channels</Text>
+                {channelsToShow.map((channel) => (
+                  <TouchableOpacity
+                    key={channel.id}
+                    style={styles.channelItem}
+                    onPress={() => openChannel(channel)}
+                  >
+                    <Text style={styles.channelText}># {channel.name}</Text>
+                  </TouchableOpacity>
+                ))}
+                {allChannels.length > 6 && (
+                  <TouchableOpacity
+                    style={styles.showMoreButton}
+                    onPress={() => setShowAllChannels(!showAllChannels)}
+                  >
+                    <Text style={styles.showMoreText}>
+                      {showAllChannels ? 'Show Less' : `Show ${allChannels.length - 6} More`}
+                    </Text>
+                  </TouchableOpacity>
                 )}
+                <TouchableOpacity
+                  style={styles.addChannel}
+                  onPress={() => navigation.navigate('ChannelBrowser')}
+                >
+                  <Text style={styles.addChannelText}>+ Add channel</Text>
+                </TouchableOpacity>
+              </View>
+            );
+
+
+            default:
+              return null;
+          }
+        })()}
+      </View>
+    );
+  };
+
+  return (
+    <View style={{ flex: 1 }}>
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      >
+        <KeyboardAwareScrollView
+          contentContainerStyle={{ flexGrow: 1 }}
+          keyboardShouldPersistTaps="handled"
+        >
+          <View style={styles.container}>
+            <View style={styles.headerContainer}>
+              <View style={styles.header}>
+                <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
+                  {user && user.photoURL ? (
+                    <Image source={{ uri: user.photoURL }} style={styles.profileImage} />
+                  ) : (
+                    <Ionicons name="person-circle" size={40} color="#FFF" />
+                  )}
+                </TouchableOpacity>
+                <Text style={styles.headerTitle}>{organizationName}</Text>
+                <TouchableOpacity style={styles.addButton} onPress={toggleDropdown}>
+                  <Ionicons name="add" size={24} color="#FFF" />
+                </TouchableOpacity>
               </View>
 
+              <View style={styles.searchContainer}>
+                <Ionicons name="search" size={20} color="#888" />
+                <TextInput
+                  style={styles.searchInput}
+                  placeholder="Jump to or search..."
+                  placeholderTextColor="#888"
+                  value={searchText}
+                  onChangeText={setSearchText}
+                />
+              </View>
+            </View>
+            <ScrollView showsHorizontalScrollIndicator={false} horizontal>
+              <View style={styles.navBar}>
+                {["All", "Messages", "Chats", "Channels"].map(
+                  (title, index) => (
+                    <TouchableOpacity
+                      key={title}
+                      onPress={() => handleSectionChange(index)}
+                      style={styles.navItems}
+                    >
+                      <View style={[
+                        styles.navTextContainer,
+                        activeSection === index ? styles.activeNavItem : styles.inactiveNavItem
+                      ]}>
+                        <Text
+                          style={
+                            activeSection === index
+                              ? styles.activeNavText
+                              : styles.inactiveNavText
+                          }
+                        >
+                          {title}
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
+                  )
+                )}
+              </View>
+            </ScrollView>
+
+            <ScrollView 
+              style={styles.content}
+              contentContainerStyle={styles.contentContainer}
+            >
+              {renderContent()}
+              <View style={styles.spacer} />
               <View style={styles.suggestion}>
                 <Text style={styles.suggestionText}>Next, you could...</Text>
                 <TouchableOpacity style={styles.suggestionButton} onPress={() => navigation.navigate('MembersScreen')}>
@@ -310,11 +435,11 @@ const MainHomeScreen = ({ route, navigation }) => {
       <View style={styles.bottomNav}>
         <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('MainHome')}>
           <Ionicons name="home" size={28} color={getActiveRoute() === 'MainHome' ? '#0d6efd' : '#FFF'} />
-          <Text style={getActiveRoute() === 'MainHome' ? styles.navTextActive : styles.navTextInactive}>Home</Text>
+         <Text style={getActiveRoute() === 'MainHome' ? styles.navTextActive : styles.navTextInactive}>Home</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('OfficeScreen', { organizationName })}>
           <FontAwesome5 name="briefcase" size={28} color={getActiveRoute() === 'OfficeScreen' ? '#0d6efd' : '#FFF'} />
-          <Text style={getActiveRoute() === 'OfficeScreen' ? styles.navTextActive : styles.navTextInactive}>Office</Text>
+         <Text style={getActiveRoute() === 'OfficeScreen' ? styles.navTextActive : styles.navTextInactive}>Office</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Activity')}>
           <Ionicons name="notifications" size={28} color={getActiveRoute() === 'Activity' ? '#0d6efd' : '#FFF'} />
@@ -332,16 +457,19 @@ const MainHomeScreen = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#00072d',
+    backgroundColor: '#FFF',
+  },
+  content: {
+    flex: 1,
   },
   loaderContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#00072d',
+    backgroundColor: '#FFFFFF',
   },
   headerContainer: {
-    backgroundColor: '#1a1a2e',
+    backgroundColor: '#333',
     paddingHorizontal: 20,
     paddingTop: 10,
     paddingBottom: 10,
@@ -379,26 +507,33 @@ const styles = StyleSheet.create({
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#2b2b40',
+    backgroundColor: '#FFF',
     borderRadius: 30,
     paddingHorizontal: 10,
     height: 40,
   },
   searchInput: {
     flex: 1,
-    color: '#FFF',
+    color: '#000',
     marginLeft: 10,
   },
   content: {
     flex: 1,
+  },
+  contentContainer: {
+    flexGrow: 1,
     paddingHorizontal: 20,
     paddingTop: 10,
   },
+  sectionContainer: {
+    flex: 1,
+    marginBottom: 200,
+  },
   section: {
-    marginBottom: 20,
+    marginBottom: 10,
   },
   sectionTitle: {
-    color: '#FFF',
+    color: '#000',
     fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 10,
@@ -411,7 +546,7 @@ const styles = StyleSheet.create({
     borderBottomColor: '#0d6efd',
   },
   channelText: {
-    color: '#FFF',
+    color: '#000',
     fontSize: 14,
     marginLeft: 10,
   },
@@ -428,12 +563,16 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginBottom: 10,
   },
+  spacer: {
+    flex: 1,
+  },
   suggestion: {
-    backgroundColor: '#1a1a2e',
+    backgroundColor: '#DADADA',
     borderRadius: 10,
     padding: 20,
     alignItems: 'center',
-    marginBottom: 20,
+    marginTop: -20,
+    marginBottom: 30,
   },
   suggestionText: {
     color: '#888',
@@ -454,7 +593,7 @@ const styles = StyleSheet.create({
   bottomNav: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    backgroundColor: '#1a1a2e',
+    backgroundColor: '#333',
     paddingVertical: 10,
   },
   navItem: {
@@ -470,32 +609,35 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginTop: 2,
   },
-
-navBar: {
+  navBar: {
     flexDirection: "row",
     justifyContent: "space-around",
-    borderRadius: 25,
-    padding: 5,
-    marginVertical: 9,
-},
-navItems: {
-   paddingVertical: 5,
-    paddingHorizontal: 20,
+    padding: 1,
+    marginVertical: 6,
+  },
+  navItems: {
+    paddingVertical: 5,
+    paddingHorizontal: 12,
     borderRadius: 15,
-},
-activeNavItem: {
-  backgroundColor: '#0d6efd',
-},
-inactiveNavItem: {
-  backgroundColor: 'transparent',
-},
-activeNavText: {
-  color: '#FFF',
-  fontWeight: 'bold',
-},
-inactiveNavText: {
-  color: '#888',
-},
+  },
+  activeNavItem: {
+    backgroundColor: '#0d6efd',
+  },
+  inactiveNavItem: {
+    backgroundColor: 'transparent',
+  },
+  activeNavText: {
+    color: '#FFF',
+    fontWeight: 'bold',
+  },
+  inactiveNavText: {
+    color: '#888',
+  },
+  navTextContainer: {
+    paddingVertical: 5,
+    paddingHorizontal: 8,
+    borderRadius: 15,
+  },
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
@@ -505,11 +647,11 @@ inactiveNavText: {
   dropdownContainer: {
     width: '80%',
     maxWidth: 300,
-    marginTop: 60, // Adjust this value to position the dropdown below the header
+    marginTop: 60,
     marginRight: 20,
   },
   dropdown: {
-    backgroundColor: '#2a2a3e',
+    backgroundColor: '#FFF',
     borderRadius: 10,
     padding: 10,
     elevation: 5,
@@ -525,10 +667,18 @@ inactiveNavText: {
     paddingHorizontal: 15,
   },
   dropdownText: {
-    color: '#FFF',
+    color: '#000',
     marginLeft: 10,
   },
-
+  showMoreButton: {
+  paddingVertical: 10,
+  alignItems: 'center',
+},
+showMoreText: {
+  color: '#0d6efd',
+  fontSize: 14,
+  fontWeight: 'bold',
+},
 });
 
 export default MainHomeScreen;

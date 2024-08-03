@@ -11,7 +11,18 @@ const ChatbotScreen = ({ navigation }) => {
 
   useEffect(() => {
     scrollViewRef.current?.scrollToEnd({ animated: true });
-  }, [messages]);
+
+    // Add Ned's introduction
+    const introMessage = {
+      id: 'intro',
+      text: "Hello! I'm Ned, your AI assistant. How can I help you today?",
+      sender: 'bot',
+      createdAt: new Date(),
+      name: 'Ned',
+      avatar: 'https://via.placeholder.com/150/FF0000/FFFFFF?text=Ned'
+    };
+    setMessages([introMessage]);
+  }, []);
 
   const handleSendMessage = async () => {
     if (message.trim() === '') {
@@ -24,7 +35,7 @@ const ChatbotScreen = ({ navigation }) => {
       text: message,
       sender: 'user',
       createdAt: new Date(),
-      avatar: 'https://via.placeholder.com/150/0000FF/808080?text=User',
+      name: 'You',
     };
 
     setMessages([...messages, newMessage]);
@@ -46,7 +57,8 @@ const ChatbotScreen = ({ navigation }) => {
         text: botResponse,
         sender: 'bot',
         createdAt: new Date(),
-        avatar: 'https://via.placeholder.com/150/FF0000/FFFFFF?text=Bot'
+        name: 'Ned',
+        avatar: 'https://via.placeholder.com/150/FF0000/FFFFFF?text=Ned'
       };
 
       setMessages(prevMessages => [...prevMessages, newBotMessage]);
@@ -72,8 +84,9 @@ const ChatbotScreen = ({ navigation }) => {
           {messages.length > 0 ? (
             messages.map((msg) => (
               <View key={msg.id} style={[styles.messageContainer, msg.sender === 'user' ? styles.myMessage : styles.botMessage]}>
-                <Image source={{ uri: msg.avatar }} style={styles.avatar} />
+                {msg.sender === 'bot' && <Image source={{ uri: msg.avatar }} style={styles.avatar} />}
                 <View style={styles.messageContent}>
+                  <Text style={styles.messageName}>{msg.name}</Text>
                   <Text style={styles.messageText}>{msg.text}</Text>
                   <Text style={styles.messageTime}>{moment(msg.createdAt).fromNow()}</Text>
                 </View>
@@ -104,13 +117,13 @@ const ChatbotScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#101223',
+    backgroundColor: '#FFF',
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: 10,
-    backgroundColor: '#212A3E',
+    backgroundColor: '#333',
     borderBottomWidth: 1,
     borderBottomColor: '#3E497A',
   },
@@ -150,9 +163,15 @@ const styles = StyleSheet.create({
   messageContent: {
     maxWidth: '80%',
     padding: 10,
-    backgroundColor: '#212A3E',
+    backgroundColor: '#333',
     borderRadius: 10,
     marginLeft: 10,
+  },
+  messageName: {
+    color: '#999',
+    fontSize: 14,
+    fontWeight: 'bold',
+    marginBottom: 5,
   },
   messageText: {
     color: 'white',
@@ -168,7 +187,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: 10,
-    backgroundColor: '#212A3E',
+    backgroundColor: '#333',
     borderTopWidth: 1,
     borderTopColor: '#3E497A',
   },

@@ -181,7 +181,7 @@ const ActivityScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#00072d',
+        backgroundColor: '#FFF',
     },
     loaderContainer: {
         flex: 1,
@@ -190,7 +190,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#00072d',
     },
     headerContainer: {
-        backgroundColor: '#1a1a2e',
+        backgroundColor: '#333',
         paddingHorizontal: 20,
         paddingTop: 10,
         paddingBottom: 10,
@@ -233,11 +233,11 @@ const styles = StyleSheet.create({
         paddingVertical: 15,
     },
     activityText: {
-        color: '#FFF',
+        color: '#000',
         fontSize: 14,
     },
     timestampText: {
-        color: '#888',
+        color: '#000',
         fontSize: 12,
         marginTop: 5,
     },
@@ -248,7 +248,7 @@ const styles = StyleSheet.create({
     bottomNav: {
         flexDirection: 'row',
         justifyContent: 'space-around',
-        backgroundColor: '#1a1a2e',
+        backgroundColor: '#333',
         paddingVertical: 10,
     },
     navItem: {

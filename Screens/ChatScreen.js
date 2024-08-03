@@ -6,6 +6,7 @@ import { collection, addDoc, query, orderBy, onSnapshot, doc, getDoc, Timestamp,
 import { onAuthStateChanged } from 'firebase/auth';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import moment from 'moment';
+import Video from 'react-native-video';
 import { launchImageLibrary, launchCamera } from 'react-native-image-picker';
 import AudioRecorderPlayer from 'react-native-audio-recorder-player';
 
@@ -18,6 +19,8 @@ const ChatScreen = ({ route, navigation }) => {
   const [video, setVideo] = useState(null);
   const [audioUri, setAudioUri] = useState(null);
   const [mediaModalVisible, setMediaModalVisible] = useState(false);
+  const [fullScreenImage, setFullScreenImage] = useState(null);
+  const [fullScreenVideo, setFullScreenVideo] = useState(null);
   const scrollViewRef = useRef();
   const audioRecorderPlayer = useRef(new AudioRecorderPlayer()).current;
   const [recording, setRecording] = useState(false);
@@ -59,14 +62,14 @@ const ChatScreen = ({ route, navigation }) => {
     } else {
       q = query(collection(db, 'channels', channelName, 'messages'), orderBy('createdAt', 'asc'));
     }
-    
+   
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const messagesData = snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
       }));
       setMessages(messagesData);
-      scrollViewRef.current?.scrollToEnd({ animated: true }); // Auto-scroll
+      scrollViewRef.current?.scrollToEnd({ animated: true });
     });
 
     return () => unsubscribe();
@@ -135,7 +138,7 @@ const ChatScreen = ({ route, navigation }) => {
       setVideo(null);
       setAudioUri(null);
       setMediaModalVisible(false);
-      scrollViewRef.current?.scrollToEnd({ animated: true }); // Auto-scroll after sending message
+      scrollViewRef.current?.scrollToEnd({ animated: true });
     } catch (error) {
       console.error('Error sending message: ', error);
     }
@@ -215,6 +218,14 @@ const ChatScreen = ({ route, navigation }) => {
     return memberCount;
   };
 
+  const handleImageTap = (imageUrl) => {
+    setFullScreenImage(imageUrl);
+  };
+
+  const handleVideoTap = (videoUrl) => {
+    setFullScreenVideo(videoUrl);
+  };
+
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
@@ -250,23 +261,29 @@ const ChatScreen = ({ route, navigation }) => {
                 ]}
               >
                 <Image source={{ uri: msg.userPhoto || 'https://via.placeholder.com/150' }} style={styles.avatar} />
-                <View style={styles.messageContent}>
+                <View style={[
+                  styles.messageContent,
+                  msg.userId === user?.uid ? styles.myMessageContent : styles.otherMessageContent
+                ]}>
                   <Text style={styles.messageAuthor}>{msg.userName || 'User'}</Text>
                   {msg.mediaType === 'image' && (
-                    <Image source={{ uri: msg.mediaUrl }} style={styles.messageImage} />
+                    <TouchableOpacity onPress={() => handleImageTap(msg.mediaUrl)}>
+                      <Image source={{ uri: msg.mediaUrl }} style={styles.messageImage} />
+                    </TouchableOpacity>
                   )}
                   {msg.mediaType === 'video' && (
-                    <Video
-                      source={{ uri: msg.mediaUrl }}
-                      style={styles.messageVideo}
-                      useNativeControls
-                      resizeMode="contain"
-                    />
+                    <TouchableOpacity onPress={() => handleVideoTap(msg.mediaUrl)}>
+                      <Video
+                        source={{ uri: msg.mediaUrl }}
+                        style={styles.messageVideo}
+                        useNativeControls
+                        resizeMode="contain"
+                      />
+                    </TouchableOpacity>
                   )}
                   {msg.mediaType === 'audio' && (
                     <TouchableOpacity
                       onPress={() => {
-                        // Play audio
                         audioRecorderPlayer.startPlayer(msg.mediaUrl);
                       }}
                     >
@@ -340,13 +357,52 @@ const ChatScreen = ({ route, navigation }) => {
               <Ionicons name="close-circle" size={32} color="red" />
             </TouchableOpacity>
             {image || video || audioUri ? (
-      <TouchableOpacity
-        style={styles.sendModalButton}
-        onPress={handleSendMessage}
-      >
-        <Text style={styles.sendModalButtonText}>Send</Text>
-      </TouchableOpacity>
-    ) : null}
+              <TouchableOpacity
+                style={styles.sendModalButton}
+                onPress={handleSendMessage}
+              >
+                <Text style={styles.sendModalButtonText}>Send</Text>
+              </TouchableOpacity>
+            ) : null}
+          </View>
+        </Modal>
+        <Modal
+          visible={fullScreenImage !== null}
+          transparent={true}
+          onRequestClose={() => setFullScreenImage(null)}
+        >
+          <View style={styles.fullScreenImageContainer}>
+            <TouchableOpacity 
+              style={styles.closeFullScreenButton} 
+              onPress={() => setFullScreenImage(null)}
+            >
+              <Ionicons name="close" size={30} color="#FFF" />
+            </TouchableOpacity>
+            <Image 
+              source={{ uri: fullScreenImage }} 
+              style={styles.fullScreenImage} 
+              resizeMode="contain"
+            />
+          </View>
+        </Modal>
+        <Modal
+          visible={fullScreenVideo !== null}
+          transparent={true}
+          onRequestClose={() => setFullScreenVideo(null)}
+        >
+          <View style={styles.fullScreenVideoContainer}>
+            <TouchableOpacity 
+              style={styles.closeFullScreenButton} 
+              onPress={() => setFullScreenVideo(null)}
+            >
+              <Ionicons name="close" size={30} color="#FFF" />
+            </TouchableOpacity>
+            <Video 
+              source={{ uri: fullScreenVideo }} 
+              style={styles.fullScreenVideo} 
+              resizeMode="contain"
+              useNativeControls
+            />
           </View>
         </Modal>
       </View>
@@ -357,13 +413,13 @@ const ChatScreen = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#101223',
+    backgroundColor: '#FFF',
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: 10,
-    backgroundColor: '#007bff',
+    backgroundColor: '#333',
   },
   headerTextContainer: {
     flex: 1,
@@ -391,13 +447,9 @@ const styles = StyleSheet.create({
   messageContainer: {
     flexDirection: 'row',
     marginBottom: 10,
-    
-    
   },
   myMessage: {
     alignSelf: 'flex-end',
-    color: '#00f',
-   
   },
   otherMessage: {
     alignSelf: 'flex-start',
@@ -410,15 +462,18 @@ const styles = StyleSheet.create({
   },
   messageContent: {
     maxWidth: '80%',
-    backgroundColor: '#444',
     padding: 10,
     borderRadius: 10,
-    
+  },
+  myMessageContent: {
+    backgroundColor: '#034BAD',
+  },
+  otherMessageContent: {
+    backgroundColor: '#545454',
   },
   messageAuthor: {
     fontWeight: 'bold',
     color: 'white',
-    
   },
   messageText: {
     color: 'white',
@@ -497,17 +552,44 @@ const styles = StyleSheet.create({
     right: 20,
   },
   sendModalButton: {
-  position: 'absolute',
-  bottom: 20,
-  backgroundColor: '#00f',
-  padding: 10,
-  borderRadius: 20,
-},
-sendModalButtonText: {
-  color: 'white',
-  fontSize: 16,
-  fontWeight: 'bold',
-},
+    position: 'absolute',
+    bottom: 20,
+    backgroundColor: '#00f',
+    padding: 10,
+    borderRadius: 20,
+  },
+  sendModalButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  fullScreenImageContainer: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.9)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  fullScreenImage: {
+    width: '100%',
+    height: '100%',
+  },
+  fullScreenVideoContainer: {
+    flex: 1,
+    backgroundColor: 'black',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  fullScreenVideo: {
+    width: '100%',
+    height: '100%',
+  },
+  closeFullScreenButton: {
+    position: 'absolute',
+    top: 40,
+    right: 20,
+    zIndex: 1,
+  },
 });
+
 
 export default ChatScreen;

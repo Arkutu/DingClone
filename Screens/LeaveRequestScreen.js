@@ -65,12 +65,12 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#101223',
+    backgroundColor: '#FFF',
     padding: 16,
   },
   title: {
     fontSize: 24,
-    color: '#FFF',
+    color: '#034BAD',
     marginBottom: 20,
     fontWeight: 'bold',
   },
@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#1a1a2e',
   },
   button: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: '#034BAD',
     paddingVertical: 15,
     borderRadius: 25,
     alignItems: 'center',

@@ -1,14 +1,15 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { Linking } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { OrganizationProvider } from './context/OrganizationContext';
 import { ProjectProvider } from './context/ProjectContext';
-import { LoadingProvider } from './context/LoadingContext'; 
+import { LoadingProvider } from './context/LoadingContext';
 import { UserProvider } from './context/UserContext';
 import { AppProvider } from './context/AppContext';
 import { handleInvitationLink } from './invitationUtils';
-import Welcome from './Screens/Welcome'; 
+import Welcome from './Screens/Welcome';
 import LoginScreen from './Screens/LoginScreen';
 import CreateAccountScreen from './Screens/CreateAccountScreen';
 import CreateOrganization from './Screens/CreateOrganization';
@@ -25,7 +26,7 @@ import ChannelVisibility from './Screens/ChannelVisibility';
 import ChannelDetails from './Screens/ChannelDetails';
 import CreateChannelScreen from './Screens/CreateChannelScreen';
 import MembersScreen from './Screens/MembersScreen';
-import VideoCall from './Screens/VideoCall'; // Import your VideoCall screen
+import VideoCall from './Screens/VideoCall';
 import MeetingScreen from './Screens/MeetingScreen';
 import JoinMeetingScreen from './Screens/JoinMeetingScreen';
 import ClockInOutScreen from './Screens/ClockInOutScreen';
@@ -43,15 +44,18 @@ import SettingsScreen from './Screens/SettingsScreen';
 import ToDoScreen from './Screens/ToDoScreen';
 import { enableScreens } from 'react-native-screens';
 import QrCodeScannerScreen from './Screens/QrCodeScannerScreen';
+import DocumentUploadScreen from './Screens/DocumentUploadScreen';
+import SummaryScreen from './Screens/SummaryScreen';
+import AboutScreen from './Screens/AboutScreen';
+import HelpAndFeedbackScreen from './Screens/HelpAndFeedbackScreen';
+import GeneralScreen from './Screens/GeneralScreen';
+import PermissionsScreen from './Screens/PermissionsScreen';
+import NewsScreen from './Screens/NewsScreen';
 
 enableScreens(true);
 
 const Stack = createStackNavigator();
 
-/**
- * Defines the screens and their corresponding components for the application.
- * This array is used to configure the navigation stack in the main App component.
- */
 const screens = [
   { name: 'Welcome', component: Welcome },
   { name: 'Login', component: LoginScreen },
@@ -86,12 +90,20 @@ const screens = [
   { name: 'TodoListScreen', component: TodoListScreen },
   { name: 'Settings', component: SettingsScreen },
   { name: 'ToDo', component: ToDoScreen },
-
-
+  { name: 'Docs', component: DocumentUploadScreen },
+  { name: 'SummaryScreen', component: SummaryScreen },
+  { name: 'About', component: AboutScreen},
+  { name: 'HelpAndFeedbackScreen', component: HelpAndFeedbackScreen},
+  { name: 'GeneralScreen', component: GeneralScreen},
+  { name: 'PermissionsScreen', component: PermissionsScreen},
+  { name: 'NewsScreen', component: NewsScreen},
 
 ];
 
 const App = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [initialRoute, setInitialRoute] = useState('SplashScreen');
+
   const linking = {
     prefixes: ['officecomms://'],
     config: {
@@ -110,8 +122,7 @@ const App = () => {
     const { path, queryParams } = Linking.parse(event.url);
     if (path && path.includes('join')) {
       const linkId = queryParams.linkId;
-      // Assuming userId is available in some way, for example from a context or storage
-      const userId = 'currentUserId'; 
+      const userId = 'currentUserId';
       try {
         await handleInvitationLink(linkId, userId);
         console.log('User successfully joined the organization');
@@ -122,6 +133,23 @@ const App = () => {
   };
 
   useEffect(() => {
+    const checkLoginStatus = async () => {
+      try {
+        const value = await AsyncStorage.getItem('userLoggedIn');
+        if (value === 'true') {
+          setIsLoggedIn(true);
+          setInitialRoute('MainHome');
+        } else {
+          setInitialRoute('Welcome');
+        }
+      } catch (error) {
+        console.error('Error checking login status:', error);
+        setInitialRoute('Welcome');
+      }
+    };
+
+    checkLoginStatus();
+
     const subscription = Linking.addEventListener('url', handleDeepLink);
     console.log('Linking subscription added', subscription);
 
@@ -142,13 +170,20 @@ const App = () => {
           <ProjectProvider>
             <LoadingProvider>
               <NavigationContainer linking={linking}>
-                <Stack.Navigator initialRouteName="SplashScreen">
+                <Stack.Navigator initialRouteName={initialRoute}>
                   {screens.map((screen, index) => (
-                    <Stack.Screen 
-                      key={index} 
-                      name={screen.name} 
-                      component={screen.component} 
-                      options={{ headerShown: false }} 
+                    <Stack.Screen
+                      key={index}
+                      name={screen.name}
+                      component={screen.component}
+                      options={
+                        screen.name === 'MainHome'
+                          ? {
+                              headerShown: false,
+                              gestureEnabled: false,
+                            }
+                          : { headerShown: false }
+                      }
                     />
                   ))}
                 </Stack.Navigator>

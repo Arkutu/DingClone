@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
-import { auth, db } from '../firebaseConfig';  // Ensure the path is correct to your Firebase config file
+import { auth, db } from '../firebaseConfig';
 import { OrganizationContext } from '../context/OrganizationContext';
 import { collection, doc, getDoc, addDoc, serverTimestamp, Timestamp, writeBatch } from 'firebase/firestore';
 
@@ -28,7 +28,7 @@ const ProjectScreen = ({ navigation }) => {
             const membersData = orgDoc.data().members || [];
 
             if (membersData.length > 0) {
-              const userPromises = membersData.map(memberId => 
+              const userPromises = membersData.map(memberId =>
                 getDoc(doc(db, 'users', memberId))
               );
               const users = await Promise.all(userPromises);
@@ -149,16 +149,18 @@ const ProjectScreen = ({ navigation }) => {
           placeholder="Enter task title"
           placeholderTextColor="#888"
         />
-        <Picker
-          selectedValue={assignedTo}
-          onValueChange={(itemValue) => setAssignedTo(itemValue)}
-          style={styles.picker}
-        >
-          <Picker.Item label="Select a member" value="" />
-          {organizationMembers.map((member) => (
-            <Picker.Item key={member.uid} label={member.displayName} value={member.uid} />
-          ))}
-        </Picker>
+        <View style={styles.pickerContainer}>
+          <Picker
+            selectedValue={assignedTo}
+            onValueChange={(itemValue) => setAssignedTo(itemValue)}
+            style={styles.picker}
+          >
+            <Picker.Item label="Select a member" value="" />
+            {organizationMembers.map((member) => (
+              <Picker.Item key={member.uid} label={member.displayName} value={member.uid} />
+            ))}
+          </Picker>
+        </View>
         <TextInput
           style={styles.input}
           value={dueDate}
@@ -180,7 +182,7 @@ const ProjectScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1a1a2e',
+    backgroundColor: '#fff',
     padding: 20,
   },
   title: {
@@ -199,15 +201,17 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFF',
     marginBottom: 20,
   },
+  pickerContainer: {
+    borderWidth: 1,
+    borderColor: '#888',
+    borderRadius: 25,
+    marginBottom: 20,
+    overflow: 'hidden',
+  },
   picker: {
     height: 50,
-    borderColor: '#888',
-    borderWidth: 1,
-    borderRadius: 25,
-    paddingHorizontal: 15,
     color: '#000',
     backgroundColor: '#FFF',
-    marginBottom: 20,
   },
   button: {
     backgroundColor: '#0d6efd',
@@ -224,7 +228,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#1a1a2e',
+    backgroundColor: '#FFF',
   },
 });
 

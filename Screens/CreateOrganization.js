@@ -37,7 +37,7 @@ const CreateOrganization = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#00072d',
+    backgroundColor: '#FFF',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
     textShadowRadius: 2,
   },
   welcomeContainer: {
-    backgroundColor: '#007bff',
+    backgroundColor: '#545454',
     borderRadius: 35,
     padding: 20,
     alignItems: 'center',
@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
    
   },
   button: {
-    backgroundColor: '#333',
+    backgroundColor: '#034BAD',
     paddingVertical: 15,
     borderRadius: 15,
     marginBottom: 20,

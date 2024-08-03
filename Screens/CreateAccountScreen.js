@@ -52,7 +52,7 @@ const CreateAccountScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Ionicons name="chevron-back" size={24} color="white" onPress={goBack} style={styles.icon} />
+      <Ionicons name="chevron-back" size={24} color="blue" onPress={goBack} style={styles.icon} />
       <Text style={styles.headerText}>Create your new account</Text>
       <TextInput
         style={styles.input}
@@ -82,13 +82,9 @@ const CreateAccountScreen = () => {
           <Text style={styles.buttonText}>Sign Up</Text>
         )}
       </Pressable>
-      <View style={styles.signUpContainer}>
-        <View style={styles.line} />
-        <Text style={styles.signUpText}>or sign up with</Text>
-        <View style={styles.line} />
-      </View>
+      
       <Pressable style={styles.iconButton}>
-        <Ionicons name="logo-google" size={30} color="black" />
+       
       </Pressable>
     </View>
   );
@@ -98,7 +94,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: "#101223",
+    backgroundColor: "#FFF",
   },
   icon: {
     marginTop: 40,
@@ -107,13 +103,13 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 30,
     fontWeight: "bold",
-    color: "#007bff",
+    color: "#034BAD",
     marginBottom: 20,
   },
   input: {
     height: 40,
-    borderColor: "#fff",
-    backgroundColor: "#fff",
+    borderColor: "#545454",
+    backgroundColor: "#000",
     borderWidth: 1,
     borderRadius: 50,
     paddingLeft: 18,
@@ -123,14 +119,14 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginTop: 6,
     marginBottom: 50,
-    color: "#fff",
+    color: "#000",
   },
   textBlue: {
-    color: "#007bff",
+    color: "#034BAD",
     fontWeight: "500",
   },
   button: {
-    backgroundColor: "#007bff",
+    backgroundColor: "#034BAD",
     padding: 12,
     borderRadius: 50,
     marginBottom: 150,

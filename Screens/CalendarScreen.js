@@ -25,13 +25,10 @@ const CalendarScreen = ({ navigation }) => {
     new Date().toISOString().split("T")[0]
   );
   const [selectedEvents, setSelectedEvents] = useState([]);
+  const [isFocused, setIsFocused] = useState(false);
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerTitle: "Calendar",
-      headerTitleStyle: {
-        color: "#fff",
-      },
       headerTitle: () => (
         <View>
           <Text style={styles.dateText}>{formatDate()}</Text>
@@ -93,7 +90,6 @@ const CalendarScreen = ({ navigation }) => {
         });
       });
       setItems(fetchedEvents);
-      // Update selectedEvents when items change
       const eventsForDate = fetchedEvents[eventDate] || [];
       setSelectedEvents(eventsForDate);
     } catch (error) {
@@ -147,7 +143,7 @@ const CalendarScreen = ({ navigation }) => {
 
       console.log(`Event created with ID: ${eventId}`);
       Alert.alert("Success", `Event created with ID: ${eventId}`);
-      fetchEvents(); // Refresh the events after adding a new one
+      fetchEvents();
     } catch (error) {
       console.error("Error creating event: ", error);
       Alert.alert("Error", "Failed to create event");

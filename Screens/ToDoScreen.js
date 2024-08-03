@@ -367,7 +367,7 @@ const styles = StyleSheet.create({
   },
   taskContainer: {
     marginVertical: 6,
-    backgroundColor: '#00072d',
+    backgroundColor: '#333',
     borderWidth: 1,
     padding: 14,
     borderColor: "#ddd",

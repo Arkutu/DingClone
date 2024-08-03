@@ -108,7 +108,7 @@ const MembersScreen = ({ navigation }) => {
           >
             <Text style={styles.memberName}>{member.displayName}</Text>
             <TouchableOpacity onPress={() => startChat(member)} style={styles.chatIcon}>
-              <Ionicons name="chatbubbles-outline" size={24} color="#FFF" />
+              
             </TouchableOpacity>
           </TouchableOpacity>
         ))}

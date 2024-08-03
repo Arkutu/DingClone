@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
 import { useProject } from '../context/ProjectContext';
 import { useUser } from '../context/UserContext';
-import { firestore } from '../firebaseConfig';
+import { db } from '../firebaseConfig';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 
 const ProjectListScreen = () => {
@@ -16,14 +16,17 @@ const ProjectListScreen = () => {
     console.log("Project ID:", projectId);
 
     const fetchProjects = async () => {
-      if (!user || !projectId) {
+      if (!user || !user.uid) {
         setLoading(false);
         return;
       }
 
       try {
-        const projectsRef = collection(firestore, 'projects');
-        const projectsQuery = query(projectsRef, where('organizationId', '==', user.organizationId));
+        const projectsRef = collection(db, 'projects');
+        const projectsQuery = query(
+          projectsRef, 
+          where('members', 'array-contains', user.uid)
+        );
         const projectsSnapshot = await getDocs(projectsQuery);
 
         const projectsData = projectsSnapshot.docs.map(doc => ({
@@ -34,8 +37,12 @@ const ProjectListScreen = () => {
         console.log("Projects Data:", projectsData);
 
         const tasksPromises = projectsData.map(async (project) => {
-          const tasksRef = collection(firestore, 'tasksmanage');
-          const tasksQuery = query(tasksRef, where('projectId', '==', project.id), where('assignedTo', '==', user.uid));
+          const tasksRef = collection(db, 'tasksmanage');
+          const tasksQuery = query(
+            tasksRef, 
+            where('projectId', '==', project.id), 
+            where('assignedTo', '==', user.uid)
+          );
           const tasksSnapshot = await getDocs(tasksQuery);
 
           const tasks = tasksSnapshot.docs.map(doc => ({

@@ -47,32 +47,38 @@ const Settings = () => {
         <View>
           <Text style={styles.textHeader}>Available</Text>
 
-          <View style={{ marginTop: 10 }} />
+          <View style={{ marginTop: 20 }} />
 
           <View style={styles.profile}>
             <View style={styles.settingsContainer}>
               <View style={styles.items}>
+                 <TouchableOpacity
+              activeOpacity={0.5}
+              onPress={() => navigation.navigate("GeneralScreen")}
+            >
                 <Text style={styles.text}>General</Text>
+                </TouchableOpacity>
               </View>
             </View>
             <View style={styles.space}>
               <View style={styles.line} />
             </View>
 
-            <View style={styles.settingsContainer}>
-              <View style={styles.items}>
-                <Text style={styles.text}>New Message Notification</Text>
-              </View>
-            </View>
+           
           </View>
 
-          <View style={{ marginTop: 10 }} />
+          <View style={{ marginTop: 20 }} />
           <Text style={styles.textHeader}>Privacy</Text>
 
           <View style={styles.profile}>
             <View style={styles.settingsContainer}>
               <View style={styles.items}>
+                 <TouchableOpacity
+              activeOpacity={0.5}
+              onPress={() => navigation.navigate("PermissionsScreen")}
+            >
                 <Text style={styles.text}>Permission</Text>
+                </TouchableOpacity>
               </View>
             </View>
 
@@ -80,11 +86,7 @@ const Settings = () => {
               <View style={styles.line} />
             </View>
 
-            <View style={styles.settingsContainer}>
-              <View style={styles.items}>
-                <Text style={styles.text}>Display of External Info...</Text>
-              </View>
-            </View>
+            
 
             <View style={styles.space}>
               <View style={styles.line} />
@@ -92,7 +94,12 @@ const Settings = () => {
 
             <View style={styles.settingsContainer}>
               <View style={styles.items}>
-                <Text style={styles.text}>Persional Information inqu...</Text>
+                  <TouchableOpacity
+              activeOpacity={0.5}
+              onPress={() => navigation.navigate("NewsScreen")}
+            >
+                <Text style={styles.text}>News</Text>
+                </TouchableOpacity>
               </View>
             </View>
           </View>
@@ -103,7 +110,12 @@ const Settings = () => {
           <View style={styles.profile}>
             <View style={styles.settingsContainer}>
               <View style={styles.items}>
-                <Text style={styles.text}>Help and Feedback</Text>
+                <TouchableOpacity
+              activeOpacity={0.5}
+              onPress={() => navigation.navigate("HelpAndFeedbackScreen")}
+            >
+              <Text style={styles.text}>Help and Feedback</Text>
+                </TouchableOpacity>
               </View>
             </View>
 
@@ -113,17 +125,22 @@ const Settings = () => {
 
             <View style={styles.settingsContainer}>
               <View style={styles.items}>
+                <TouchableOpacity
+              activeOpacity={0.5}
+              onPress={() => navigation.navigate("About")}
+            >
                 <Text style={styles.text}>About OfficeComms</Text>
-              </View>
-            </View>
+             </TouchableOpacity> 
+              </View> 
+            </View> 
           </View>
 
-          <View style={{ marginTop: 10 }} />
+          <View style={{ marginTop: 40 }} />
           <View style={styles.profile}>
             <TouchableOpacity
               activeOpacity={0.5}
               style={styles.settingsContainerLogout}
-              onPress={() => navigation.navigate("AddNewAccount")}
+              onPress={() => navigation.navigate("Login")}
             >
               <View style={styles.items}>
                 <Text style={styles.text}>Add new account</Text>
@@ -136,7 +153,7 @@ const Settings = () => {
             <TouchableOpacity
               activeOpacity={0.5}
               style={styles.settingsContainerLogout}
-              onPress={() => navigation.navigate("Logout")}
+              onPress={() => navigation.navigate("SplashScreen")}
             >
               <View style={styles.items}>
                 <Text style={styles.text}>Log Out</Text>
@@ -153,7 +170,7 @@ const Settings = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#00072d',
+    backgroundColor: '#333',
   },
   textTop: {
     fontSize: 24,

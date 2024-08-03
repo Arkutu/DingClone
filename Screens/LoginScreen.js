@@ -2,14 +2,14 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, Pressable, Alert, ActivityIndicator } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
-import { doc, setDoc } from "firebase/firestore"; // Import Firestore functions
-import { auth, db } from '../firebaseConfig';  // Ensure the path is correct to your Firebase config file
+import { getAuth, signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, sendPasswordResetEmail } from 'firebase/auth';
+import { doc, setDoc } from "firebase/firestore";
+import { auth, db } from '../firebaseConfig';
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [buttonLoading, setButtonLoading] = useState(false); // Change state name to buttonLoading
+  const [buttonLoading, setButtonLoading] = useState(false);
   const navigation = useNavigation();
   const route = useRoute();
 
@@ -33,7 +33,7 @@ const LoginScreen = () => {
 
         Alert.alert('Success', 'Login successful!');
         setButtonLoading(false);
-        navigation.navigate('CreateOrganization'); // Navigate to CreateOrganization
+        navigation.navigate('CreateOrganization');
       } catch (error) {
         setButtonLoading(false);
         Alert.alert('Error', error.message);
@@ -59,9 +59,23 @@ const LoginScreen = () => {
 
       Alert.alert('Success', 'Login successful!');
       setButtonLoading(false);
-      navigation.navigate('CreateOrganization'); // Navigate to CreateOrganization
+      navigation.navigate('CreateOrganization');
     } catch (error) {
       setButtonLoading(false);
+      Alert.alert('Error', error.message);
+    }
+  };
+
+  const handleForgotPassword = async () => {
+    if (!email) {
+      Alert.alert('Error', 'Please enter your email address');
+      return;
+    }
+
+    try {
+      await sendPasswordResetEmail(auth, email);
+      Alert.alert('Success', 'Password reset email sent. Please check your inbox.');
+    } catch (error) {
       Alert.alert('Error', error.message);
     }
   };
@@ -73,7 +87,7 @@ const LoginScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Ionicons name="chevron-back" size={24} color="white" onPress={goBack} style={styles.icon} />
+      <Ionicons name="chevron-back" size={24} color="blue" onPress={goBack} style={styles.icon} />
       <Text style={styles.headerText}>Login to your account</Text>
       <TextInput
         style={styles.input}
@@ -97,13 +111,14 @@ const LoginScreen = () => {
           <Text style={styles.buttonText}>Login</Text>
         )}
       </Pressable>
+      <Pressable onPress={handleForgotPassword}>
+        <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+      </Pressable>
       <View style={styles.signInContainer}>
-        <View style={styles.line} />
-        <Text style={styles.signInText}>or sign in with</Text>
-        <View style={styles.line} />
+        
       </View>
       <Pressable style={styles.iconButton} onPress={handleGoogleSignIn}>
-        <Ionicons name="logo-google" size={30} color="black" />
+        {/* Add Google icon here */}
       </Pressable>
     </View>
   );
@@ -113,7 +128,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: '#101223',
+    backgroundColor: '#FFF',
   },
   icon: {
     marginTop: 40,
@@ -122,12 +137,12 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 30,
     fontWeight: 'bold',
-    color: '#007bff',
+    color: '#034BAD',
     marginBottom: 20,
   },
   input: {
     height: 40,
-    borderColor: '#fff',
+    borderColor: '#545454',
     backgroundColor: '#fff',
     borderWidth: 1,
     borderRadius: 50,
@@ -136,10 +151,10 @@ const styles = StyleSheet.create({
     color: "#333",
   },
   button: {
-    backgroundColor: '#007bff',
+    backgroundColor: '#034BAD',
     padding: 12,
     borderRadius: 50,
-    marginBottom: 50,
+    marginBottom: 20,
     alignItems: 'center',
   },
   buttonText: {
@@ -147,6 +162,12 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  forgotPasswordText: {
+    color: '#034BAD',
+    textAlign: 'center',
+    fontSize: 14,
+    marginBottom: 20,
   },
   signInContainer: {
     flexDirection: 'row',

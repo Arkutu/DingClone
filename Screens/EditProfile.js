@@ -53,6 +53,7 @@ const EditProfile = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
+      <View style={{ marginBottom: 150 }} />
       <TouchableOpacity onPress={pickImage}>
         <Image
           source={{ uri: image || 'https://via.placeholder.com/150' }}
@@ -76,7 +77,7 @@ const EditProfile = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#101223',
+    backgroundColor: '#FFF',
     padding: 16,
     alignItems: 'center',
   },
